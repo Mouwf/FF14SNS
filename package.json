@@ -1,0 +1,34 @@
+{
+  "name": "my-remix-app",
+  "private": true,
+  "sideEffects": false,
+  "type": "module",
+  "scripts": {
+    "build": "remix build",
+    "dev": "remix dev --manual -c \"ntl dev --framework=#static\"",
+    "start": "netlify serve",
+    "typecheck": "tsc -b"
+  },
+  "dependencies": {
+    "@netlify/edge-functions": "^2.0.0",
+    "@netlify/remix-edge-adapter": "^3.0.0",
+    "@netlify/remix-runtime": "^2.0.0",
+    "@remix-run/css-bundle": "^2.4.0",
+    "@remix-run/react": "^2.4.0",
+    "cross-env": "^7.0.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@remix-run/dev": "^2.4.0",
+    "@remix-run/eslint-config": "^2.4.0",
+    "@remix-run/serve": "^2.4.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "eslint": "^8.27.0",
+    "typescript": "^5.2.2"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
