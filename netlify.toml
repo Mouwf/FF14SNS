@@ -11,7 +11,6 @@ for = "/build/*"
 "Cache-Control" = "public, max-age=31560000, immutable"
 
 [functions]
-included_files = ["server.js"]
 external_node_modules = ["express"]
 node_bundler = "esbuild"
 
