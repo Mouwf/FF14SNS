@@ -1,5 +1,4 @@
 import { config } from '@netlify/remix-edge-adapter'
-import { resolve } from 'node:path'
 
 const productionConfig = {
   ...config,
