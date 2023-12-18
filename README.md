@@ -1,87 +1,36 @@
-# FF14SNS
-
 # Welcome to Remix!
 
 - [Remix Docs](https://remix.run/docs)
-- [Netlify Edge Functions Overview](https://docs.netlify.com/edge-functions/overview/)
-
-## Netlify Setup
-
-1. Install the [Netlify CLI](https://docs.netlify.com/cli/get-started/):
-
-```sh
-npm i -g netlify-cli
-```
-
-If you have previously installed the Netlify CLI, you should update it to the latest version:
-
-```sh
-npm i -g netlify-cli@latest
-```
-
-2. Sign up and log in to Netlify:
-
-```sh
-netlify login
-```
-
-3. Create a new site:
-
-```sh
-netlify init
-```
 
 ## Development
 
-Ensure all packages are installed by running:
-
-```sh
-npm install
-```
-
-Run
+Start the Remix development asset server and the Express server by running:
 
 ```sh
 npm run dev
 ```
 
-Open up [http://localhost:8888](http://localhost:8888), and you're ready to go!
-
-### Serve your site locally
-
-To serve your site locally in a production-like environment, run
-
-```sh
-npm run start
-```
-
-Your site will be available at [http://localhost:8888](http://localhost:8888). Note that it will not auto-reload when you make changes.
-
-## Excluding routes
-
-You can exclude routes for non-Remix code such as custom Netlify Functions or Edge Functions. To do this, add an additional entry in the array like in the example below:
-
-```diff
-export const config = {
-  cache: "manual",
-  path: "/*",
-  // Let the CDN handle requests for static assets, i.e. /_assets/*
-  //
-  // Add other exclusions here, e.g. "/api/*" for custom Netlify functions or
-  // custom Netlify Edge Functions
--  excluded_patterns: ["/_assets/*"],
-+  excluded_patterns: ["/_assets/*", "/api/*"],
-};
-```
+This starts your app in development mode, which will purge the server require cache when Remix rebuilds assets so you don't need a process manager restarting the express server.
 
 ## Deployment
 
-There are two ways to deploy your app to Netlify, you can either link your app to your git repo and have it auto deploy changes to Netlify, or you can deploy your app manually. If you've followed the setup instructions already, all you need to do is run this:
+First, build your app for production:
 
 ```sh
-# preview deployment
-netlify deploy --build
-
-# production deployment
-netlify deploy --build --prod
+npm run build
 ```
+
+Then run the app in production mode:
+
+```sh
+npm start
+```
+
+Now you'll need to pick a host to deploy it to.
+
+### DIY
+
+If you're familiar with deploying express applications you should be right at home just make sure to deploy the output of `remix build`
+
+- `build/`
+- `public/build/`
