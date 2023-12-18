@@ -5,9 +5,9 @@
   "type": "module",
   "scripts": {
     "build": "remix build",
-    "dev": "CHOKIDAR_USEPOLLING=true remix dev --manual -c \"node --watch-path server.js --watch server.js\"",
+    "dev": "CHOKIDAR_USEPOLLING=true remix dev --manual -c \"node --watch-path netlify/functions/server.js --watch netlify/functions/server.js\"",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
-    "start": "cross-env NODE_ENV=production node ./server.js",
+    "start": "cross-env NODE_ENV=production node ./netlify/functions/server.js",
     "typecheck": "tsc"
   },
   "dependencies": {
