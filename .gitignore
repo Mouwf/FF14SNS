@@ -9,4 +9,4 @@ node_modules
 .netlify
 
 # 
-entry.server.tsx
+app/entry.server.tsx
