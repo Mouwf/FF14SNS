@@ -1,3 +1,6 @@
+import { json } from "@netlify/remix-runtime";
+import { useLoaderData } from "@remix-run/react";
+
 export function headers({
   loaderHeaders,
   parentHeaders,
@@ -15,10 +18,16 @@ export function headers({
   };
 }
 
+export async function loader() {
+  return json("Hello World!");
+}
+
 export default function Index() {
+  const projects = useLoaderData<typeof loader>();
   return (
     <main style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }}>
       <h1>Welcome to Remix</h1>
+      <h2>{projects}</h2>
       <ul>
         <li>
           <a
