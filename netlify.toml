@@ -8,14 +8,5 @@ publish = "public"
 for = "/build/*"
 
 [headers.values]
+
 "Cache-Control" = "public, max-age=31560000, immutable"
-
-[functions]
-external_node_modules = ["express"]
-node_bundler = "esbuild"
-
-[[redirects]]
-force = true
-from = "/*"
-status = 200
-to = "/.netlify/functions/server"

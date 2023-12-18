@@ -1,9 +1,16 @@
-/** @type {import('@remix-run/dev').AppConfig} */
-export default {
+import { config } from '@netlify/remix-edge-adapter'
+import { resolve } from 'node:path'
+
+const productionConfig = {
+  ...config,
+}
+
+const developmentConfig = {
   ignoredRouteFiles: ["**/.*"],
   serverModuleFormat: "esm",
-  // appDirectory: "app",
-  // assetsBuildDirectory: "public/build",
-  // publicPath: "/build/",
-  // serverBuildPath: "build/index.js",
-};
+}
+
+/** @type {import('@remix-run/dev').AppConfig} */
+export default {
+  ...(process.env.NODE_ENV === 'development' ? developmentConfig : productionConfig),
+}
