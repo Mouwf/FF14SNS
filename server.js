@@ -9,6 +9,8 @@ import express from "express";
 import morgan from "morgan";
 import sourceMapSupport from "source-map-support";
 
+import serverless from "serverless-http";
+
 sourceMapSupport.install({
   retrieveSourceMap: function (source) {
     // get source file without the `file://` prefix or `?t=...` suffix
@@ -67,6 +69,9 @@ app.listen(port, async () => {
     broadcastDevReady(initialBuild);
   }
 });
+
+// Export serverless app for Netlify Functions.
+export const handler = serverless(app);
 
 /**
  * @returns {Promise<ServerBuild>}

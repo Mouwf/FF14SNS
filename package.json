@@ -11,6 +11,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@netlify/functions": "^2.4.1",
     "@remix-run/css-bundle": "^2.4.0",
     "@remix-run/express": "^2.4.0",
     "@remix-run/node": "^2.4.0",
@@ -22,6 +23,7 @@
     "morgan": "^1.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "serverless-http": "^3.2.0",
     "source-map-support": "^0.5.21"
   },
   "devDependencies": {
