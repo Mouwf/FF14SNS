@@ -3,7 +3,6 @@ import { resolve } from 'node:path'
 
 const productionConfig = {
   ...config,
-  server: './app/entry.server.netlify.tsx',
 }
 
 const developmentConfig = {
