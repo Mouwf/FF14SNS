@@ -12,6 +12,7 @@ for = "/build/*"
 
 [functions]
 directory = "."
+included_files = ["server.js"]
 external_node_modules = ["express"]
 node_bundler = "esbuild"
 
