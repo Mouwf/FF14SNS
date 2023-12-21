@@ -16,14 +16,22 @@
                 "NODE_ENV": "development",
                 "BROWSER": "none"
             },
-            "serverReadyAction": {
-                "pattern": "Express server listening on port 3000",
-                "uriFormat": "http://localhost:3000",
-                "action": "debugWithChrome"
-            },
+            "sourceMaps": true,
+            "outFiles": [
+                "${workspaceFolder}/build/**/*.js",
+                "${workspaceFolder}/public/build/**/*.js",
+            ],
             "skipFiles": [
                 "<node_internals>/**"
             ],
+        },
+        {
+            "type": "chrome",
+            "request": "launch",
+            "name": "Debug Frontend",
+            "url": "http://localhost:3000/",
+            "webRoot": "${workspaceFolder}/app",
+            "sourceMaps": true,
         }
     ]
 }
