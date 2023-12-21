@@ -1,5 +1,6 @@
 import { json } from "@netlify/remix-runtime";
 import { useLoaderData } from "@remix-run/react";
+import { useState } from "react";
 
 export function headers({
   loaderHeaders,
@@ -24,10 +25,18 @@ export async function loader() {
 
 export default function Index() {
   const projects = useLoaderData<typeof loader>();
+
+  const [count, setCount] = useState(0);
+  const incrementCount = () => {
+    setCount(count + 1);
+  }
+
   return (
     <main style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.4" }}>
       <h1>Welcome to Remix</h1>
       <h2>{projects}</h2>
+      <p>Count: {count}</p>
+      <button onClick={incrementCount}>Increment count</button>
       <ul>
         <li>
           <a
