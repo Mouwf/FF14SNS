@@ -1,23 +1,13 @@
-import { json } from "@netlify/remix-runtime";
-import { useLoaderData } from "@remix-run/react";
+import { MetaFunction, json } from "@netlify/remix-runtime";
+import { Link, useLoaderData } from "@remix-run/react";
 import { useState } from "react";
 
-export function headers({
-  loaderHeaders,
-  parentHeaders,
-}: {
-  loaderHeaders: Headers;
-  parentHeaders: Headers;
-}) {
-  console.log(
-    "This is an example of how to set caching headers for a route, feel free to change the value of 60 seconds or remove the header"
-  );
-  return {
-    // This is an example of how to set caching headers for a route
-    // For more info on headers in Remix, see: https://remix.run/docs/en/v1/route/headers
-    "Cache-Control": "public, max-age=60, s-maxage=60",
-  };
-}
+export const meta: MetaFunction = () => {
+  return [
+    { title: "Index" },
+    { name: "description", content: "IndexDescription" },
+  ];
+};
 
 export async function loader() {
   return json("Hello World!");
@@ -38,6 +28,9 @@ export default function Index() {
       <p>Count: {count}</p>
       <button onClick={incrementCount}>Increment count</button>
       <ul>
+        <li>
+          <Link to="/parameter-test/test3">Parameter Test</Link>
+        </li>
         <li>
           <a
             target="_blank"
