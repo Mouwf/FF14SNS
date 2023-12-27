@@ -29,6 +29,12 @@ export default function Index() {
       <button onClick={incrementCount}>Increment count</button>
       <ul>
         <li>
+          <Link to="/auth">Auth Top</Link>
+        </li>
+        <li>
+          <Link to="/app">App Top</Link>
+        </li>
+        <li>
           <Link to="/parameter-test/test3">Parameter Test</Link>
         </li>
         <li>
