@@ -5,6 +5,9 @@ node_modules
 /build
 .env
 
+server.cert
+server.key
+
 # Local Netlify folder
 .netlify
 
