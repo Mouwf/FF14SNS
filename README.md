@@ -1,3 +1,6 @@
+# FF14SNS
+FF14SNSはネタバレを恐れずにFF14の感想を投稿できるSNSです。
+
 # Welcome to Remix!
 
 - [Remix Docs](https://remix.run/docs)
