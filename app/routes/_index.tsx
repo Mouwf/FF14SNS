@@ -1,6 +1,7 @@
-import { MetaFunction, json } from "@netlify/remix-runtime";
+import { LoaderFunctionArgs, MetaFunction, json, redirect } from "@netlify/remix-runtime";
 import { Link, useLoaderData } from "@remix-run/react";
 import { useState } from "react";
+import { userAuthenticationCookie } from "../cookies.server";
 
 export const meta: MetaFunction = () => {
   return [
@@ -9,8 +10,13 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export async function loader() {
-  return json("Hello World!");
+export async function loader({
+  request,
+}: LoaderFunctionArgs) {
+  const cookieHeader = request.headers.get("Cookie");
+  const cookie = (await userAuthenticationCookie.parse(cookieHeader)) || {};
+  if (Object.keys(cookie).length <= 0) return redirect("/auth/login");
+  return redirect("/app");
 }
 
 export default function Index() {
