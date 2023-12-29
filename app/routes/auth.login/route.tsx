@@ -35,7 +35,7 @@ export const action = async ({
         });
     } catch (error) {
         console.error(error);
-        return redirect("/auth/login", {
+        throw redirect("/auth/login", {
             headers: {
                 "Set-Cookie": await userAuthenticationCookie.serialize({}),
             },

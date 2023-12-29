@@ -25,10 +25,20 @@ export const loader = async ({
     if (Object.keys(cookie).length <= 0) return redirect("/auth/login");
 
     // FF14SNSのユーザーを取得する。
-    const authenticatedUserProvider = new FirebaseAuthenticatedUserProvider();
-    const ff14SnsUserLoader = new FF14SnsUserLoader(authenticatedUserProvider);
-    const ff14SnsUser = await ff14SnsUserLoader.getUser(cookie.idToken);
-    return json(ff14SnsUser);
+    try {
+        const authenticatedUserProvider = new FirebaseAuthenticatedUserProvider();
+        const ff14SnsUserLoader = new FF14SnsUserLoader(authenticatedUserProvider);
+        const ff14SnsUser = await ff14SnsUserLoader.getUser(cookie.idToken);
+        return json(ff14SnsUser);
+    } catch (error) {
+        console.error(error);
+        throw redirect("/auth/login", {
+            headers: {
+                "Set-Cookie": await userAuthenticationCookie.serialize({}),
+            },
+        });
+    
+    }
 }
 
 export const action = async () => {

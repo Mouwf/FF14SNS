@@ -17,11 +17,11 @@ export const action = async ({
     try {
         // ユーザーを登録する。
         const userAccountManager = new FirebaseUserAccountManager();
-        const userAuthenticationAction = new UserRegistrationAction(userAccountManager);
+        const userRegistrationAction = new UserRegistrationAction(userAccountManager);
         const formData = await request.formData();
         const mailAddress = formData.get('mailAddress') as string;
         const password = formData.get('password') as string;
-        const response = await userAuthenticationAction.register(mailAddress, password);
+        const response = await userRegistrationAction.register(mailAddress, password);
 
         // IDトークンとリフレッシュトークンをCookieに保存する。
         const cookie: any = {};
@@ -34,7 +34,7 @@ export const action = async ({
         });
     } catch (error) {
         console.error(error);
-        return redirect("/auth/signup", {
+        throw redirect("/auth/signup", {
             headers: {
                 "Set-Cookie": await userAuthenticationCookie.serialize({}),
             },
