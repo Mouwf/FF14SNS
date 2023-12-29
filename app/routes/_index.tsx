@@ -1,26 +1,22 @@
-import { json } from "@netlify/remix-runtime";
-import { useLoaderData } from "@remix-run/react";
+import { LoaderFunctionArgs, MetaFunction, json, redirect } from "@netlify/remix-runtime";
+import { Link, useLoaderData } from "@remix-run/react";
 import { useState } from "react";
+import { userAuthenticationCookie } from "../cookies.server";
 
-export function headers({
-  loaderHeaders,
-  parentHeaders,
-}: {
-  loaderHeaders: Headers;
-  parentHeaders: Headers;
-}) {
-  console.log(
-    "This is an example of how to set caching headers for a route, feel free to change the value of 60 seconds or remove the header"
-  );
-  return {
-    // This is an example of how to set caching headers for a route
-    // For more info on headers in Remix, see: https://remix.run/docs/en/v1/route/headers
-    "Cache-Control": "public, max-age=60, s-maxage=60",
-  };
-}
+export const meta: MetaFunction = () => {
+  return [
+    { title: "Index" },
+    { name: "description", content: "IndexDescription" },
+  ];
+};
 
-export async function loader() {
-  return json("Hello World!");
+export async function loader({
+  request,
+}: LoaderFunctionArgs) {
+  const cookieHeader = request.headers.get("Cookie");
+  const cookie = (await userAuthenticationCookie.parse(cookieHeader)) || {};
+  if (Object.keys(cookie).length <= 0) return redirect("/auth/login");
+  return redirect("/app");
 }
 
 export default function Index() {
@@ -38,6 +34,15 @@ export default function Index() {
       <p>Count: {count}</p>
       <button onClick={incrementCount}>Increment count</button>
       <ul>
+        <li>
+          <Link to="/auth">Auth Top</Link>
+        </li>
+        <li>
+          <Link to="/app">App Top</Link>
+        </li>
+        <li>
+          <Link to="/parameter-test/test3">Parameter Test</Link>
+        </li>
         <li>
           <a
             target="_blank"

@@ -1,3 +1,12 @@
+# FF14SNS
+FF14SNSはネタバレを恐れずにFF14の感想を投稿できるSNSです。
+
+## 環境構築
+### 環境変数
+.envファイルをルート直下に作成し、以下の環境変数を設定してください。
+* FIREBASE_API_KEY
+  * FirebaseプロジェクトのAPIキーを設定してください。
+
 # Welcome to Remix!
 
 - [Remix Docs](https://remix.run/docs)

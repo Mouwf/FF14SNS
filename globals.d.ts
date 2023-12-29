@@ -2,6 +2,7 @@ export {};
 declare global {
   interface ProcessEnv {
     NODE_ENV: "development" | "production" | "test";
+    FIREBASE_API_KEY: string | undefined;
   }
   interface Process {
     env: ProcessEnv;

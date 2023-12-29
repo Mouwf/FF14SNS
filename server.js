@@ -6,6 +6,7 @@ import { createRequestHandler } from "@remix-run/express";
 import { broadcastDevReady, installGlobals } from "@remix-run/node";
 import compression from "compression";
 import express from "express";
+import https from "https";
 import morgan from "morgan";
 import sourceMapSupport from "source-map-support";
 
@@ -59,8 +60,15 @@ app.use(morgan("tiny"));
 
 app.all("*", remixHandler);
 
+const privateKey = fs.readFileSync("server.key", "utf8");
+const certificate = fs.readFileSync("server.cert", "utf8");
+const credentials = {
+  key: privateKey,
+  cert: certificate
+};
+const httpsServer = https.createServer(credentials, app);
 const port = process.env.PORT || 3000;
-app.listen(port, async () => {
+httpsServer.listen(port, async () => {
   console.log(`Express server listening on port ${port}`);
 
   if (process.env.NODE_ENV === "development") {

@@ -1,0 +1,34 @@
+import SignUpResponse from "~/models/firebase/signup-response";
+import FirebaseClient from "../firebase/firebase-client";
+import IUserAuthenticator from "./i-user-authenticator";
+import IUserRegistrar from "./i-user-registrar";
+import SignInWithEmailPasswordResponse from "~/models/firebase/signin-with-email-password-response";
+
+
+/**
+ * Firebaseを利用したユーザー管理を行うクラス。
+ */
+export default class FirebaseUserAccountManager implements IUserRegistrar, IUserAuthenticator {
+    /**
+     * Firebaseのクライアント。
+     */
+    private readonly firebaseClient = new FirebaseClient();
+
+    public async register(mailAddress: string, password: string): Promise<SignUpResponse> {
+        const response = await this.firebaseClient.signUp(mailAddress, password);
+        return response;
+    }
+
+    public delete(mailAddress: string): Promise<boolean> {
+        throw new Error('Method not implemented.');
+    }
+
+    public async login(mailAddress: string, password: string): Promise<SignInWithEmailPasswordResponse> {
+        const response = await this.firebaseClient.signInWithEmailPassword(mailAddress, password);
+        return response;
+    }
+
+    public async logout(): Promise<boolean> {
+        return true;
+    }
+}
