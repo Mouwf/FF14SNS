@@ -1,7 +1,5 @@
 import { ActionFunctionArgs, MetaFunction, redirect } from "@netlify/remix-runtime";
 import { Form } from "@remix-run/react";
-import FirebaseUserAccountManager from "../../libraries/authentication/firebase-user-account-manager";
-import UserRegistrationAction from "../../actions/authentication/user-registration-action";
 import { userAuthenticationCookie } from "../../cookies.server";
 
 export const meta: MetaFunction = () => {
@@ -13,14 +11,14 @@ export const meta: MetaFunction = () => {
 
 export const action = async ({
     request,
+    context,
 }: ActionFunctionArgs) => {
     try {
         // ユーザーを登録する。
-        const userAccountManager = new FirebaseUserAccountManager();
-        const userRegistrationAction = new UserRegistrationAction(userAccountManager);
         const formData = await request.formData();
         const mailAddress = formData.get('mailAddress') as string;
         const password = formData.get('password') as string;
+        const userRegistrationAction = context.userRegistrationAction;
         const response = await userRegistrationAction.register(mailAddress, password);
 
         // IDトークンとリフレッシュトークンをCookieに保存する。

@@ -17,10 +17,6 @@
                 "BROWSER": "none"
             },
             "sourceMaps": true,
-            "outFiles": [
-                "${workspaceFolder}/build/**/*.js",
-                "${workspaceFolder}/public/build/**/*.js",
-            ],
             "skipFiles": [
                 "<node_internals>/**"
             ],

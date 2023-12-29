@@ -1,11 +1,13 @@
 import * as build from "@remix-run/dev/server-build";
 import { createRequestHandler } from "@netlify/remix-edge-adapter";
 import { broadcastDevReady } from "@netlify/remix-runtime";
+import getLoadContext from "./app/dependency-injector/get-load-context";
 
 export default createRequestHandler({
   build,
   // process.env.NODE_ENV is provided by Remix at compile time
   mode: process.env.NODE_ENV,
+  getLoadContext: getLoadContext,
 });
 
 if (process.env.NODE_ENV === "development") {

@@ -7,6 +7,10 @@ FF14SNSはネタバレを恐れずにFF14の感想を投稿できるSNSです。
 * FIREBASE_API_KEY
   * FirebaseプロジェクトのAPIキーを設定してください。
 
+## ローカル開発環境
+### サーバー証明書
+`openssl req -nodes -new -x509 -keyout server.key -out server.cert`を実行し、サーバー証明書を作成してください。
+
 # Welcome to Remix!
 
 - [Remix Docs](https://remix.run/docs)

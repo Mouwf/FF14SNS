@@ -1,10 +1,6 @@
-import { LoaderFunctionArgs, MetaFunction, json, redirect } from "@netlify/remix-runtime";
+import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@netlify/remix-runtime";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import FirebaseAuthenticatedUserProvider from "../../libraries/user/firebase-authenticated-user-provider";
 import FF14SnsUser from "../../libraries/user/ff14-sns-user";
-import FF14SnsUserLoader from "../../loaders/user/ff14-sns-user-loader";
-import FirebaseUserAccountManager from "../../libraries/authentication/firebase-user-account-manager";
-import UserAuthenticationAction from "../../actions/authentication/user-authentication-action";
 import { userAuthenticationCookie } from "../../cookies.server";
 import Header from "./components/header";
 import Footer from "./components/footer";
@@ -18,16 +14,16 @@ export const meta: MetaFunction = () => {
 
 export const loader = async ({
     request,
+    context,
 }: LoaderFunctionArgs) => {
-    // ログインしていない場合、ログインページにリダイレクトする。
-    const cookieHeader = request.headers.get("Cookie");
-    const cookie = (await userAuthenticationCookie.parse(cookieHeader)) || {};
-    if (Object.keys(cookie).length <= 0) return redirect("/auth/login");
-
-    // FF14SNSのユーザーを取得する。
     try {
-        const authenticatedUserProvider = new FirebaseAuthenticatedUserProvider();
-        const ff14SnsUserLoader = new FF14SnsUserLoader(authenticatedUserProvider);
+        // ログインしていない場合、ログインページにリダイレクトする。
+        const cookieHeader = request.headers.get("Cookie");
+        const cookie = (await userAuthenticationCookie.parse(cookieHeader)) || {};
+        if (Object.keys(cookie).length <= 0) return redirect("/auth/login");
+
+        // FF14SNSのユーザーを取得する。
+        const ff14SnsUserLoader = context.ff14SnsUserLoader;
         const ff14SnsUser = await ff14SnsUserLoader.getUser(cookie.idToken);
         return json(ff14SnsUser);
     } catch (error) {
@@ -41,11 +37,12 @@ export const loader = async ({
     }
 }
 
-export const action = async () => {
+export const action = async ({
+    context,
+}: ActionFunctionArgs) => {
     try {
         // ログアウトする。
-        const userAccountManager = new FirebaseUserAccountManager();
-        const userAuthenticationAction = new UserAuthenticationAction(userAccountManager);
+        const userAuthenticationAction = context.userAuthenticationAction;
         await userAuthenticationAction.logout();
 
         // IDトークンとリフレッシュトークンをCookieから削除する。

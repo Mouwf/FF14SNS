@@ -9,6 +9,7 @@ import express from "express";
 import https from "https";
 import morgan from "morgan";
 import sourceMapSupport from "source-map-support";
+import getLoadContext from "./app/dependency-injector/get-load-context";
 
 sourceMapSupport.install({
   retrieveSourceMap: function (source) {
@@ -67,7 +68,7 @@ const credentials = {
   cert: certificate
 };
 const httpsServer = https.createServer(credentials, app);
-const port = process.env.PORT || 3000;
+const port = parseInt(process.env.PORT, 10) || 3000;
 httpsServer.listen(port, async () => {
   console.log(`Express server listening on port ${port}`);
 
@@ -93,7 +94,7 @@ async function reimportServer() {
  * @param {ServerBuild} initialBuild
  * @returns {Promise<import('@remix-run/express').RequestHandler>}
  */
-async function createDevRequestHandler(initialBuild) {
+async function createDevRequestHandler(initialBuild: any) {
   let build = initialBuild;
   async function handleServerUpdate() {
     // 1. re-import the server build
@@ -108,11 +109,12 @@ async function createDevRequestHandler(initialBuild) {
     .on("change", handleServerUpdate);
 
   // wrap request handler to make sure its recreated with the latest build for every request
-  return async (req, res, next) => {
+  return async (req: any, res: any, next: any) => {
     try {
       return createRequestHandler({
         build,
         mode: "development",
+        getLoadContext: getLoadContext,
       })(req, res, next);
     } catch (error) {
       next(error);
