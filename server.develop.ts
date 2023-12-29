@@ -68,7 +68,7 @@ const credentials = {
   cert: certificate
 };
 const httpsServer = https.createServer(credentials, app);
-const port = process.env.PORT || 3000;
+const port = parseInt(process.env.PORT, 10) || 3000;
 httpsServer.listen(port, async () => {
   console.log(`Express server listening on port ${port}`);
 
