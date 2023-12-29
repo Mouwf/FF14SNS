@@ -1,4 +1,4 @@
-import { Context } from "@netlify/edge-functions";
+import type * as express from "express";
 import { AppLoadContext } from "@netlify/remix-runtime";
 import FirebaseAuthenticatedUserProvider from "../libraries/user/firebase-authenticated-user-provider";
 import FF14SnsUserLoader from "../loaders/user/ff14-sns-user-loader";
@@ -27,11 +27,11 @@ const ff14SnsUserLoader = new FF14SnsUserLoader(authenticatedUserProvider);
  * @param context コンテキスト。
  * @returns ローダー、アクションなどのコンテキスト。
  */
-export default function getLoadContext(request: Request, context: Context) {
+export default function getLoadContext(req: express.Request, res: express.Response) {
     const appLoadContext: AppLoadContext = {
         userRegistrationAction,
         userAuthenticationAction,
         ff14SnsUserLoader,
     };
-    return { ...appLoadContext, ...context };
+    return { ...appLoadContext };
 }
