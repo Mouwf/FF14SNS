@@ -18,8 +18,8 @@ export default class UserAuthenticationAction {
      * @param password パスワード。
      * @returns メールアドレスとパスワードでサインインのレスポンス。
      */
-    public login(mailAddress: string, password: string): Promise<SignInWithEmailPasswordResponse> {
-        const response = this.userAuthenticator.login(mailAddress, password);
+    public async login(mailAddress: string, password: string): Promise<SignInWithEmailPasswordResponse> {
+        const response = await this.userAuthenticator.login(mailAddress, password);
         return response;
     }
 
@@ -27,8 +27,8 @@ export default class UserAuthenticationAction {
      * ログアウトする。
      * @returns ログアウトに成功したかどうか。
      */
-    public logout(): Promise<boolean> {
-        const response = this.userAuthenticator.logout();
+    public async logout(): Promise<boolean> {
+        const response = await this.userAuthenticator.logout();
         return response;
     }
 }

@@ -28,8 +28,8 @@ export default class UserRegistrationAction {
      * @param mailAddress メールアドレス。
      * @returns 削除に成功したかどうか。
      */
-    public delete(mailAddress: string): Promise<boolean> {
-        const response = this.userRegistrar.delete(mailAddress);
+    public async delete(mailAddress: string): Promise<boolean> {
+        const response = await this.userRegistrar.delete(mailAddress);
         return response;
     }
 }
