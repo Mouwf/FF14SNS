@@ -4,6 +4,9 @@
     "**/*.ts",
     "**/*.tsx"
   ],
+  "exclude": [
+    "**/*.spec.ts"
+  ],
   "compilerOptions": {
     "lib": [
       "DOM",
