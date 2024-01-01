@@ -93,7 +93,7 @@ describe("loader", () => {
                 context,
             });
         } catch (error) {
-            // エラーが Response でない場合、エラーを投げる。
+            // エラーがResponseでない場合、エラーを投げる。
             if (!(error instanceof Response)) {
                 throw error;
             }
@@ -160,7 +160,7 @@ describe("action", () => {
                 context,
             });
         } catch (error) {
-            // エラーが Response でない場合、エラーを投げる。
+            // エラーがResponseでない場合、エラーを投げる。
             if (!(error instanceof Response)) {
                 throw error;
             }
