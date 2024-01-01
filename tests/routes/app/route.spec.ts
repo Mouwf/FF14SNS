@@ -55,13 +55,13 @@ describe("loader", () => {
         });
 
         // 検証に必要な情報を取得する。
-        const result = await response.json();
+        const resultUser = await response.json();
 
         // 結果を検証する。
-        const expected = {
+        const expectedUser = {
             name: "UserName",
         };
-        expect(result).toEqual(expected);
+        expect(resultUser).toEqual(expectedUser);
     });
 
     test("Loader should redirect login page, if user is not authenticated.", async () => {
