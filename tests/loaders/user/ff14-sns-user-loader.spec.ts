@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import FF14SnsUserLoader from "../../../app/loaders/user/ff14-sns-user-loader";
-import MockAuthenticatedUserProvider from "../../libralies/user/mock-authenticated-user-provider";
+import MockAuthenticatedUserProvider from "../../libraries/user/mock-authenticated-user-provider";
 
 /**
  * FF14SNSのユーザーを取得するローダー。
