@@ -8,7 +8,8 @@
     "dev": "node build.js && CHOKIDAR_USEPOLLING=true remix dev --manual -c \"npm run dev:server\"",
     "dev:server": "tsx watch --clear-screen=false --ignore 'app/**' --ignore 'build/**' --ignore 'node_modules/**' --inspect ./server.ts",
     "start": "netlify serve",
-    "test": "jest",
+    "test": "jest --testPathIgnorePatterns=/tests/infrastructure/",
+    "test:all": "jest",
     "typecheck": "tsc -b"
   },
   "dependencies": {
