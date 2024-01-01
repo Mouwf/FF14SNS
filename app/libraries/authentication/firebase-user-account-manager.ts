@@ -28,7 +28,7 @@ export default class FirebaseUserAccountManager implements IUserRegistrar, IUser
         return response;
     }
 
-    public async logout(): Promise<boolean> {
+    public async logout(token: string): Promise<boolean> {
         return true;
     }
 }

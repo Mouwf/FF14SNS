@@ -27,8 +27,8 @@ export default class UserAuthenticationAction {
      * ログアウトする。
      * @returns ログアウトに成功したかどうか。
      */
-    public async logout(): Promise<boolean> {
-        const response = await this.userAuthenticator.logout();
+    public async logout(token: string): Promise<boolean> {
+        const response = await this.userAuthenticator.logout(token);
         return response;
     }
 }

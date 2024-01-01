@@ -14,7 +14,8 @@ export default interface IUserAuthenticator {
 
     /**
      * ログアウトする。
+     * @param token トークン。
      * @returns ログアウトに成功したかどうか。
      */
-    logout(): Promise<boolean>;
+    logout(token: string): Promise<boolean>;
 }
