@@ -1,6 +1,5 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import FF14SnsUserLoader from "../../../app/loaders/user/ff14-sns-user-loader";
-import IAuthenticatedUserProvider from "../../../app/libraries/user/i-authenticated-user-provider";
 import MockAuthenticatedUserProvider from "../../libralies/user/mock-authenticated-user-provider";
 
 /**
@@ -13,10 +12,10 @@ beforeEach(() => {
     ff14SnsUserLoader = new FF14SnsUserLoader(mockAuthenticatedUserProvider);
 });
 
-describe('getUser', () => {
-    test('getUser should return a FF14SnsUser object for a valid token', async () => {
+describe("getUser", () => {
+    test("getUser should return a FF14SnsUser object for a valid token", async () => {
         // FF14SNSのユーザーを取得する。
-        const resultUser = await ff14SnsUserLoader.getUser('idToken');
+        const resultUser = await ff14SnsUserLoader.getUser("idToken");
 
         // 結果を検証する。
         const expectedUser = {
@@ -25,10 +24,10 @@ describe('getUser', () => {
         expect(resultUser).toEqual(expectedUser);
     });
 
-    test('getUser should throw an error for an invalid token', async () => {
+    test("getUser should throw an error for an invalid token", async () => {
         expect.assertions(1);
         try {
-            await ff14SnsUserLoader.getUser('invalidIdToken');
+            await ff14SnsUserLoader.getUser("invalidIdToken");
         } catch (error) {
             // エラーがErrorでない場合、エラーを投げる。
             if (!(error instanceof Error)) {
@@ -36,7 +35,7 @@ describe('getUser', () => {
             }
 
             // エラーを検証する。
-            expect(error.message).toBe('Invalid token.');
+            expect(error.message).toBe("Invalid token.");
         }
     });
 });
