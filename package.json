@@ -8,8 +8,8 @@
     "dev": "node build.js && CHOKIDAR_USEPOLLING=true remix dev --manual -c \"npm run dev:server\"",
     "dev:server": "tsx watch --clear-screen=false --ignore 'app/**' --ignore 'build/**' --ignore 'node_modules/**' --inspect ./server.ts",
     "start": "netlify serve",
-    "test": "jest --testPathIgnorePatterns=/tests/infrastructure/",
-    "test:all": "jest",
+    "test": "jest",
+    "test:all": "RUN_INFRA_TESTS=true jest",
     "typecheck": "tsc -b"
   },
   "dependencies": {
@@ -41,6 +41,7 @@
     "@types/react-dom": "^18.2.0",
     "@types/source-map-support": "^0.5.6",
     "chokidar": "^3.5.3",
+    "dotenv": "^16.3.1",
     "eslint": "^8.27.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-import": "^2.28.1",
