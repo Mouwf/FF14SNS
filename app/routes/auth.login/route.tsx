@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, MetaFunction, redirect } from "@netlify/remix-runtime";
+import { ActionFunctionArgs, MetaFunction, json, redirect } from "@netlify/remix-runtime";
 import { Form } from "@remix-run/react";
 import { userAuthenticationCookie } from "../../cookies.server";
 
@@ -33,11 +33,7 @@ export const action = async ({
         });
     } catch (error) {
         console.error(error);
-        throw redirect("/auth/login", {
-            headers: {
-                "Set-Cookie": await userAuthenticationCookie.serialize({}),
-            },
-        });
+        return json({ error: "ログインに失敗しました。" });
     }
 }
 
