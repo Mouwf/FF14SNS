@@ -16,7 +16,7 @@ beforeEach(() => {
 });
 
 describe("login", () => {
-    test("login should return a SignInWithEmailPasswordResponse object for valid parameters.", async () => {
+    test("login should login and return a SignInWithEmailPasswordResponse.", async () => {
         // ログインする。
         const response = await userAuthenticationAction.login(mailAddress, password);
 
@@ -69,7 +69,7 @@ describe("login", () => {
 });
 
 describe("logout", () => {
-    test("logout should return true for valid token.", async () => {
+    test("logout should logout and return true.", async () => {
         // ログアウトする。
         const idToken = "idToken";
         const response = await userAuthenticationAction.logout(idToken);
