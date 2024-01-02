@@ -3,7 +3,27 @@ import IUserAuthenticator from "../../../app/libraries/authentication/i-user-aut
 
 export default class MockUserAuthenticator implements IUserAuthenticator {
     public async login(mailAddress: string, password: string): Promise<SignInWithEmailPasswordResponse> {
-        throw new Error("Method not implemented.");
+        // メールアドレスが不正な場合、エラーを投げる。
+        if (mailAddress !== "test@example.com") {
+            throw new Error("Invalid mail address.");
+        }
+
+        // パスワードが不正な場合、エラーを投げる。
+        if (password !== "testPassword123") {
+            throw new Error("Invalid password.");
+        }
+
+        // メールアドレスとパスワードでサインインのレスポンスを返す。
+        const response: SignInWithEmailPasswordResponse = {
+            displayName: "DisplayName",
+            idToken: "idToken",
+            email: "test@example.com",
+            refreshToken: "refreshToken",
+            expiresIn: "3600",
+            localId: "localId",
+            registered: true,
+        };
+        return response;
     }
 
     public async logout(token: string): Promise<boolean> {
