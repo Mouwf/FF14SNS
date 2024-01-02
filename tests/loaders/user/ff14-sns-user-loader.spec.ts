@@ -27,6 +27,7 @@ describe("getUser", () => {
     test("getUser should throw an error for an invalid token", async () => {
         expect.assertions(1);
         try {
+            // 無効なIDトークンでFF14SNSのユーザーを取得し、エラーを発生させる。
             await ff14SnsUserLoader.getUser("invalidIdToken");
         } catch (error) {
             // エラーがErrorでない場合、エラーを投げる。
