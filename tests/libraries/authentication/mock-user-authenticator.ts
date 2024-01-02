@@ -1,6 +1,9 @@
 import SignInWithEmailPasswordResponse from "../../../app/models/firebase/signin-with-email-password-response";
 import IUserAuthenticator from "../../../app/libraries/authentication/i-user-authenticator";
 
+/**
+ * ユーザー認証を行うモッククラス。
+ */
 export default class MockUserAuthenticator implements IUserAuthenticator {
     public async login(mailAddress: string, password: string): Promise<SignInWithEmailPasswordResponse> {
         // メールアドレスが不正な場合、エラーを投げる。
@@ -14,7 +17,7 @@ export default class MockUserAuthenticator implements IUserAuthenticator {
         }
 
         // メールアドレスとパスワードでサインインのレスポンスを返す。
-        const response: SignInWithEmailPasswordResponse = {
+        const response = {
             displayName: "DisplayName",
             idToken: "idToken",
             email: "test@example.com",
