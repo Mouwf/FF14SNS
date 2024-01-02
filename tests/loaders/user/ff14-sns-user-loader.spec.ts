@@ -15,13 +15,14 @@ beforeEach(() => {
 describe("getUser", () => {
     test("getUser should return a FF14SnsUser object for a valid token", async () => {
         // FF14SNSのユーザーを取得する。
-        const resultUser = await ff14SnsUserLoader.getUser("idToken");
+        const idToken = "idToken";
+        const response = await ff14SnsUserLoader.getUser(idToken);
 
         // 結果を検証する。
         const expectedUser = {
             name: "UserName",
         }
-        expect(resultUser).toEqual(expectedUser);
+        expect(response).toEqual(expectedUser);
     });
 
     test("getUser should throw an error for an invalid token", async () => {
