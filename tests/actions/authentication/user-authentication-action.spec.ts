@@ -7,7 +7,14 @@ import UserAuthenticationAction from "../../../app/actions/authentication/user-a
  */
 let userAuthenticationAction: UserAuthenticationAction;
 
+/**
+ * メールアドレス。
+ */
 const mailAddress = "test@example.com";
+
+/**
+ * パスワード。
+ */
 const password = "testPassword123";
 
 beforeEach(() => {
