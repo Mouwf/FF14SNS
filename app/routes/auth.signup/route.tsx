@@ -16,8 +16,8 @@ export const action = async ({
     try {
         // ユーザーを登録する。
         const formData = await request.formData();
-        const mailAddress = formData.get('mailAddress') as string;
-        const password = formData.get('password') as string;
+        const mailAddress = formData.get("mailAddress") as string;
+        const password = formData.get("password") as string;
         const userRegistrationAction = context.userRegistrationAction;
         const response = await userRegistrationAction.register(mailAddress, password);
 

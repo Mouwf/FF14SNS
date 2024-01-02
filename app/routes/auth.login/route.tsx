@@ -16,8 +16,8 @@ export const action = async ({
     try {
         // ログインする。
         const formData = await request.formData();
-        const mailAddress = formData.get('mailAddress') as string;
-        const password = formData.get('password') as string;
+        const mailAddress = formData.get("mailAddress") as string;
+        const password = formData.get("password") as string;
         const userAuthenticationAction = context.userAuthenticationAction;
         const response = await userAuthenticationAction.login(mailAddress, password);
 
