@@ -65,7 +65,7 @@ describe("signUp", () => {
             const invalidPassword = "password";
             await firebaseClient.signUp(invalidMailAddress, invalidPassword);
         } catch (error) {
-            // 結果を検証する。
+            // エラーを検証する。
             expect(error).toBeDefined();
         }
     });
@@ -104,7 +104,7 @@ describe("signInWithEmailPassword", () => {
             const invalidPassword = "invalidPassword";
             await firebaseClient.signInWithEmailPassword(mailAddress, invalidPassword);
         } catch (error) {
-            // 結果を検証する。
+            // エラーを検証する。
             expect(error).toBeDefined();
         }
     });
@@ -140,8 +140,10 @@ describe("getUserInformation", () => {
     test("getUserInformation should throw an error for invalid token.", async () => {
         expect.assertions(1);
         try {
+            // 無効なトークンでユーザー情報を取得し、エラーを発生させる。
             await firebaseClient.getUserInformation("invalidToken");
         } catch (error) {
+            // エラーを検証する。
             expect(error).toBeDefined();
         }
     });
