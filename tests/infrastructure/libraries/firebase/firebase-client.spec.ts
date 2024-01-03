@@ -19,11 +19,6 @@ const password = "testPassword123";
 
 
 beforeEach(async () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        return;
-    }
-
     // Firebaseのクライアントを生成する。
     firebaseClient = new FirebaseClient();
 
