@@ -64,7 +64,7 @@ describe("loader", () => {
         expect(resultUser).toEqual(expectedUser);
     });
 
-    test("Loader should redirect login page, if user is not authenticated.", async () => {
+    test("Loader should redirect login page if user is not authenticated.", async () => {
         // ローダーを実行し、結果を取得する。
         const response = await loader({
             request: requestWithoutCookie,
