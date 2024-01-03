@@ -4,7 +4,7 @@
  * @param delayMs 待機時間。
  * @returns 関数の戻り値。
  */
-export default async function delayAsync<T>(fn: () => Promise<T>, delayMs: number = 1000): Promise<T> {
+export default async function delayAsync<T>(fn: () => Promise<T>, delayMs: number = 0): Promise<T> {
     await delay(delayMs);
     return await fn();
 }

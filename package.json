@@ -9,7 +9,7 @@
     "dev:server": "tsx watch --clear-screen=false --ignore 'app/**' --ignore 'build/**' --ignore 'node_modules/**' --inspect ./server.ts",
     "start": "netlify serve",
     "test": "jest",
-    "test:all": "RUN_INFRA_TESTS=true jest",
+    "test:all": "RUN_INFRA_TESTS=true jest --runInBand",
     "typecheck": "tsc -b"
   },
   "dependencies": {

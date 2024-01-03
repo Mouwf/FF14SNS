@@ -39,7 +39,7 @@ beforeEach(async () => {
 
 describe("signUp", () => {
     // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_FIREBASE_TESTS) {
+    if (!process.env.RUN_INFRA_TESTS) {
         test.skip("Skipping infrastructure tests.", () => {});
         return;
     }
@@ -85,7 +85,7 @@ describe("signUp", () => {
 
 describe("signInWithEmailPassword", () => {
     // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_FIREBASE_TESTS) {
+    if (!process.env.RUN_INFRA_TESTS) {
         test.skip("Skipping infrastructure tests.", () => {});
         return;
     }
@@ -124,7 +124,7 @@ describe("signInWithEmailPassword", () => {
 
 describe("getUserInformation", () => {
     // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_FIREBASE_TESTS) {
+    if (!process.env.RUN_INFRA_TESTS) {
         test.skip("Skipping infrastructure tests.", () => {});
         return;
     }
@@ -164,7 +164,7 @@ describe("getUserInformation", () => {
 
 describe("deleteUser", () => {
     // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_FIREBASE_TESTS) {
+    if (!process.env.RUN_INFRA_TESTS) {
         test.skip("Skipping infrastructure tests.", () => {});
         return;
     }
