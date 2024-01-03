@@ -7,7 +7,7 @@ FF14SNSはネタバレを恐れずにFF14の感想を投稿できるSNSです。
 * FIREBASE_API_KEY
   * FirebaseプロジェクトのAPIキーを設定してください。
 * RUN_INFRA_TESTS
-  * インフラ関連のテストを実行する場合、trueを設定してください。
+  * インフラに依存したテストを実行する場合、trueを設定してください。
     * Firebaseのテストは含まれません。
 * RUN_FIREBASE_TESTS
   * Firebase関連のテストを実行する場合、trueを設定してください。
