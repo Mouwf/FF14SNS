@@ -6,6 +6,12 @@ FF14SNSはネタバレを恐れずにFF14の感想を投稿できるSNSです。
 .envファイルをルート直下に作成し、以下の環境変数を設定してください。
 * FIREBASE_API_KEY
   * FirebaseプロジェクトのAPIキーを設定してください。
+* RUN_INFRA_TESTS
+  * インフラ関連のテストを実行する場合、trueを設定してください。
+    * Firebaseのテストは含まれません。
+* RUN_FIREBASE_TESTS
+  * Firebase関連のテストを実行する場合、trueを設定してください。
+  * Firebaseは連続でアクセスするとBad Requestエラーになることがあるため、少量ずつ実行するほうが安定します。
 
 ## ローカル開発環境
 ### サーバー証明書
