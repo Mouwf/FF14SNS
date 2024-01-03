@@ -49,6 +49,12 @@ beforeEach(async () => {
 });
 
 describe("getUser", () => {
+    // 環境変数が設定されていない場合、テストをスキップする。
+    if (!process.env.RUN_INFRA_TESTS) {
+        test.skip("Skipping infrastructure tests.", () => {});
+        return;
+    }
+
     test("getUser should return a FF14SnsUser.", async () => {
         // テスト用のユーザーを登録する。
         const responsSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));

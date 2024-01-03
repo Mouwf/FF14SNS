@@ -49,6 +49,12 @@ beforeEach(async () => {
 });
 
 describe("register", () => {
+    // 環境変数が設定されていない場合、テストをスキップする。
+    if (!process.env.RUN_INFRA_TESTS) {
+        test.skip("Skipping infrastructure tests.", () => {});
+        return;
+    }
+
     test("register should register a user and return a SignUpResponse.", async () => {
         // テスト用のユーザーを登録する。
         const response = await delayAsync(() => userRegistrationAction.register(mailAddress, password));
@@ -97,6 +103,12 @@ describe("register", () => {
 });
 
 describe("delete", () => {
+    // 環境変数が設定されていない場合、テストをスキップする。
+    if (!process.env.RUN_INFRA_TESTS) {
+        test.skip("Skipping infrastructure tests.", () => {});
+        return;
+    }
+
     test("delete should delete a user and return true.", async () => {
         // テスト用のユーザーを登録する。
         const responseRegister = await delayAsync(() => userRegistrationAction.register(mailAddress, password));
