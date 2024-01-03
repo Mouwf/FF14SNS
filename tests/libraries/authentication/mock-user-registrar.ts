@@ -23,7 +23,13 @@ export default class MockUserRegistrar implements IUserRegistrar {
         };
     }
 
-    delete(token: string): Promise<boolean> {
-        throw new Error("Method not implemented.");
+    public async delete(token: string): Promise<boolean> {
+        // トークンが無効な場合、エラーを投げる。
+        if (token !== "idToken") {
+            throw new Error("Invalid token.");
+        }
+
+        // ユーザー削除に成功したとする。
+        return true;
     }
 }

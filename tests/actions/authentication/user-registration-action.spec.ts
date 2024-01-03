@@ -72,3 +72,31 @@ describe("register", () => {
         }
     });
 });
+
+describe("delete", () => {
+    test("delete should delete a user and return true.", async () => {
+        // ユーザーを削除する。
+        const token = "idToken";
+        const response = await userRegistrationAction.delete(token);
+
+        // 結果を検証する。
+        expect(response).toBe(true);
+    });
+
+    test("delete should throw an exception for invalid token.", async () => {
+        expect.assertions(1);
+        try {
+            // 無効なメールアドレスでユーザーを削除し、エラーを発生させる。
+            const token = "invalid-token";
+            await userRegistrationAction.delete(token);
+        } catch (error) {
+            // エラーがErrorでない場合、エラーを投げる。
+            if (!(error instanceof Error)) {
+                throw error;
+            }
+
+            // エラーを検証する。
+            expect(error.message).toBe("Invalid token.");
+        }
+    });
+});
