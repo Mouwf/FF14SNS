@@ -19,8 +19,9 @@ export default class FirebaseUserAccountManager implements IUserRegistrar, IUser
         return response;
     }
 
-    public delete(mailAddress: string): Promise<boolean> {
-        throw new Error('Method not implemented.');
+    public async delete(token: string): Promise<boolean> {
+        const response = await this.firebaseClient.deleteUser(token);
+        return response;
     }
 
     public async login(mailAddress: string, password: string): Promise<SignInWithEmailPasswordResponse> {

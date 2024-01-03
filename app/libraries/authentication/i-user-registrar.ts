@@ -14,8 +14,8 @@ export default interface IUserRegistrar {
 
     /**
      * ユーザーを削除する。
-     * @param mailAddress メールアドレス。
+     * @param token トークン。
      * @returns 削除に成功したかどうか。
      */
-    delete(mailAddress: string): Promise<boolean>;
+    delete(token: string): Promise<boolean>;
 }

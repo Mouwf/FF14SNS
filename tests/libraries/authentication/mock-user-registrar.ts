@@ -23,7 +23,7 @@ export default class MockUserRegistrar implements IUserRegistrar {
         };
     }
 
-    delete(mailAddress: string): Promise<boolean> {
+    delete(token: string): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
 }
