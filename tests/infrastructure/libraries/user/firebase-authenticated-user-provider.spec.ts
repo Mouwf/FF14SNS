@@ -1,4 +1,5 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
+import delayAsync from "../../../test-utilityies/delay-async";
 import FirebaseAuthenticatedUserProvider from "../../../../app/libraries/user/firebase-authenticated-user-provider";
 import FirebaseClient from "../../../../app/libraries/firebase/firebase-client";
 
@@ -28,8 +29,12 @@ beforeEach(async () => {
 
     // テスト用のユーザーが存在する場合、削除する。
     try {
-        const response = await firebaseClient.signInWithEmailPassword(mailAddress, password);
-        firebaseClient.deleteUser(response.idToken);
+        // テスト用のユーザーをログインする。
+        const responseSignIn = await delayAsync(() => firebaseClient.signInWithEmailPassword(mailAddress, password));
+
+        // テスト用のユーザーを削除する。
+        const idToken = responseSignIn.idToken;
+        await delayAsync(() => firebaseClient.deleteUser(idToken));
         console.log("テスト用のユーザーを削除しました。");
     } catch (error) {
         console.log("テスト用のユーザーは存在しませんでした。");
@@ -44,12 +49,12 @@ describe("getUser", () => {
     }
 
     test("getUser should return a FF14SnsUser.", async () => {
-        // ユーザーを登録する。
-        const responseSignUp = await firebaseClient.signUp(mailAddress, password);
+        // テスト用のユーザーを登録する。
+        const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
 
-        // ユーザー情報を取得する。
+        // テスト用のユーザー情報を取得する。
         const idToken = responseSignUp.idToken;
-        const responseUser = await firebaseAuthenticatedUserProvider.getUser(idToken);
+        const responseUser = await delayAsync(() => firebaseAuthenticatedUserProvider.getUser(idToken));
 
         // 結果を検証する。
         const expectedUser = {
