@@ -34,6 +34,12 @@ export default class FirebaseClient {
      * @returns サインアップのレスポンス。
      */
     public async signUp(mailAddress: string, password: string): Promise<SignUpResponse> {
+        // パスワードの長さが8文字未満、英数字が含まれていない場合、エラーを投げる。
+        if (password.length < 8 || !password.match(/^(?=.*?[a-z])(?=.*?\d)[a-z\d]{8,100}$/i)) {
+            throw new Error("パスワードは8文字以上の英数字で設定してください。");
+        }
+
+        // メールアドレスとパスワードでサインアップする。
         const endpoint = "v1/accounts:signUp";
         const queries = {
             key: this.firebaseApiKey,

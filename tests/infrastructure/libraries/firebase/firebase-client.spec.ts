@@ -69,6 +69,18 @@ describe("signUp", () => {
             expect(error).toBeDefined();
         }
     });
+
+    test("signUp should throw an error for invalid password.", async () => {
+        expect.assertions(1);
+        try {
+            // 無効なパスワードでサインアップし、エラーを発生させる。
+            const invalidPassword = "invalid-password";
+            await delayAsync(() => firebaseClient.signUp(mailAddress, invalidPassword));
+        } catch (error) {
+            // エラーを検証する。
+            expect(error).toBeDefined();
+        }
+    });
 });
 
 describe("signInWithEmailPassword", () => {
