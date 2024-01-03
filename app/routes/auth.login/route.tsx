@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, MetaFunction, json, redirect } from "@netlify/remix-runtime";
+import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@netlify/remix-runtime";
 import { Form } from "@remix-run/react";
 import { userAuthenticationCookie } from "../../cookies.server";
 
@@ -9,21 +9,32 @@ export const meta: MetaFunction = () => {
     ];
 }
 
+export const loader = async ({
+    request,
+}: LoaderFunctionArgs) => {
+    // ログインしている場合、トップページにリダイレクトする。
+    const cookieHeader = request.headers.get("Cookie");
+    const cookie = (await userAuthenticationCookie.parse(cookieHeader)) || {};
+    if (Object.keys(cookie).length > 0) return redirect("/app");
+    return null;
+}
+
 export const action = async ({
     request,
     context,
 }: ActionFunctionArgs) => {
     try {
-        // ログインする。
+        // フォームデータを取得する。
         const formData = await request.formData();
         const mailAddress = formData.get("mailAddress") as string;
         const password = formData.get("password") as string;
+
+        // ログインする。
         const userAuthenticationAction = context.userAuthenticationAction;
         const response = await userAuthenticationAction.login(mailAddress, password);
 
         // IDトークンとリフレッシュトークンをCookieに保存する。
-        const cookieHeader = request.headers.get("Cookie");
-        const cookie = (await userAuthenticationCookie.parse(cookieHeader)) || {};
+        const cookie: any = {};
         cookie.idToken = response.idToken;
         cookie.refreshToken = response.refreshToken;
         return redirect("/app", {
