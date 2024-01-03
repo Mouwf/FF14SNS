@@ -131,7 +131,7 @@ describe("action", () => {
         expect(cookie).toStrictEqual({});
     });
 
-    test("Action should redirect login page, if user is not authenticated.", async () => {
+    test("Action should redirect login page if user is not authenticated.", async () => {
         // アクションを実行し、結果を取得する。
         const response = await action({
             request: requestWithoutCookie,
