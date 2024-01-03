@@ -86,7 +86,7 @@ describe("delete", () => {
     test("delete should throw an exception for invalid token.", async () => {
         expect.assertions(1);
         try {
-            // 無効なメールアドレスでユーザーを削除し、エラーを発生させる。
+            // 無効なトークンでユーザーを削除し、エラーを発生させる。
             const token = "invalid-token";
             await userRegistrationAction.delete(token);
         } catch (error) {
