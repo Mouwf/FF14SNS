@@ -5,17 +5,17 @@ import appLoadContext from "../../dependency-injector/app-load-context";
 import { userAuthenticationCookie } from "../../../app/cookies.server";
 
 /**
- * リクエスト。
+ * モックリクエスト。
  */
 let request: Request;
 
 /**
- * メールアドレスが不正なリクエスト。
+ * メールアドレスが不正なモックリクエスト。
  */
 let requestWithInvalidEmail: Request;
 
 /**
- * パスワードが不正なリクエスト。
+ * パスワードが不正なモックリクエスト。
  */
 let requestWithInvalidPassword: Request;
 
