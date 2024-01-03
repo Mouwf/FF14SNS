@@ -43,7 +43,7 @@ beforeEach(async () => {
 
 describe("register", () => {
     // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
+    if (!process.env.RUN_FIREBASE_TESTS) {
         test.skip("Skipping infrastructure tests.", () => {});
         return;
     }
@@ -59,7 +59,7 @@ describe("register", () => {
 
 describe("delete", () => {
     // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
+    if (!process.env.RUN_FIREBASE_TESTS) {
         test.skip("Skipping infrastructure tests.", () => {});
         return;
     }
@@ -79,7 +79,7 @@ describe("delete", () => {
 
 describe("login", () => {
     // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
+    if (!process.env.RUN_FIREBASE_TESTS) {
         test.skip("Skipping infrastructure tests.", () => {});
         return;
     }
@@ -98,7 +98,7 @@ describe("login", () => {
 
 describe("logout", () => {
     // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
+    if (!process.env.RUN_FIREBASE_TESTS) {
         test.skip("Skipping infrastructure tests.", () => {});
         return;
     }
