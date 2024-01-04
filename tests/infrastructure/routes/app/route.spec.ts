@@ -116,7 +116,7 @@ describe("loader", () => {
             // 検証に必要な情報を取得する。
             const status = error.status;
             const redirect = error.headers.get("Location");
-            const cookie = (await userAuthenticationCookie.parse(error.headers.get("Set-Cookie")));
+            const cookie = await userAuthenticationCookie.parse(error.headers.get("Set-Cookie"));
 
             // 結果を検証する。
             expect(status).toBe(302);
@@ -155,7 +155,7 @@ describe("action", () => {
         // 検証に必要な情報を取得する。
         const status = response.status;
         const redirect = response.headers.get("Location");
-        const cookie = (await userAuthenticationCookie.parse(response.headers.get("Set-Cookie")));
+        const cookie = await userAuthenticationCookie.parse(response.headers.get("Set-Cookie"));
 
         // 結果を検証する。
         expect(status).toBe(302);
@@ -182,7 +182,7 @@ describe("action", () => {
         //     // 検証に必要な情報を取得する。
         //     const status = error.status;
         //     const redirect = error.headers.get("Location");
-        //     const cookie = (await userAuthenticationCookie.parse(error.headers.get("Set-Cookie")));
+        //     const cookie = await userAuthenticationCookie.parse(error.headers.get("Set-Cookie"));
 
         //     // 結果を検証する。
         //     expect(status).toBe(302);
