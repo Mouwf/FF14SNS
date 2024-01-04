@@ -43,9 +43,9 @@ beforeEach(async () => {
         // テスト用のユーザーを削除する。
         const idToken = responseSignIn.idToken;
         await delayAsync(() => firebaseClient.deleteUser(idToken));
-        console.log("テスト用のユーザーを削除しました。");
+        console.info("テスト用のユーザーを削除しました。");
     } catch (error) {
-        console.log("テスト用のユーザーは存在しませんでした。");
+        console.info("テスト用のユーザーは存在しませんでした。");
     }
 
     // コンテキストを設定する。
