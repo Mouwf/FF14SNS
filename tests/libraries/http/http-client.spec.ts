@@ -66,6 +66,35 @@ describe("get", () => {
         expect(response).toEqual(expectedResponse);
     });
 
+    test("get should correctly encode query parameters.", async () => {
+        // fetch APIをモックする。
+        const expectedResponse = {
+            result: "test",
+        };
+        global.fetch = jest.fn<() => Promise<Response>>().mockResolvedValue(mockResponse(200, "OK", JSON.stringify(expectedResponse)));
+    
+        // GETリクエストを送信する。
+        const endpoint = "/test";
+        const specialChars = "chars &=%";
+        const queries = {
+            special: specialChars,
+        };
+        const response = await httpClient.get(endpoint, queries);
+    
+        // 結果を検証する。
+        const url = new URL(endpoint, baseUrl);
+        url.searchParams.append("special", String(specialChars));
+        const expectedUrl = `${baseUrl}${endpoint}${url.search}`;
+        expect(fetch).toBeCalledWith(expectedUrl, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${accessToken}`,
+            },
+        });
+        expect(response).toEqual(expectedResponse);
+    });
+
     test("get should send GET request without queries.", async () => {
         // fetch APIをモックする。
         const expectedResponse = {
