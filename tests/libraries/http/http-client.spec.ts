@@ -323,7 +323,7 @@ describe("post", () => {
 });
 
 describe("put", () => {
-    test("put should send POST request with queries and body.", async () => {
+    test("put should send PUT request with queries and body.", async () => {
         // fetch APIをモックする。
         const expectedResponse = {
             result: "test",
@@ -354,7 +354,7 @@ describe("put", () => {
         expect(response).toEqual(expectedResponse);
     });
 
-    test("put should send POST request with queries without body.", async () => {
+    test("put should send PUT request with queries without body.", async () => {
         // fetch APIをモックする。
         const expectedResponse = {
             result: "test",
@@ -380,7 +380,7 @@ describe("put", () => {
         expect(response).toEqual(expectedResponse);
     });
 
-    test("put should send POST request with body without queries.", async () => {
+    test("put should send PUT request with body without queries.", async () => {
         // fetch APIをモックする。
         const expectedResponse = {
             result: "test",
@@ -407,7 +407,7 @@ describe("put", () => {
         expect(response).toEqual(expectedResponse);
     });
 
-    test("put should send POST request without queries and body.", async () => {
+    test("put should send PUT request without queries and body.", async () => {
         // fetch APIをモックする。
         const expectedResponse = {
             result: "test",
@@ -429,7 +429,7 @@ describe("put", () => {
         expect(response).toEqual(expectedResponse);
     });
 
-    test("put should send POST request baseUrl including endpoint and queries.", async () => {
+    test("put should send PUT request baseUrl including endpoint and queries.", async () => {
         // fetch APIをモックする。
         const expectedResponse = {
             result: "test",
