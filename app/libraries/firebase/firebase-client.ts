@@ -33,7 +33,13 @@ export default class FirebaseClient {
      * @param password パスワード。
      * @returns サインアップのレスポンス。
      */
-    public signUp(mailAddress: string, password: string): Promise<SignUpResponse> {
+    public async signUp(mailAddress: string, password: string): Promise<SignUpResponse> {
+        // パスワードの長さが8文字未満、英数字が含まれていない場合、エラーを投げる。
+        if (password.length < 8 || !password.match(/^(?=.*?[a-z])(?=.*?\d)[a-z\d]{8,100}$/i)) {
+            throw new Error("パスワードは8文字以上の英数字で設定してください。");
+        }
+
+        // メールアドレスとパスワードでサインアップする。
         const endpoint = "v1/accounts:signUp";
         const queries = {
             key: this.firebaseApiKey,
@@ -43,7 +49,7 @@ export default class FirebaseClient {
             password: password,
             returnSecureToken: true,
         };
-        return this.httpClient.post<SignUpResponse>(endpoint, queries, body);
+        return await this.httpClient.post<SignUpResponse>(endpoint, queries, body);
     }
 
     /**
@@ -52,7 +58,7 @@ export default class FirebaseClient {
      * @param password パスワード。
      * @returns メールアドレスとパスワードでサインインのレスポンス。
      */
-    public signInWithEmailPassword(mailAddress: string, password: string): Promise<SignInWithEmailPasswordResponse> {
+    public async signInWithEmailPassword(mailAddress: string, password: string): Promise<SignInWithEmailPasswordResponse> {
         const endpoint = 'v1/accounts:signInWithPassword';
         const queries = {
             key: this.firebaseApiKey,
@@ -62,7 +68,7 @@ export default class FirebaseClient {
             password: password,
             returnSecureToken: true,
         };
-        return this.httpClient.post<SignInWithEmailPasswordResponse>(endpoint, queries, body);
+        return await this.httpClient.post<SignInWithEmailPasswordResponse>(endpoint, queries, body);
     }
 
     /**
@@ -70,7 +76,7 @@ export default class FirebaseClient {
      * @param idToken IDトークン。
      * @returns ユーザー情報。
      */
-    public getUserInformation(idToken: string): Promise<GetUserInformationResponse> {
+    public async getUserInformation(idToken: string): Promise<GetUserInformationResponse> {
         const endpoint = 'v1/accounts:lookup';
         const queries = {
             key: this.firebaseApiKey,
@@ -78,6 +84,23 @@ export default class FirebaseClient {
         const body = {
           idToken: idToken
         };
-        return this.httpClient.post<GetUserInformationResponse>(endpoint, queries, body);
+        return await this.httpClient.post<GetUserInformationResponse>(endpoint, queries, body);
+    }
+
+    /**
+     * ユーザーを削除する。
+     * @param idToken IDトークン。
+     * @returns 削除に成功したかどうか。
+     */
+    public async deleteUser(idToken: string): Promise<boolean> {
+        const endpoint = 'v1/accounts:delete';
+        const queries = {
+            key: this.firebaseApiKey
+        };
+        const body = {
+          idToken: idToken
+        };
+        await this.httpClient.post<void>(endpoint, queries, body);
+        return true;
     }
 }

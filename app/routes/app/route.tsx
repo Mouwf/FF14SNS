@@ -20,7 +20,11 @@ export const loader = async ({
         // ログインしていない場合、ログインページにリダイレクトする。
         const cookieHeader = request.headers.get("Cookie");
         const cookie = (await userAuthenticationCookie.parse(cookieHeader)) || {};
-        if (Object.keys(cookie).length <= 0) return redirect("/auth/login");
+        if (Object.keys(cookie).length <= 0) return redirect("/auth/login", {
+            headers: {
+                "Set-Cookie": await userAuthenticationCookie.serialize({}),
+            },
+        });
 
         // FF14SNSのユーザーを取得する。
         const ff14SnsUserLoader = context.ff14SnsUserLoader;
@@ -33,17 +37,26 @@ export const loader = async ({
                 "Set-Cookie": await userAuthenticationCookie.serialize({}),
             },
         });
-    
     }
 }
 
 export const action = async ({
+    request,
     context,
 }: ActionFunctionArgs) => {
     try {
+        // ログインしていない場合、ログインページにリダイレクトする。
+        const cookieHeader = request.headers.get("Cookie");
+        const cookie = (await userAuthenticationCookie.parse(cookieHeader)) || {};
+        if (Object.keys(cookie).length <= 0) return redirect("/auth/login", {
+            headers: {
+                "Set-Cookie": await userAuthenticationCookie.serialize({}),
+            },
+        });
+
         // ログアウトする。
         const userAuthenticationAction = context.userAuthenticationAction;
-        await userAuthenticationAction.logout();
+        await userAuthenticationAction.logout(cookie.idToken);
 
         // IDトークンとリフレッシュトークンをCookieから削除する。
         return redirect("/auth/login", {
@@ -53,7 +66,7 @@ export const action = async ({
         });
     } catch (error) {
         console.error(error);
-        return redirect("/auth/login", {
+        throw redirect("/auth/login", {
             headers: {
                 "Set-Cookie": await userAuthenticationCookie.serialize({}),
             },

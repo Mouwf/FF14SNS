@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, MetaFunction, redirect } from "@netlify/remix-runtime";
+import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@netlify/remix-runtime";
 import { Form } from "@remix-run/react";
 import { userAuthenticationCookie } from "../../cookies.server";
 
@@ -9,15 +9,31 @@ export const meta: MetaFunction = () => {
     ];
 }
 
+export const loader = async ({
+    request,
+}: LoaderFunctionArgs) => {
+    // ログインしている場合、トップページにリダイレクトする。
+    const cookieHeader = request.headers.get("Cookie");
+    const cookie = (await userAuthenticationCookie.parse(cookieHeader)) || {};
+    if (Object.keys(cookie).length > 0) return redirect("/app");
+    return null;
+}
+
 export const action = async ({
     request,
     context,
 }: ActionFunctionArgs) => {
     try {
-        // ユーザーを登録する。
+        // フォームデータを取得する。
         const formData = await request.formData();
-        const mailAddress = formData.get('mailAddress') as string;
-        const password = formData.get('password') as string;
+        const mailAddress = formData.get("mailAddress") as string;
+        const password = formData.get("password") as string;
+        const confirmPassword = formData.get("confirmPassword") as string;
+
+        // パスワードとパスワード再確認が一致しない場合、エラーを返す。
+        if (password !== confirmPassword) return json({ error: "パスワードが一致しません。" });
+
+        // ユーザーを登録する。
         const userRegistrationAction = context.userRegistrationAction;
         const response = await userRegistrationAction.register(mailAddress, password);
 
@@ -32,11 +48,7 @@ export const action = async ({
         });
     } catch (error) {
         console.error(error);
-        throw redirect("/auth/signup", {
-            headers: {
-                "Set-Cookie": await userAuthenticationCookie.serialize({}),
-            },
-        });
+        return json({ error: "ログインに失敗しました。" });
     }
 }
 

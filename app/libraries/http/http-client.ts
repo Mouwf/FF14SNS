@@ -82,7 +82,7 @@ export default class HttpClient {
         // クエリをURLに追加する。
         const url = endpoint ? new URL(endpoint, this.baseUrl) : new URL(this.endpoint, this.baseUrl);
         if (queries) {
-            for (const[ key, value ] of Object.entries(queries)) {
+            for (const[key, value] of Object.entries(queries)) {
                 url.searchParams.append(key, String(value));
             }
         }

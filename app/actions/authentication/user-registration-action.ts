@@ -25,11 +25,11 @@ export default class UserRegistrationAction {
 
     /**
      * ユーザーを削除する。
-     * @param mailAddress メールアドレス。
+     * @param token トークン。
      * @returns 削除に成功したかどうか。
      */
-    public async delete(mailAddress: string): Promise<boolean> {
-        const response = await this.userRegistrar.delete(mailAddress);
+    public async delete(token: string): Promise<boolean> {
+        const response = await this.userRegistrar.delete(token);
         return response;
     }
 }
