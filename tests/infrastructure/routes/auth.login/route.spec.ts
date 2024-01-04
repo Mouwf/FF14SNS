@@ -83,7 +83,6 @@ beforeEach(async () => {
             password: "invalid-password",
         }),
     });
-    context = appLoadContext;
 });
 
 describe("action", () => {
