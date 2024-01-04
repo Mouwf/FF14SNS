@@ -21,6 +21,12 @@ const userAuthenticationAction = new UserAuthenticationAction(userAuthenticator)
 const authenticatedUserProvider = new FirebaseAuthenticatedUserProvider();
 const ff14SnsUserLoader = new FF14SnsUserLoader(authenticatedUserProvider);
 
+export const appLoadContext: AppLoadContext = {
+    userRegistrationAction,
+    userAuthenticationAction,
+    ff14SnsUserLoader,
+};
+
 /**
  * ローダー、アクションなどのコンテキストを取得する。
  * @param request リクエスト。
@@ -28,10 +34,5 @@ const ff14SnsUserLoader = new FF14SnsUserLoader(authenticatedUserProvider);
  * @returns ローダー、アクションなどのコンテキスト。
  */
 export default function getLoadContext(req: express.Request, res: express.Response) {
-    const appLoadContext: AppLoadContext = {
-        userRegistrationAction,
-        userAuthenticationAction,
-        ff14SnsUserLoader,
-    };
     return { ...appLoadContext };
 }
