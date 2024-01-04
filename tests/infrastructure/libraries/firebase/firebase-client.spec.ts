@@ -17,8 +17,6 @@ const mailAddress = "test@example.com";
  */
 const password = "testPassword123";
 
-
-
 beforeEach(async () => {
     // Firebaseのクライアントを生成する。
     firebaseClient = new FirebaseClient();
