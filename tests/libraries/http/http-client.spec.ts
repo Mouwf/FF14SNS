@@ -188,7 +188,7 @@ describe("post", () => {
         expect(fetch).toBeCalledWith(`${baseUrl}${endpoint}?foo=query&baz=123`, {
             method: "POST",
             headers: {
-                "Content-Type": 'application/json',
+                "Content-Type": "application/json",
                 "Authorization": `Bearer ${accessToken}`,
             },
             body: JSON.stringify(body),
@@ -215,7 +215,7 @@ describe("post", () => {
         expect(fetch).toBeCalledWith(`${baseUrl}${endpoint}?foo=query&baz=123`, {
             method: "POST",
             headers: {
-                "Content-Type": 'application/json',
+                "Content-Type": "application/json",
                 "Authorization": `Bearer ${accessToken}`,
             },
         });
@@ -241,7 +241,7 @@ describe("post", () => {
         expect(fetch).toBeCalledWith(`${baseUrl}${endpoint}`, {
             method: "POST",
             headers: {
-                "Content-Type": 'application/json',
+                "Content-Type": "application/json",
                 "Authorization": `Bearer ${accessToken}`,
             },
             body: JSON.stringify(body),
@@ -264,7 +264,7 @@ describe("post", () => {
         expect(fetch).toBeCalledWith(`${baseUrl}${endpoint}`, {
             method: "POST",
             headers: {
-                "Content-Type": 'application/json',
+                "Content-Type": "application/json",
                 "Authorization": `Bearer ${accessToken}`,
             },
         });
@@ -346,7 +346,7 @@ describe("put", () => {
         expect(fetch).toBeCalledWith(`${baseUrl}${endpoint}?foo=query&baz=123`, {
             method: "PUT",
             headers: {
-                "Content-Type": 'application/json',
+                "Content-Type": "application/json",
                 "Authorization": `Bearer ${accessToken}`,
             },
             body: JSON.stringify(body),
@@ -373,7 +373,7 @@ describe("put", () => {
         expect(fetch).toBeCalledWith(`${baseUrl}${endpoint}?foo=query&baz=123`, {
             method: "PUT",
             headers: {
-                "Content-Type": 'application/json',
+                "Content-Type": "application/json",
                 "Authorization": `Bearer ${accessToken}`,
             },
         });
@@ -399,7 +399,7 @@ describe("put", () => {
         expect(fetch).toBeCalledWith(`${baseUrl}${endpoint}`, {
             method: "PUT",
             headers: {
-                "Content-Type": 'application/json',
+                "Content-Type": "application/json",
                 "Authorization": `Bearer ${accessToken}`,
             },
             body: JSON.stringify(body),
@@ -422,7 +422,7 @@ describe("put", () => {
         expect(fetch).toBeCalledWith(`${baseUrl}${endpoint}`, {
             method: "PUT",
             headers: {
-                "Content-Type": 'application/json',
+                "Content-Type": "application/json",
                 "Authorization": `Bearer ${accessToken}`,
             },
         });
@@ -484,7 +484,7 @@ describe("delete", () => {
     test("delete should send DELETE request.", async () => {
         // fetch APIをモックする。
         const expectedResponse = {
-            result: 'test',
+            result: "test",
         }
         global.fetch = jest.fn<() => Promise<Response>>().mockResolvedValue(mockResponse(200, "OK", JSON.stringify(expectedResponse)));
 
