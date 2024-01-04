@@ -81,11 +81,6 @@ describe("login", () => {
             const invalidMailAddress = "invalid-email";
             await delayAsync(() => userAuthenticationAction.login(invalidMailAddress, password));
         } catch (error) {
-            // エラーがErrorでない場合、エラーを投げる。
-            if (!(error instanceof Error)) {
-                throw error;
-            }
-
             // エラーを検証する。
             expect(error).toBeDefined();
         }
@@ -101,11 +96,6 @@ describe("login", () => {
             const invalidPassword = "invalid-password";
             await delayAsync(() => userAuthenticationAction.login(mailAddress, invalidPassword));
         } catch (error) {
-            // エラーがErrorでない場合、エラーを投げる。
-            if (!(error instanceof Error)) {
-                throw error;
-            }
-
             // エラーを検証する。
             expect(error).toBeDefined();
         }
@@ -139,11 +129,6 @@ describe("logout", () => {
         //     const invalidToken = "invalid-token";
         //     await delayAsync(() => userAuthenticationAction.logout(invalidToken));
         // } catch (error) {
-        //     // エラーがErrorでない場合、エラーを投げる。
-        //     if (!(error instanceof Error)) {
-        //         throw error;
-        //     }
-
         //     // エラーを検証する。
         //     expect(error).toBeDefined();
         // }

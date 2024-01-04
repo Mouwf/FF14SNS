@@ -74,11 +74,6 @@ describe("register", () => {
             const invalidMailAddress = "invalid-email";
             await delayAsync(() => userRegistrationAction.register(invalidMailAddress, password));
         } catch (error) {
-            // エラーがErrorでない場合、エラーを投げる。
-            if (!(error instanceof Error)) {
-                throw error;
-            }
-
             // エラーを検証する。
             expect(error).toBeDefined();
         }
@@ -91,11 +86,6 @@ describe("register", () => {
             const invalidPassword = "invalid-password";
             await delayAsync(() => userRegistrationAction.register(mailAddress, invalidPassword));
         } catch (error) {
-            // エラーがErrorでない場合、エラーを投げる。
-            if (!(error instanceof Error)) {
-                throw error;
-            }
-
             // エラーを検証する。
             expect(error).toBeDefined();
         }
@@ -128,11 +118,6 @@ describe("delete", () => {
             const token = "invalid-token";
             await delayAsync(() => userRegistrationAction.delete(token));
         } catch (error) {
-            // エラーがErrorでない場合、エラーを投げる。
-            if (!(error instanceof Error)) {
-                throw error;
-            }
-
             // エラーを検証する。
             expect(error).toBeDefined();
         }

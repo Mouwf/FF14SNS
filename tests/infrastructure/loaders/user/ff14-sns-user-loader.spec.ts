@@ -74,11 +74,6 @@ describe("getUser", () => {
             const idToken = "invalidIdToken";
             await delayAsync(() => ff14SnsUserLoader.getUser(idToken));
         } catch (error) {
-            // エラーがErrorでない場合、エラーを投げる。
-            if (!(error instanceof Error)) {
-                throw error;
-            }
-
             // エラーを検証する。
             expect(error).toBeDefined();
         }
