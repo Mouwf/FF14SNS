@@ -5,6 +5,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    environment:
+      name: develop
     strategy:
       matrix:
         node-version: [18.x, 20.x]
