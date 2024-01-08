@@ -26,6 +26,7 @@ jobs:
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
         run: |
           if [ "${{ github.ref }}" = "refs/heads/main" ]; then
             npx netlify deploy --prod --build --message "${{ github.event.head_commit.message || github.event.pull_request.title }}"
