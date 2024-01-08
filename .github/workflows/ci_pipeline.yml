@@ -1,0 +1,23 @@
+name: Continuous Integration Pipeline
+on:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+      - name: Run npm audit
+        run: npm audit --production --audit-level=moderate
+      - name: Install dependencies
+        run: npm ci
+      - name: Run Jest tests
+        run: npm run test:all
