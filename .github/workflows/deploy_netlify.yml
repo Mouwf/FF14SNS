@@ -30,7 +30,7 @@ jobs:
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
         run: |
           if [ "${{ github.ref }}" = "refs/heads/main" ]; then
-            npx netlify deploy --prod --dir=./public --functions=./netlify/edge-functions --message "${{ github.event.head_commit.message || github.event.pull_request.title }}"
+            npx netlify deploy --prod --build --message "${{ github.event.head_commit.message || github.event.pull_request.title }}"
           else
-            npx netlify deploy --dir=./public --functions=./netlify/edge-functions --message "${{ github.event.head_commit.message || github.event.pull_request.title }}"
+            npx netlify deploy --build --message "${{ github.event.head_commit.message || github.event.pull_request.title }}"
           fi
