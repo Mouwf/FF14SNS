@@ -1,0 +1,44 @@
+name: Continuous Integration Pipeline
+on:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  build_node_18:
+    runs-on: ubuntu-latest
+    environment:
+      name: develop
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 18.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18.x
+          cache: 'npm'
+      - name: Run npm audit
+        run: npm audit --production --audit-level=moderate
+      - name: Install dependencies
+        run: npm ci
+      - name: Run Jest tests
+        env:
+          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+        run: npm run test:all
+  build_node_20:
+    needs: build_node_18
+    runs-on: ubuntu-latest
+    environment:
+      name: develop
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: 'npm'
+      - name: Run npm audit
+        run: npm audit --production --audit-level=moderate
+      - name: Install dependencies
+        run: npm ci
+      - name: Run Jest tests
+        env:
+          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+        run: npm run test:all
