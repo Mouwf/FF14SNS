@@ -1,6 +1,7 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@netlify/remix-runtime";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import FF14SnsUser from "../../libraries/user/ff14-sns-user";
+import SnsUserProvider from "../../contexts/user/sns-user-provider";
 import { userAuthenticationCookie } from "../../cookies.server";
 import Header from "./components/header";
 import Footer from "./components/footer";
@@ -82,10 +83,12 @@ export default function App() {
 
     return (
         <main>
-            <Header ff14SnsUser={ff14SnsUser} />
-            <h1>FF14 SNS</h1>
-            <Outlet />
-            <Footer />
+            <SnsUserProvider snsUser={ff14SnsUser}>
+                <Header />
+                <h1>FF14 SNS</h1>
+                <Outlet />
+                <Footer />
+            </SnsUserProvider>
         </main>
     );
 }
