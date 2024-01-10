@@ -10,18 +10,25 @@ export default class LatestPostsLoader {
      * @returns 最新の投稿。
      */
     public async getLatestPosts(id: string): Promise<PostContent[]> {
-        const idNumber = Number(id);
+        const idNumber = Number(id) + 1;
         const postContents: PostContent[] = Array.from({
             length: 10,
         }, (_, i) => {
-            const incrementedId = i + 1 + idNumber;
+            const incrementedId = i + idNumber;
+            const content = `
+                これはポスト${incrementedId}のテストです。\n
+                これはポスト${incrementedId}のテストです。\n
+                これはポスト${incrementedId}のテストです。\n
+                これはポスト${incrementedId}のテストです。\n
+                これはポスト${incrementedId}のテストです。\n
+            `;
 
             return ({
                 id: incrementedId.toString(),
                 releaseVersion: "5.5",
                 tag: "考察",
                 createdAt: new Date(),
-                content: `これは${incrementedId}のテストです。これは${incrementedId}のテストです。これは${incrementedId}のテストです。これは${incrementedId}のテストです。これは${incrementedId}のテストです。\nこれは${incrementedId}のテストです。これは${incrementedId}のテストです。これは${incrementedId}のテストです。`,
+                content: content,
             });
         });
         return postContents;

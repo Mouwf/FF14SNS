@@ -1,12 +1,9 @@
+import Entity from '../common/entity';
+
 /**
  * 投稿内容。
  */
-export default interface PostContent {
-    /**
-     * 投稿ID。
-     */
-    id: string;
-
+export default interface PostContent extends Entity {
     /**
      * 投稿内容に含まれるリリースバージョン。
      */
@@ -16,11 +13,6 @@ export default interface PostContent {
      * タグ。
      */
     tag: string;
-
-    /**
-     * 投稿日時。
-     */
-    createdAt: Date;
 
     /**
      * 投稿内容。

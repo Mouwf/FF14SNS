@@ -2,8 +2,10 @@ import { LoaderFunctionArgs, json } from "@netlify/remix-runtime";
 import PostEntry from "./components/post-entry";
 import LatestPostTimeLine from "./components/latest-post-time-line";
 import { newlyPostedPostCookie } from "../../cookies.server";
-import { useLoaderData } from "@remix-run/react";
+import { useFetcher, useLoaderData } from "@remix-run/react";
 import PostContent from "../../models/post/post-content";
+import InfiniteScroll from "../components/infinite-scroll";
+import { useState } from "react";
 
 /**
  * 最新の投稿を取得するローダー。
@@ -30,15 +32,24 @@ export const loader = async ({
  * @returns トップページのインデックス。
  */
 export default function TopIndex() {
-    const latestPostContents: PostContent[] = useLoaderData<typeof loader>().map((postContent) => ({
+    const fetcher = useFetcher<typeof loader>();
+    const initialLatestPostContents: PostContent[] = useLoaderData<typeof loader>().map((postContent) => ({
         ...postContent,
         createdAt: new Date(postContent.createdAt),
     }));
+    const [latestPostContents, setLatestPostContents] = useState<PostContent[]>(initialLatestPostContents);
 
     return (
         <div>
-            <PostEntry />
-            <LatestPostTimeLine postContents={latestPostContents} />
+            <InfiniteScroll
+                fetcher={fetcher}
+                targetAddress="/app/latest-posts"
+                contents={latestPostContents}
+                setContents={setLatestPostContents}
+            >
+                <PostEntry />
+                <LatestPostTimeLine postContents={latestPostContents} />
+            </InfiniteScroll>
         </div>
     );
 }
