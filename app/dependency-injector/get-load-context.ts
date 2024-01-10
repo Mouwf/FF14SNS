@@ -7,6 +7,7 @@ import UserAuthenticationAction from "../actions/authentication/user-authenticat
 import IUserAuthenticator from "../libraries/authentication/i-user-authenticator";
 import UserRegistrationAction from "../actions/authentication/user-registration-action";
 import IUserRegistrar from "../libraries/authentication/i-user-registrar";
+import LatestPostsLoader from "../loaders/post/latest-posts-loader";
 
 // ユーザー登録を行うためのクラスを生成する。
 const userAccountManager = new FirebaseUserAccountManager();
@@ -21,10 +22,14 @@ const userAuthenticationAction = new UserAuthenticationAction(userAuthenticator)
 const authenticatedUserProvider = new FirebaseAuthenticatedUserProvider();
 const ff14SnsUserLoader = new FF14SnsUserLoader(authenticatedUserProvider);
 
+// 最新の投稿を取得するためのクラスを生成する。
+const latestPostsLoader = new LatestPostsLoader();
+
 export const appLoadContext: AppLoadContext = {
     userRegistrationAction,
     userAuthenticationAction,
     ff14SnsUserLoader,
+    latestPostsLoader,
 };
 
 /**
