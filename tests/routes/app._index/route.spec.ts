@@ -32,7 +32,7 @@ beforeEach(async () => {
 });
 
 describe("loader", () => {
-    test('loader should return 10 PostContent objects.', async () => {
+    test("loader should return 10 PostContent objects.", async () => {
         // ローダーを実行し、結果を取得する。
         const response = await loader({
             request: requestWithoutCookie,
@@ -47,7 +47,7 @@ describe("loader", () => {
         expect(resultPostContents.length).toBe(10);
     });
 
-    test('loader should return 10 PostContent objects with cookie.', async () => {
+    test("loader should return 10 PostContent objects with cookie.", async () => {
         // ローダーを実行し、結果を取得する。
         const response = await loader({
             request: requestWithCookie,
