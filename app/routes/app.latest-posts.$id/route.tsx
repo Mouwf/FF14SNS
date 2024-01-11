@@ -12,7 +12,7 @@ export const loader = async ({
     context,
     params,
 }: LoaderFunctionArgs) => {
-    if (params.id === undefined) return json([]);
+    if (params.id === undefined || !params.id) return json([]);
     const postId = params.id;
     const postContents: PostContent[] = await context.latestPostsLoader.getLatestPosts(postId);
     return json(postContents);
