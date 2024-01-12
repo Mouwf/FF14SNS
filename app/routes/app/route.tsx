@@ -1,10 +1,15 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@netlify/remix-runtime";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import FF14SnsUser from "../../libraries/user/ff14-sns-user";
+import SnsUserProvider from "../../contexts/user/sns-user-provider";
 import { userAuthenticationCookie } from "../../cookies.server";
 import Header from "./components/header";
 import Footer from "./components/footer";
 
+/**
+ * トップページのメタ情報を取得する。
+ * @returns トップページのメタ情報。
+ */
 export const meta: MetaFunction = () => {
     return [
         { title: "FF14 SNS" },
@@ -12,6 +17,13 @@ export const meta: MetaFunction = () => {
     ];
 }
 
+/**
+ * FF14SNSのユーザーを取得するローダー。
+ * @param request リクエスト。
+ * @param context コンテキスト。
+ * @returns FF14SNSのユーザー。
+ * @throws ログインしていない場合、ログインページにリダイレクトする。
+ */
 export const loader = async ({
     request,
     context,
@@ -40,6 +52,12 @@ export const loader = async ({
     }
 }
 
+/**
+ * ログアウトするアクション。
+ * @param request リクエスト。
+ * @param context コンテキスト。
+ * @returns ログインページにリダイレクトする。
+ */
 export const action = async ({
     request,
     context,
@@ -74,18 +92,20 @@ export const action = async ({
     }
 }
 
-export default function App() {
-    const ff14SnsUserJson = useLoaderData<typeof loader>();
-    const ff14SnsUser: FF14SnsUser = {
-        name: ff14SnsUserJson.name,
-    };
+/**
+ * トップページ。
+ * @returns トップページ。
+ */
+export default function Top() {
+    const ff14SnsUser: FF14SnsUser = useLoaderData<typeof loader>();
 
     return (
         <main>
-            <Header ff14SnsUser={ff14SnsUser} />
-            <h1>FF14 SNS</h1>
-            <Outlet />
-            <Footer />
+            <SnsUserProvider snsUser={ff14SnsUser}>
+                <Header />
+                <Outlet />
+                <Footer />
+            </SnsUserProvider>
         </main>
     );
 }

@@ -1,13 +1,9 @@
 import { Form } from "@remix-run/react";
-import FF14SnsUser from "../../../libraries/user/ff14-sns-user";
+import useSnsUser from "../../../contexts/user/use-sns-user";
 
-interface HeaderProps {
-    ff14SnsUser: FF14SnsUser;
-}
+export default function Header() {
+    const ff14SnsUser = useSnsUser();
 
-export default function Header({
-    ff14SnsUser
-}: HeaderProps) {
     return (
         <header>
             <h1>FF14 Header</h1>
