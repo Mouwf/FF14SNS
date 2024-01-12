@@ -38,7 +38,7 @@ export default function PostDisplay({
                     const reactionName = reactionNames[index];
 
                     return (
-                        <div>
+                        <div key={index}>
                             <fetcher.Form method="post" action="app/like">
                                 <input type="hidden" name="reaction" value={reactionType} />
                                 <button type="submit">{reactionName}</button>
