@@ -21,7 +21,15 @@ export const loader = async ({
     const cookieHeader = request.headers.get("Cookie");
     const cookie = (await newlyPostedPostCookie.parse(cookieHeader)) || {};
     const postContents: PostContent[] = await context.latestPostsLoader.getLatestPosts("0");
-    if (Object.keys(cookie).length > 0 && cookie.isPosted) {
+    if (cookie.isPosted) {
+        const userPostContent: PostContent = {
+            id: "userPost",
+            createdAt: new Date(),
+            releaseVersion: cookie.releaseVersion,
+            tag: cookie.tag,
+            content: cookie.content,
+        };
+        postContents.unshift(userPostContent);
         return json(postContents);
     }
     return json(postContents);
