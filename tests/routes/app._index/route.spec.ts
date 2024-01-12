@@ -24,6 +24,9 @@ beforeEach(async () => {
     requestWithCookie = new Request("https://example.com", {
         headers: {
             Cookie: await newlyPostedPostCookie.serialize({
+                releaseVersion: "パッチ5",
+                tag: "タグ2",
+                content: "クッキー経由の投稿テスト！",
                 isPosted: true,
             }),
         },
@@ -47,7 +50,7 @@ describe("loader", () => {
         expect(resultPostContents.length).toBe(10);
     });
 
-    test("loader should return 10 PostContent objects with cookie.", async () => {
+    test("loader should return 11 PostContent objects with cookie.", async () => {
         // ローダーを実行し、結果を取得する。
         const response = await loader({
             request: requestWithCookie,
@@ -59,6 +62,16 @@ describe("loader", () => {
         const resultPostContents = await response.json();
 
         // 結果を検証する。
-        expect(resultPostContents.length).toBe(10);
+        const expectedUserPost = {
+            id: "userPost",
+            releaseVersion: "パッチ5",
+            tag: "タグ2",
+            content: "クッキー経由の投稿テスト！",
+        }
+        expect(resultPostContents.length).toBe(11);
+        expect(resultPostContents[0].id).toBe(expectedUserPost.id);
+        expect(resultPostContents[0].releaseVersion).toBe(expectedUserPost.releaseVersion);
+        expect(resultPostContents[0].tag).toBe(expectedUserPost.tag);
+        expect(resultPostContents[0].content).toBe(expectedUserPost.content);
     });
 });

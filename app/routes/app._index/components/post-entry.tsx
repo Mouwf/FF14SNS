@@ -9,7 +9,7 @@ export default function PostEntry() {
     const snsUser = useSnsUser();
 
     return (
-        <Link to="app/post">
+        <Link to="/app/post-message">
             <p>{snsUser.name}</p>
             <p>投稿</p>
         </Link>
