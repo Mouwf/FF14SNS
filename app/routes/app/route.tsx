@@ -7,7 +7,7 @@ import Header from "./components/header";
 import Footer from "./components/footer";
 
 /**
- * トップページのメタ情報を取得する。
+ * トップページのメタ情報を設定する。
  * @returns トップページのメタ情報。
  */
 export const meta: MetaFunction = () => {
