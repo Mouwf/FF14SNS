@@ -13,11 +13,9 @@ export default function LatestPostTimeLine({
 }) {
     return (
         <div>
-            {postContents.map((postContent, index) => {
+            {postContents.map((postContent) => {
                 return (
-                    <div key={index}>
-                        <PostDisplay postContent={postContent} />
-                    </div>
+                    <PostDisplay key={postContent.id} postContent={postContent} />
                 );
             })}
         </div>
