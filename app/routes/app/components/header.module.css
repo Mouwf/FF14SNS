@@ -1,0 +1,9 @@
+.header {
+    display: flex;
+    color: white;
+    background-color: #282c34;
+}
+
+.test-class {
+    color: red;
+}
