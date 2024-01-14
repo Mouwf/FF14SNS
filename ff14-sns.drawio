@@ -44,7 +44,7 @@
         </mxGraphModel>
     </diagram>
     <diagram id="3-kz5vick1raBAcmtaBs" name="AuthenticationModule">
-        <mxGraphModel dx="1130" dy="522" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4681" pageHeight="3300" math="0" shadow="0">
+        <mxGraphModel dx="1130" dy="779" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4681" pageHeight="3300" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -169,7 +169,7 @@
         </mxGraphModel>
     </diagram>
     <diagram name="UserModule" id="nv-yH4P3eAEJZ1VODmPg">
-        <mxGraphModel dx="1130" dy="522" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4681" pageHeight="3300" math="0" shadow="0">
+        <mxGraphModel dx="1130" dy="779" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4681" pageHeight="3300" math="0" shadow="0">
             <root>
                 <mxCell id="PNC22y-YUvZ2O8BG3Lub-0"/>
                 <mxCell id="PNC22y-YUvZ2O8BG3Lub-1" parent="PNC22y-YUvZ2O8BG3Lub-0"/>
@@ -256,11 +256,17 @@
                 <mxCell id="NK9lsmeSJY5UJ_eAUXaL-1" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="NK9lsmeSJY5UJ_eAUXaL-0" vertex="1">
                     <mxGeometry y="30" width="180" height="8" as="geometry"/>
                 </mxCell>
+                <mxCell id="Ubt1AX4skA-d1v5u6D4S-1" style="edgeStyle=none;html=1;exitX=0;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0;entryDx=0;entryDy=0;endArrow=open;endFill=0;endSize=12;" edge="1" parent="PNC22y-YUvZ2O8BG3Lub-1" source="Ubt1AX4skA-d1v5u6D4S-0" target="PNC22y-YUvZ2O8BG3Lub-27">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="Ubt1AX4skA-d1v5u6D4S-0" value="AuthenticatedUserProviderにし、FirebaseClientをインターフェース化したインスタンスを受け取れるようにする" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="PNC22y-YUvZ2O8BG3Lub-1">
+                    <mxGeometry x="640" y="100" width="320" height="60" as="geometry"/>
+                </mxCell>
             </root>
         </mxGraphModel>
     </diagram>
     <diagram id="P8e3dbhKrLwSjuZW47kj" name="FirebaseModule">
-        <mxGraphModel dx="1130" dy="522" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4681" pageHeight="3300" math="0" shadow="0">
+        <mxGraphModel dx="1130" dy="779" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4681" pageHeight="3300" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
