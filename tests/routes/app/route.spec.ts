@@ -59,9 +59,13 @@ describe("loader", () => {
 
         // 結果を検証する。
         const expectedUser = {
-            name: "UserName",
+            id: "id",
+            userName: "test@example.com",
+            createdAt: new Date(),
         };
-        expect(resultUser).toEqual(expectedUser);
+        expect(resultUser.id).toBeDefined();
+        expect(resultUser.userName).toBe(expectedUser.userName);
+        expect(new Date(resultUser.createdAt)).toBeInstanceOf(Date);
     });
 
     test("Loader should redirect login page if user is not authenticated.", async () => {

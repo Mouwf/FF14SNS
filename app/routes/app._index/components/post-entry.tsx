@@ -10,7 +10,7 @@ export default function PostEntry() {
 
     return (
         <Link to="/app/post-message">
-            <p>{snsUser.name}</p>
+            <p>{snsUser.userName}</p>
             <p>投稿</p>
         </Link>
     );

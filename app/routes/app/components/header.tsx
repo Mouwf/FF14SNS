@@ -7,7 +7,7 @@ export default function Header() {
     return (
         <header>
             <h1>FF14 Header</h1>
-            <p>{ff14SnsUser.name}</p>
+            <p>{ff14SnsUser.userName}</p>
             <Form method="post">
                 <button type="submit">ログアウト</button>
             </Form>

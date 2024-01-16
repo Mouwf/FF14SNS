@@ -97,7 +97,11 @@ export const action = async ({
  * @returns トップページ。
  */
 export default function Top() {
-    const ff14SnsUser: FF14SnsUser = useLoaderData<typeof loader>();
+    const loaderData = useLoaderData<typeof loader>();
+    const ff14SnsUser: FF14SnsUser = {
+        ...loaderData,
+        createdAt: new Date(loaderData.createdAt),
+    };
 
     return (
         <main>

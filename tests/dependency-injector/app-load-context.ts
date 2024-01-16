@@ -4,7 +4,7 @@ import UserAuthenticationAction from "../../app/actions/authentication/user-auth
 import UserRegistrationAction from "../../app/actions/authentication/user-registration-action";
 import MockAuthenticationClient from "../libraries/authentication/mock-authentication-client";
 import UserAccountManager from "../../app/libraries/authentication/user-account-manager";
-import MockAuthenticatedUserProvider from "../libraries/user/mock-authenticated-user-provider";
+import AuthenticatedUserProvider from "../../app/libraries/user/authenticated-user-provider";
 import LatestPostsLoader from "../../app/loaders/post/latest-posts-loader";
 
 // ユーザー登録を行うためのクラスを生成する。
@@ -16,7 +16,7 @@ const userRegistrationAction = new UserRegistrationAction(userAccountManager);
 const userAuthenticationAction = new UserAuthenticationAction(userAccountManager);
 
 // ユーザー情報を取得するためのクラスを生成する。
-const authenticatedUserProvider = new MockAuthenticatedUserProvider();
+const authenticatedUserProvider = new AuthenticatedUserProvider(mockauthenticationClient);
 const ff14SnsUserLoader = new FF14SnsUserLoader(authenticatedUserProvider);
 
 // 最新の投稿を取得するためのクラスを生成する。

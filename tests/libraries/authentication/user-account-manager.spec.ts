@@ -3,7 +3,7 @@ import MockAuthenticationClient from "./mock-authentication-client";
 import UserAccountManager from "../../../app/libraries/authentication/user-account-manager";
 
 /**
- * ユーザー認証を行うアクション。
+ * ユーザー管理を行うクラス。
  */
 let userAccountManager: UserAccountManager;
 

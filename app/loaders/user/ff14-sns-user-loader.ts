@@ -9,7 +9,9 @@ export default class FF14SnsUserLoader {
      * FF14SNSのユーザーを取得するローダーを生成する。
      * @param authenticatedUserProvider 認証済みユーザーを提供するクラス。
      */
-    constructor(private readonly authenticatedUserProvider: IAuthenticatedUserProvider) {
+    constructor(
+        private readonly authenticatedUserProvider: IAuthenticatedUserProvider
+    ) {
     }
 
     /**

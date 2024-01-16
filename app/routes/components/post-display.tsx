@@ -53,7 +53,7 @@ export default function PostDisplay({
     return (
         <div>
             <div>
-                <p>{snsUser.name}</p>
+                <p>{snsUser.userName}</p>
                 <span>{postContent.releaseVersion}</span>
                 <span>{postContent.tag}</span>
                 {getPostTime()}

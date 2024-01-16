@@ -7,5 +7,5 @@ export default interface GetUserInformationResponse {
     /**
      * ユーザー情報。
      */
-    users: UserInformation[];
+    readonly users: UserInformation[];
 }

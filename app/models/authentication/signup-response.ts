@@ -5,25 +5,25 @@ export default interface SignUpResponse {
     /**
      * 新しく作成されたユーザーの Firebase Auth ID トークン。
      */
-    idToken: string;
+    readonly idToken: string;
 
     /**
      * 新しく作成されたユーザーの電子メール。
      */
-    email: string;
+    readonly email: string;
 
     /**
      * 新しく作成されたユーザーの Firebase 認証リフレッシュ トークン。
      */
-    refreshToken: string;
+    readonly refreshToken: string;
 
     /**
      * ID トークンの有効期限が切れる秒数。
      */
-    expiresIn: string;
+    readonly expiresIn: string;
 
     /**
      * 新しく作成されたユーザーの uid。
      */
-    localId: string;
+    readonly localId: string;
 }

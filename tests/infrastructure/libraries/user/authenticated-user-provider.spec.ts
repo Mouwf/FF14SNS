@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
-import FirebaseAuthenticatedUserProvider from "../../../../app/libraries/user/firebase-authenticated-user-provider";
+import AuthenticatedUserProvider from "../../../../app/libraries/user/authenticated-user-provider";
 import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
 
 /**
@@ -9,9 +9,9 @@ import FirebaseClient from "../../../../app/libraries/authentication/firebase-cl
 let firebaseClient: FirebaseClient;
 
 /**
- * Firebaseを利用した認証済みユーザーを提供するクラス。
+ * 認証済みユーザーを提供するクラス。
  */
-let firebaseAuthenticatedUserProvider: FirebaseAuthenticatedUserProvider;
+let authenticatedUserProvider: AuthenticatedUserProvider;
 
 /**
  * テスト用のメールアドレス。
@@ -25,7 +25,7 @@ const password = "testPassword123";
 
 beforeEach(async () => {
     firebaseClient = new FirebaseClient();
-    firebaseAuthenticatedUserProvider = new FirebaseAuthenticatedUserProvider();
+    authenticatedUserProvider = new AuthenticatedUserProvider(firebaseClient);
 
     // テスト用のユーザーが存在する場合、削除する。
     try {
@@ -54,12 +54,14 @@ describe("getUser", () => {
 
         // テスト用のユーザー情報を取得する。
         const idToken = responseSignUp.idToken;
-        const responseUser = await delayAsync(() => firebaseAuthenticatedUserProvider.getUser(idToken));
+        const responseUser = await delayAsync(() => authenticatedUserProvider.getUser(idToken));
 
         // 結果を検証する。
         const expectedUser = {
-            name: mailAddress,
+            userName: mailAddress,
         };
-        expect(responseUser).toEqual(expectedUser);
+        expect(responseUser.id).toBeDefined();
+        expect(responseUser.userName).toBe(expectedUser.userName);
+        expect(new Date(responseUser.createdAt)).toBeInstanceOf(Date);
     });
 });

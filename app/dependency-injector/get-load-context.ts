@@ -1,6 +1,6 @@
 import type * as express from "express";
 import { AppLoadContext } from "@netlify/remix-runtime";
-import FirebaseAuthenticatedUserProvider from "../libraries/user/firebase-authenticated-user-provider";
+import AuthenticatedUserProvider from "../libraries/user/authenticated-user-provider";
 import FF14SnsUserLoader from "../loaders/user/ff14-sns-user-loader";
 import UserAccountManager from "../libraries/authentication/user-account-manager";
 import UserAuthenticationAction from "../actions/authentication/user-authentication-action";
@@ -21,7 +21,7 @@ const userAuthenticator: IUserAuthenticator = userAccountManager;
 const userAuthenticationAction = new UserAuthenticationAction(userAuthenticator);
 
 // ユーザー情報を取得するためのクラスを生成する。
-const authenticatedUserProvider = new FirebaseAuthenticatedUserProvider();
+const authenticatedUserProvider = new AuthenticatedUserProvider(authenticationClient);
 const ff14SnsUserLoader = new FF14SnsUserLoader(authenticatedUserProvider);
 
 // 最新の投稿を取得するためのクラスを生成する。

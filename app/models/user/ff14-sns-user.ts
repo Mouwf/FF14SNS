@@ -1,9 +1,11 @@
+import Entity from "../common/entity";
+
 /**
  * FF14SNSのユーザー。
  */
-export default interface FF14SnsUser {
+export default interface FF14SnsUser extends Entity {
     /**
      * ユーザー名。
      */
-    readonly name: string;
+    readonly userName: string;
 }

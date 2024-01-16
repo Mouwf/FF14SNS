@@ -72,7 +72,7 @@ export default class MockAuthenticationClient implements IAuthenticationClient {
         ];
         const userInformation = [
             {
-                localId: "localId",
+                localId: "id",
                 email: "test@example.com",
                 emailVerified: true,
                 displayName: "DisplayName",
@@ -83,7 +83,7 @@ export default class MockAuthenticationClient implements IAuthenticationClient {
                 validSince: "validSince",
                 disabled: false,
                 lastLoginAt: "lastLoginAt",
-                createdAt: "createdAt",
+                createdAt: "1705409410669",
                 customAuth: false,
             },
         ];
