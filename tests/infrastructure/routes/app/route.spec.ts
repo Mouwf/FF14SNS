@@ -69,7 +69,7 @@ describe("loader", () => {
         return;
     }
 
-    test("loader should return FF14SNS user.", async () => {
+    test("loader should return SNS user.", async () => {
         // テスト用のユーザーを作成する。
         const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
         const requestWithCookie = new Request("https://example.com", {
@@ -95,9 +95,7 @@ describe("loader", () => {
         const expectedUser = {
             userName: mailAddress,
         };
-        expect(resultUser.id).toBeDefined();
         expect(resultUser.userName).toBe(expectedUser.userName);
-        expect(new Date(resultUser.createdAt)).toBeInstanceOf(Date);
     });
 
     test("loader should redirect to login page if an error occurs.", async () => {

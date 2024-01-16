@@ -2,7 +2,7 @@ import { describe, test, expect, beforeEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
 import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
 import { AppLoadContext } from "@netlify/remix-runtime";
-import { action, loader } from "../../../../app/routes/auth.signup/route";
+import { action } from "../../../../app/routes/auth.signup/route";
 import { appLoadContext } from "../../../../app/dependency-injector/get-load-context";
 import { userAuthenticationCookie } from "../../../../app/cookies.server";
 
@@ -97,7 +97,7 @@ describe("action", () => {
 
         // 結果を検証する。
         expect(status).toBe(302);
-        expect(location).toBe("/app");
+        expect(location).toBe("/app/register-user");
         expect(cookie).toBeDefined();
     });
 

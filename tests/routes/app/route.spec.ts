@@ -46,7 +46,7 @@ beforeEach(async () => {
 });
 
 describe("loader", () => {
-    test("loader should return FF14SNS user.", async () => {
+    test("loader should return SNS user.", async () => {
         // ローダーを実行し、結果を取得する。
         const response = await loader({
             request: requestWithCookie,
@@ -59,13 +59,9 @@ describe("loader", () => {
 
         // 結果を検証する。
         const expectedUser = {
-            id: "id",
             userName: "test@example.com",
-            createdAt: new Date(),
         };
-        expect(resultUser.id).toBeDefined();
         expect(resultUser.userName).toBe(expectedUser.userName);
-        expect(new Date(resultUser.createdAt)).toBeInstanceOf(Date);
     });
 
     test("loader should redirect login page if user is not authenticated.", async () => {

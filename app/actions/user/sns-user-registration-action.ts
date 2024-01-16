@@ -1,11 +1,11 @@
 import IUserRegistrar from "../../libraries/user/i-user-registrar";
 
 /**
- * FF14SNSのユーザー登録を行うアクション。
+ * SNSのユーザー登録を行うアクション。
  */
-export default class FF14SnsUserRegistrationAction {
+export default class SnsUserRegistrationAction {
     /**
-     * FF14SNSのユーザー登録を行うアクションを生成する。
+     * SNSのユーザー登録を行うアクションを生成する。
      * @param userRegistrar ユーザー登録を行うクラス。
      */
     constructor(
@@ -15,10 +15,11 @@ export default class FF14SnsUserRegistrationAction {
 
     /**
      * ユーザーを登録する。
+     * @param userName ユーザー名。
      * @returns 登録に成功したかどうか。
      */
-    public async register(): Promise<boolean> {
-        const response = await this.userRegistrar.register();
+    public async register(userName: string): Promise<boolean> {
+        const response = await this.userRegistrar.register(userName);
         return response;
     }
 

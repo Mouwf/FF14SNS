@@ -4,8 +4,9 @@
 export default interface IUserRegistrar {
     /**
      * ユーザーを登録する。
+     * @param userName ユーザー名。
      */
-    register(): Promise<boolean>;
+    register(userName: string): Promise<boolean>;
 
     /**
      * ユーザーを削除する。

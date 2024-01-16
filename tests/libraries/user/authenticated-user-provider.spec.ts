@@ -13,8 +13,8 @@ beforeEach(() => {
 });
 
 describe("getUser", () => {
-    test("getUser should return a FF14SnsUser.", async () => {
-        // FF14SNSのユーザーを取得する。
+    test("getUser should return a AuthenticatedUser.", async () => {
+        // 認証済みユーザーを取得する。
         const idToken = "idToken";
         const response = await authenticatedUserProvider.getUser(idToken);
 
@@ -32,7 +32,7 @@ describe("getUser", () => {
     test("getUser should throw an error for an invalid token.", async () => {
         expect.assertions(1);
         try {
-            // 無効なIDトークンでFF14SNSのユーザーを取得し、エラーを発生させる。
+            // 無効なIDトークンで認証済みユーザーを取得し、エラーを発生させる。
             await authenticatedUserProvider.getUser("invalidIdToken");
         } catch (error) {
             // エラーがErrorでない場合、エラーを投げる。

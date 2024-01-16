@@ -1,10 +1,10 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@netlify/remix-runtime";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import FF14SnsUser from "../../models/user/ff14-sns-user";
 import SnsUserProvider from "../../contexts/user/sns-user-provider";
 import { userAuthenticationCookie } from "../../cookies.server";
 import Header from "./components/header";
 import Footer from "./components/footer";
+import SnsUser from "../../models/user/sns-user";
 
 /**
  * トップページのメタ情報を設定する。
@@ -18,10 +18,10 @@ export const meta: MetaFunction = () => {
 }
 
 /**
- * FF14SNSのユーザーを取得するローダー。
+ * SNSのユーザーを取得するローダー。
  * @param request リクエスト。
  * @param context コンテキスト。
- * @returns FF14SNSのユーザー。
+ * @returns SNSのユーザー。
  * @throws ログインしていない場合、ログインページにリダイレクトする。
  */
 export const loader = async ({
@@ -38,10 +38,13 @@ export const loader = async ({
             },
         });
 
-        // FF14SNSのユーザーを取得する。
-        const ff14SnsUserLoader = context.ff14SnsUserLoader;
-        const ff14SnsUser = await ff14SnsUserLoader.getUser(cookie.idToken);
-        return json(ff14SnsUser);
+        // SNSのユーザーを取得する。
+        const authenticatedUserLoader = context.authenticatedUserLoader;
+        const authenticatedUser = await authenticatedUserLoader.getUser(cookie.idToken);
+        const snsUser: SnsUser = {
+            userName: authenticatedUser.userName,
+        };
+        return json(snsUser);
     } catch (error) {
         console.error(error);
         throw redirect("/auth/login", {
@@ -97,15 +100,11 @@ export const action = async ({
  * @returns トップページ。
  */
 export default function Top() {
-    const loaderData = useLoaderData<typeof loader>();
-    const ff14SnsUser: FF14SnsUser = {
-        ...loaderData,
-        createdAt: new Date(loaderData.createdAt),
-    };
+    const snsUser: SnsUser = useLoaderData<typeof loader>();
 
     return (
         <main>
-            <SnsUserProvider snsUser={ff14SnsUser}>
+            <SnsUserProvider snsUser={snsUser}>
                 <Header />
                 <Outlet />
                 <Footer />

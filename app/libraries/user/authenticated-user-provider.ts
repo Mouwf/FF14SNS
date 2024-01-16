@@ -1,4 +1,4 @@
-import FF14SnsUser from "../../models/user/ff14-sns-user";
+import AuthenticatedUser from "../../models/user/authenticated-user";
 import IAuthenticatedUserProvider from "./i-authenticated-user-provider";
 import IAuthenticationClient from "../authentication/i-authentication-client";
 
@@ -15,13 +15,15 @@ export default class AuthenticatedUserProvider implements IAuthenticatedUserProv
     ) {
     }
 
-    public async getUser(token: string): Promise<FF14SnsUser> {
+    public async getUser(token: string): Promise<AuthenticatedUser> {
         const response = await this.authenticationClient.getUserInformation(token);
-        const ff14SnsUser = {
+        const authenticatedUser = {
             id: response.users[0].localId,
+            profileId: response.users[0].localId,
+            authenticationProviderId: response.users[0].localId,
             userName: response.users[0].email,
             createdAt: new Date(Number(response.users[0].createdAt)),
         };
-        return ff14SnsUser;
+        return authenticatedUser;
     }
 }

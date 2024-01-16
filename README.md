@@ -11,7 +11,7 @@ FF14SNSはネタバレを恐れずにFF14の感想を投稿できるSNSです。
 
 ## ローカル開発環境
 ### サーバー証明書
-`openssl req -nodes -new -x509 -keyout server.key -out server.cert`を実行し、サーバー証明書を作成してください。
+`openssl req -nodes -new -x509 -keyout server.key -out server.cert -days 365`を実行し、サーバー証明書を作成してください。
 
 # Welcome to Remix!
 

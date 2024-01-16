@@ -2,7 +2,7 @@ import { describe, test, expect, beforeEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
 import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
 import AuthenticatedUserProvider from "../../../../app/libraries/user/authenticated-user-provider";
-import FF14SnsUserLoader from "../../../../app/loaders/user/ff14-sns-user-loader";
+import AuthenticatedUserLoader from "../../../../app/loaders/user/authenticated-user-loader";
 
 /**
  * Firebaseのクライアント。
@@ -15,9 +15,9 @@ let firebaseClient: FirebaseClient;
 let authenticatedUserProvider: AuthenticatedUserProvider;
 
 /**
- * FF14SNSのユーザーを取得するローダー。
+ * 認証済みユーザーを取得するローダー。
  */
-let ff14SnsUserLoader: FF14SnsUserLoader;
+let authenticatedUserLoader: AuthenticatedUserLoader;
 
 /**
  * メールアドレス。
@@ -32,7 +32,7 @@ const password = "testPassword123";
 beforeEach(async () => {
     firebaseClient = new FirebaseClient();
     authenticatedUserProvider = new AuthenticatedUserProvider(firebaseClient);
-    ff14SnsUserLoader = new FF14SnsUserLoader(authenticatedUserProvider);
+    authenticatedUserLoader = new AuthenticatedUserLoader(authenticatedUserProvider);
 
     // テスト用のユーザーが存在する場合、削除する。
     try {
@@ -55,13 +55,13 @@ describe("getUser", () => {
         return;
     }
 
-    test("getUser should return a FF14SnsUser.", async () => {
+    test("getUser should return a AuthenticatedUser.", async () => {
         // テスト用のユーザーを登録する。
         const responsSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
 
-        // FF14SNSのユーザーを取得する。
+        // 認証済みユーザーを取得する。
         const idToken = responsSignUp.idToken;
-        const response = await delayAsync(() => ff14SnsUserLoader.getUser(idToken));
+        const response = await delayAsync(() => authenticatedUserLoader.getUser(idToken));
 
         // 結果を検証する。
         expect(response.id).toBeDefined();
@@ -72,9 +72,9 @@ describe("getUser", () => {
     test("getUser should throw an error for an invalid token.", async () => {
         expect.assertions(1);
         try {
-            // 無効なIDトークンでFF14SNSのユーザーを取得し、エラーを発生させる。
+            // 無効なIDトークンで認証済みユーザーを取得し、エラーを発生させる。
             const idToken = "invalidIdToken";
-            await delayAsync(() => ff14SnsUserLoader.getUser(idToken));
+            await delayAsync(() => authenticatedUserLoader.getUser(idToken));
         } catch (error) {
             // エラーを検証する。
             expect(error).toBeDefined();

@@ -1,24 +1,24 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
-import MockAuthenticationClient from "../../../tests/libraries/authentication/mock-authentication-client";
+import MockAuthenticationClient from "../../libraries/authentication/mock-authentication-client";
 import AuthenticatedUserProvider from "../../../app/libraries/user/authenticated-user-provider";
-import FF14SnsUserLoader from "../../../app/loaders/user/ff14-sns-user-loader";
+import AuthenticatedUserLoader from "../../../app/loaders/user/authenticated-user-loader";
 
 /**
- * FF14SNSのユーザーを取得するローダー。
+ * 認証済みユーザーを取得するローダー。
  */
-let ff14SnsUserLoader: FF14SnsUserLoader;
+let authenticatedUserLoader: AuthenticatedUserLoader;
 
 beforeEach(() => {
     const mockauthenticationClient = new MockAuthenticationClient();
     const authenticatedUserProvider = new AuthenticatedUserProvider(mockauthenticationClient);
-    ff14SnsUserLoader = new FF14SnsUserLoader(authenticatedUserProvider);
+    authenticatedUserLoader = new AuthenticatedUserLoader(authenticatedUserProvider);
 });
 
 describe("getUser", () => {
-    test("getUser should return a FF14SnsUser.", async () => {
-        // FF14SNSのユーザーを取得する。
+    test("getUser should return a AuthenticatedUser.", async () => {
+        // 認証済みユーザーを取得する。
         const idToken = "idToken";
-        const response = await ff14SnsUserLoader.getUser(idToken);
+        const response = await authenticatedUserLoader.getUser(idToken);
 
         // 結果を検証する。
         const expectedUser = {

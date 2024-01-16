@@ -1,11 +1,14 @@
 import type * as express from "express";
 import { AppLoadContext } from "@netlify/remix-runtime";
 import AuthenticatedUserProvider from "../libraries/user/authenticated-user-provider";
-import FF14SnsUserLoader from "../loaders/user/ff14-sns-user-loader";
+import AuthenticatedUserLoader from "../loaders/user/authenticated-user-loader";
 import UserAccountManager from "../libraries/authentication/user-account-manager";
 import UserAuthenticationAction from "../actions/authentication/user-authentication-action";
 import IUserAuthenticator from "../libraries/authentication/i-user-authenticator";
 import UserRegistrationAction from "../actions/authentication/user-registration-action";
+import SnsUserRegistrationAction from "../actions/user/sns-user-registration-action";
+import UserRegistrar from "../libraries/user/user-registrar";
+import PostgresUserRepository from "../repositories/user/postgres-user-repository";
 import IAuthenticationUserRegistrar from "../libraries/authentication/i-authentication-user-registrar";
 import LatestPostsLoader from "../loaders/post/latest-posts-loader";
 import FirebaseClient from "../libraries/authentication/firebase-client";
@@ -15,6 +18,9 @@ const authenticationClient = new FirebaseClient();
 const userAccountManager = new UserAccountManager(authenticationClient);
 const authenticationUserRegistrar: IAuthenticationUserRegistrar = userAccountManager;
 const userRegistrationAction = new UserRegistrationAction(authenticationUserRegistrar);
+const userRepository = new PostgresUserRepository();
+const userRegistrar = new UserRegistrar(userRepository);
+const snsUserRegistrationAction = new SnsUserRegistrationAction(userRegistrar);
 
 // ユーザー認証を行うためのクラスを生成する。
 const userAuthenticator: IUserAuthenticator = userAccountManager;
@@ -22,15 +28,16 @@ const userAuthenticationAction = new UserAuthenticationAction(userAuthenticator)
 
 // ユーザー情報を取得するためのクラスを生成する。
 const authenticatedUserProvider = new AuthenticatedUserProvider(authenticationClient);
-const ff14SnsUserLoader = new FF14SnsUserLoader(authenticatedUserProvider);
+const authenticatedUserLoader = new AuthenticatedUserLoader(authenticatedUserProvider);
 
 // 最新の投稿を取得するためのクラスを生成する。
 const latestPostsLoader = new LatestPostsLoader();
 
 export const appLoadContext: AppLoadContext = {
     userRegistrationAction,
+    snsUserRegistrationAction,
     userAuthenticationAction,
-    ff14SnsUserLoader,
+    authenticatedUserLoader,
     latestPostsLoader,
 };
 

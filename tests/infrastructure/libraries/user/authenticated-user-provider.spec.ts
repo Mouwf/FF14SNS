@@ -48,7 +48,7 @@ describe("getUser", () => {
         return;
     }
 
-    test("getUser should return a FF14SnsUser.", async () => {
+    test("getUser should return a AuthenticatedUser.", async () => {
         // テスト用のユーザーを登録する。
         const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
 
