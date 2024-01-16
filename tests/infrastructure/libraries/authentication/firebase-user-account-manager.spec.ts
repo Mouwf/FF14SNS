@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
-import FirebaseUserAccountManager from "../../../../app/libraries/authentication/firebase-user-account-manager";
+import UserAccountManager from "../../../../app/libraries/authentication/user-account-manager";
 import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
 
 /**
@@ -9,9 +9,9 @@ import FirebaseClient from "../../../../app/libraries/authentication/firebase-cl
 let firebaseClient: FirebaseClient;
 
 /**
- * Firebaseを利用したユーザー管理を行うクラス。
+ * ユーザー管理を行うクラス。
  */
-let firebaseUserAccountManager: FirebaseUserAccountManager;
+let userAccountManager: UserAccountManager;
 
 /**
  * テスト用のメールアドレス。
@@ -25,7 +25,7 @@ const password = "testPassword123";
 
 beforeEach(async () => {
     firebaseClient = new FirebaseClient();
-    firebaseUserAccountManager = new FirebaseUserAccountManager();
+    userAccountManager = new UserAccountManager(firebaseClient);
 
     // テスト用のユーザーが存在する場合、削除する。
     try {
@@ -50,7 +50,7 @@ describe("register", () => {
 
     test("register should register a user.", async () => {
         // テスト用のユーザーを登録する。
-        const response = await delayAsync(() => firebaseUserAccountManager.register(mailAddress, password));
+        const response = await delayAsync(() => userAccountManager.register(mailAddress, password));
 
         // 結果を検証する。
         expect(response).toBeDefined();
@@ -66,11 +66,11 @@ describe("delete", () => {
 
     test("delete should delete a user.", async () => {
         // テスト用のユーザーを登録する。
-        const responseRegister = await delayAsync(() => firebaseUserAccountManager.register(mailAddress, password));
+        const responseRegister = await delayAsync(() => userAccountManager.register(mailAddress, password));
 
         // テスト用のユーザーを削除する。
         const idToken = responseRegister.idToken;
-        const response = await delayAsync(() => firebaseUserAccountManager.delete(idToken));
+        const response = await delayAsync(() => userAccountManager.delete(idToken));
 
         // 結果を検証する。
         expect(response).toBeTruthy();
@@ -86,10 +86,10 @@ describe("login", () => {
 
     test("login should login a user.", async () => {
         // テスト用のユーザーを登録する。
-        await delayAsync(() => firebaseUserAccountManager.register(mailAddress, password));
+        await delayAsync(() => userAccountManager.register(mailAddress, password));
 
         // テスト用のユーザーをログインする。
-        const response = await delayAsync(() => firebaseUserAccountManager.login(mailAddress, password));
+        const response = await delayAsync(() => userAccountManager.login(mailAddress, password));
 
         // 結果を検証する。
         expect(response).toBeTruthy();
@@ -105,11 +105,11 @@ describe("logout", () => {
 
     test("logout should logout a user.", async () => {
         // テスト用のユーザーを登録する。
-        const responseRegister = await delayAsync(() => firebaseUserAccountManager.register(mailAddress, password));
+        const responseRegister = await delayAsync(() => userAccountManager.register(mailAddress, password));
 
         // テスト用のユーザーをログアウトする。
         const idToken = responseRegister.idToken;
-        const response = await delayAsync(() => firebaseUserAccountManager.logout(idToken));
+        const response = await delayAsync(() => userAccountManager.logout(idToken));
 
         // 結果を検証する。
         expect(response).toBeTruthy();

@@ -1,5 +1,5 @@
 import SignUpResponse from "../../models/authentication/signup-response";
-import FirebaseClient from "./firebase-client";
+import IAuthenticationClient from "./i-authentication-client";
 import IUserAuthenticator from "./i-user-authenticator";
 import IUserRegistrar from "./i-user-registrar";
 import SignInWithEmailPasswordResponse from "../../models/authentication/signin-with-email-password-response";
@@ -8,24 +8,28 @@ import SignInWithEmailPasswordResponse from "../../models/authentication/signin-
 /**
  * Firebaseを利用したユーザー管理を行うクラス。
  */
-export default class FirebaseUserAccountManager implements IUserRegistrar, IUserAuthenticator {
+export default class UserAccountManager implements IUserRegistrar, IUserAuthenticator {
     /**
-     * Firebaseのクライアント。
+     * 
+     * @param authenticationClient ユーザー認証のクライアント。
      */
-    private readonly firebaseClient = new FirebaseClient();
+    constructor(
+        private readonly authenticationClient: IAuthenticationClient,
+    ) {
+    }
 
     public async register(mailAddress: string, password: string): Promise<SignUpResponse> {
-        const response = await this.firebaseClient.signUp(mailAddress, password);
+        const response = await this.authenticationClient.signUp(mailAddress, password);
         return response;
     }
 
     public async delete(token: string): Promise<boolean> {
-        const response = await this.firebaseClient.deleteUser(token);
+        const response = await this.authenticationClient.deleteUser(token);
         return response;
     }
 
     public async login(mailAddress: string, password: string): Promise<SignInWithEmailPasswordResponse> {
-        const response = await this.firebaseClient.signInWithEmailPassword(mailAddress, password);
+        const response = await this.authenticationClient.signInWithEmailPassword(mailAddress, password);
         return response;
     }
 
