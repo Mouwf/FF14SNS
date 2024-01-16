@@ -6,7 +6,7 @@ import SignInWithEmailPasswordResponse from "../../models/authentication/signin-
 
 
 /**
- * Firebaseを利用したユーザー管理を行うクラス。
+ * ユーザー管理を行うクラス。
  */
 export default class UserAccountManager implements IUserRegistrar, IUserAuthenticator {
     /**

@@ -2,18 +2,18 @@ import { AppLoadContext } from "@netlify/remix-runtime";
 import FF14SnsUserLoader from "../../app/loaders/user/ff14-sns-user-loader";
 import UserAuthenticationAction from "../../app/actions/authentication/user-authentication-action";
 import UserRegistrationAction from "../../app/actions/authentication/user-registration-action";
-import MockUserRegistrar from "../libraries/authentication/mock-user-registrar";
-import MockUserAuthenticator from "../libraries/authentication/mock-user-authenticator";
+import MockAuthenticationClient from "../libraries/authentication/mock-authentication-client";
+import UserAccountManager from "../../app/libraries/authentication/user-account-manager";
 import MockAuthenticatedUserProvider from "../libraries/user/mock-authenticated-user-provider";
 import LatestPostsLoader from "../../app/loaders/post/latest-posts-loader";
 
 // ユーザー登録を行うためのクラスを生成する。
-const userRegistrar = new MockUserRegistrar();
-const userRegistrationAction = new UserRegistrationAction(userRegistrar);
+const mockauthenticationClient = new MockAuthenticationClient();
+const userAccountManager: UserAccountManager = new UserAccountManager(mockauthenticationClient);
+const userRegistrationAction = new UserRegistrationAction(userAccountManager);
 
 // ユーザー認証を行うためのクラスを生成する。
-const userAuthenticator = new MockUserAuthenticator();
-const userAuthenticationAction = new UserAuthenticationAction(userAuthenticator);
+const userAuthenticationAction = new UserAuthenticationAction(userAccountManager);
 
 // ユーザー情報を取得するためのクラスを生成する。
 const authenticatedUserProvider = new MockAuthenticatedUserProvider();
