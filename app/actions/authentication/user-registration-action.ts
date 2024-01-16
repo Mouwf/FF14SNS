@@ -2,12 +2,12 @@ import IAuthenticationUserRegistrar from "../../libraries/authentication/i-authe
 import SignUpResponse from "../../models/authentication/signup-response";
 
 /**
- * ユーザー登録を行うアクション。
+ * 認証するユーザーの登録をを行うアクション。
  */
 export default class UserRegistrationAction {
     /**
-     * ユーザー登録を行うアクションを生成する。
-     * @param authenticationUserRegistrar ユーザー登録を行うクラス。
+     * 認証するユーザーの登録を行うアクションを生成する。
+     * @param authenticationUserRegistrar 認証するユーザーの登録を行うクラス。
      */
     constructor(
         private readonly authenticationUserRegistrar: IAuthenticationUserRegistrar
