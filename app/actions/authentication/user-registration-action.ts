@@ -9,7 +9,9 @@ export default class UserRegistrationAction {
      * ユーザー登録を行うアクションを生成する。
      * @param userRegistrar ユーザー登録を行うクラス。
      */
-    constructor(private readonly userRegistrar: IUserRegistrar) {
+    constructor(
+        private readonly userRegistrar: IUserRegistrar
+    ) {
     }
 
     /**

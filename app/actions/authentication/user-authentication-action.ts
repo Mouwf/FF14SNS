@@ -9,7 +9,9 @@ export default class UserAuthenticationAction {
      * ユーザー認証を行うアクションを生成する。
      * @param userAuthenticator 
      */
-    constructor(private readonly userAuthenticator: IUserAuthenticator) {
+    constructor(
+        private readonly userAuthenticator: IUserAuthenticator
+    ) {
     }
 
     /**
