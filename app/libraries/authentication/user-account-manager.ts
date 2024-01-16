@@ -1,14 +1,14 @@
 import SignUpResponse from "../../models/authentication/signup-response";
 import IAuthenticationClient from "./i-authentication-client";
 import IUserAuthenticator from "./i-user-authenticator";
-import IUserRegistrar from "./i-user-registrar";
+import IAuthenticationUserRegistrar from "./i-authentication-user-registrar";
 import SignInWithEmailPasswordResponse from "../../models/authentication/signin-with-email-password-response";
 
 
 /**
  * ユーザー管理を行うクラス。
  */
-export default class UserAccountManager implements IUserRegistrar, IUserAuthenticator {
+export default class UserAccountManager implements IAuthenticationUserRegistrar, IUserAuthenticator {
     /**
      * 
      * @param authenticationClient ユーザー認証のクライアント。

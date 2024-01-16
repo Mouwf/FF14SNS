@@ -1,9 +1,9 @@
 import SignUpResponse from "../../models/authentication/signup-response";
 
 /**
- * ユーザー登録を行うためのインターフェース。
+ * 認証するユーザーの登録を行うためのインターフェース。
  */
-export default interface IUserRegistrar {
+export default interface IAuthenticationUserRegistrar {
     /**
      * ユーザーを登録する。
      * @param mailAddress メールアドレス。

@@ -6,15 +6,15 @@ import UserAccountManager from "../libraries/authentication/user-account-manager
 import UserAuthenticationAction from "../actions/authentication/user-authentication-action";
 import IUserAuthenticator from "../libraries/authentication/i-user-authenticator";
 import UserRegistrationAction from "../actions/authentication/user-registration-action";
-import IUserRegistrar from "../libraries/authentication/i-user-registrar";
+import IAuthenticationUserRegistrar from "../libraries/authentication/i-authentication-user-registrar";
 import LatestPostsLoader from "../loaders/post/latest-posts-loader";
 import FirebaseClient from "../libraries/authentication/firebase-client";
 
 // ユーザー登録を行うためのクラスを生成する。
 const authenticationClient = new FirebaseClient();
 const userAccountManager = new UserAccountManager(authenticationClient);
-const userRegistrar: IUserRegistrar = userAccountManager;
-const userRegistrationAction = new UserRegistrationAction(userRegistrar);
+const authenticationUserRegistrar: IAuthenticationUserRegistrar = userAccountManager;
+const userRegistrationAction = new UserRegistrationAction(authenticationUserRegistrar);
 
 // ユーザー認証を行うためのクラスを生成する。
 const userAuthenticator: IUserAuthenticator = userAccountManager;
