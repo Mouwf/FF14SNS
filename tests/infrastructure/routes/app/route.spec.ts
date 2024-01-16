@@ -69,7 +69,7 @@ describe("loader", () => {
         return;
     }
 
-    test("Loader should return FF14SNS user.", async () => {
+    test("loader should return FF14SNS user.", async () => {
         // テスト用のユーザーを作成する。
         const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
         const requestWithCookie = new Request("https://example.com", {
@@ -100,7 +100,7 @@ describe("loader", () => {
         expect(new Date(resultUser.createdAt)).toBeInstanceOf(Date);
     });
 
-    test("Loader should redirect to login page if an error occurs.", async () => {
+    test("loader should redirect to login page if an error occurs.", async () => {
         expect.assertions(3);
         try {
             // ローダーを実行し、エラーを発生させる。
@@ -135,7 +135,7 @@ describe("action", () => {
         return;
     }
 
-    test("Action shoula logout and delete cookies.", async () => {
+    test("action shoula logout and delete cookies.", async () => {
         // テスト用のユーザーを作成する。
         const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
         const requestWithCookie = new Request("https://example.com", {
@@ -165,7 +165,7 @@ describe("action", () => {
         expect(cookie).toStrictEqual({});
     });
 
-    test("Action should redirect to login page if an error occurs.", async () => {
+    test("action should redirect to login page if an error occurs.", async () => {
         // TODO: ログアウトの処理を実装していないので後に実装する。
         // expect.assertions(3);
         // try {
