@@ -1,4 +1,4 @@
-import SignUpResponse from "../../../app/models/firebase/signup-response";
+import SignUpResponse from "../../../app/models/authentication/signup-response";
 import IUserRegistrar from "../../../app/libraries/authentication/i-user-registrar";
 
 export default class MockUserRegistrar implements IUserRegistrar {

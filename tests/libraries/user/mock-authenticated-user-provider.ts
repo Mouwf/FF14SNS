@@ -1,4 +1,4 @@
-import FF14SnsUser from "../../../app/libraries/user/ff14-sns-user";
+import FF14SnsUser from "../../../app/models/user/ff14-sns-user";
 import IAuthenticatedUserProvider from "../../../app/libraries/user/i-authenticated-user-provider";
 
 /**

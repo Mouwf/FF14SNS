@@ -1,8 +1,8 @@
-import SignUpResponse from "~/models/firebase/signup-response";
-import FirebaseClient from "../firebase/firebase-client";
+import SignUpResponse from "../../models/authentication/signup-response";
+import FirebaseClient from "./firebase-client";
 import IUserAuthenticator from "./i-user-authenticator";
 import IUserRegistrar from "./i-user-registrar";
-import SignInWithEmailPasswordResponse from "~/models/firebase/signin-with-email-password-response";
+import SignInWithEmailPasswordResponse from "../../models/authentication/signin-with-email-password-response";
 
 
 /**

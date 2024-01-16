@@ -1,5 +1,5 @@
 import IUserAuthenticator from "../../libraries/authentication/i-user-authenticator";
-import SignInWithEmailPasswordResponse from "../../models/firebase/signin-with-email-password-response";
+import SignInWithEmailPasswordResponse from "../../models/authentication/signin-with-email-password-response";
 
 /**
  * ユーザー認証を行うアクション。

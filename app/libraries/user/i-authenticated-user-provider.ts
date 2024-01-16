@@ -1,4 +1,4 @@
-import FF14SnsUser from "./ff14-sns-user";
+import FF14SnsUser from "../../models/user/ff14-sns-user";
 
 /**
  * 認証済みユーザーを提供するインターフェース。

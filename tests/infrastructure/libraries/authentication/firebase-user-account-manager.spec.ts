@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
 import FirebaseUserAccountManager from "../../../../app/libraries/authentication/firebase-user-account-manager";
-import FirebaseClient from "../../../../app/libraries/firebase/firebase-client";
+import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
 
 /**
  * Firebaseのクライアント。

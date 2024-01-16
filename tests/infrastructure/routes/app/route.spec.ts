@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
-import FirebaseClient from "../../../../app/libraries/firebase/firebase-client";
+import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
 import { AppLoadContext } from "@netlify/remix-runtime";
 import { loader, action } from "../../../../app/routes/app/route";
 import { appLoadContext } from "../../../../app/dependency-injector/get-load-context";

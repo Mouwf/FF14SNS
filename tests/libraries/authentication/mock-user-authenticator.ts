@@ -1,4 +1,4 @@
-import SignInWithEmailPasswordResponse from "../../../app/models/firebase/signin-with-email-password-response";
+import SignInWithEmailPasswordResponse from "../../../app/models/authentication/signin-with-email-password-response";
 import IUserAuthenticator from "../../../app/libraries/authentication/i-user-authenticator";
 
 /**

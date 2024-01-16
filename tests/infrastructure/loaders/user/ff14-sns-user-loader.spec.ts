@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
-import FirebaseClient from "../../../../app/libraries/firebase/firebase-client";
+import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
 import FirebaseAuthenticatedUserProvider from "../../../../app/libraries/user/firebase-authenticated-user-provider";
 import FF14SnsUserLoader from "../../../../app/loaders/user/ff14-sns-user-loader";
 

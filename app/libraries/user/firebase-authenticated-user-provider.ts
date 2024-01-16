@@ -1,6 +1,6 @@
-import FF14SnsUser from "./ff14-sns-user";
+import FF14SnsUser from "../../models/user/ff14-sns-user";
 import IAuthenticatedUserProvider from "./i-authenticated-user-provider";
-import FirebaseClient from "../firebase/firebase-client";
+import FirebaseClient from "../authentication/firebase-client";
 
 /**
  * Firebaseを利用した認証済みユーザーを提供するクラス。

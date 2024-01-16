@@ -1,7 +1,7 @@
 import HttpClient from "../http/http-client";
-import SignUpResponse from "../../models/firebase/signup-response";
-import SignInWithEmailPasswordResponse from "../../models/firebase/signin-with-email-password-response";
-import GetUserInformationResponse from "../../models/user/get-user-information-response";
+import SignUpResponse from "../../models/authentication/signup-response";
+import SignInWithEmailPasswordResponse from "../../models/authentication/signin-with-email-password-response";
+import GetUserInformationResponse from "../../models/authentication/get-user-information-response";
 
 /**
  * Firebaseのクライアント。
