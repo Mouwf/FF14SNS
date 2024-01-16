@@ -5,35 +5,35 @@ export default interface ProviderUserInformation {
     /**
      * プロバイダーのID。
      */
-    providerId: string;
+    readonly providerId: string;
 
     /**
      * アカウントの表示名。
      */
-    displayName: string;
+    readonly displayName: string;
 
     /**
      * アカウントの写真の URL。
      */
-    photoUrl: string;
+    readonly photoUrl: string;
 
     /**
      * 外部認証プロバイダーのユーザーID。
      */
-    federatedId: string;
+    readonly federatedId: string;
 
     /**
      * アカウントのメールアドレス。
      */
-    email: string;
+    readonly email: string;
 
     /**
      * 生のID。
      */
-    rawId: string;
+    readonly rawId: string;
 
     /**
      * 表示名。
      */
-    screenName: string;
+    readonly screenName: string;
 }

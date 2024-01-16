@@ -7,15 +7,15 @@ export default interface PostContent extends Entity {
     /**
      * 投稿内容に含まれるリリースバージョン。
      */
-    releaseVersion: string;
+    readonly releaseVersion: string;
 
     /**
      * タグ。
      */
-    tag: string;
+    readonly tag: string;
 
     /**
      * 投稿内容。
      */
-    content: string;
+    readonly content: string;
 }

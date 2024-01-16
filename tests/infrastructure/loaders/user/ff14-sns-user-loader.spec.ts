@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
-import FirebaseClient from "../../../../app/libraries/firebase/firebase-client";
-import FirebaseAuthenticatedUserProvider from "../../../../app/libraries/user/firebase-authenticated-user-provider";
+import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
+import AuthenticatedUserProvider from "../../../../app/libraries/user/authenticated-user-provider";
 import FF14SnsUserLoader from "../../../../app/loaders/user/ff14-sns-user-loader";
 
 /**
@@ -12,7 +12,7 @@ let firebaseClient: FirebaseClient;
 /**
  * Firebaseの認証済みユーザーを提供するクラス。
  */
-let firebaseAuthenticatedUserProvider: FirebaseAuthenticatedUserProvider;
+let authenticatedUserProvider: AuthenticatedUserProvider;
 
 /**
  * FF14SNSのユーザーを取得するローダー。
@@ -31,8 +31,8 @@ const password = "testPassword123";
 
 beforeEach(async () => {
     firebaseClient = new FirebaseClient();
-    firebaseAuthenticatedUserProvider = new FirebaseAuthenticatedUserProvider();
-    ff14SnsUserLoader = new FF14SnsUserLoader(firebaseAuthenticatedUserProvider);
+    authenticatedUserProvider = new AuthenticatedUserProvider(firebaseClient);
+    ff14SnsUserLoader = new FF14SnsUserLoader(authenticatedUserProvider);
 
     // テスト用のユーザーが存在する場合、削除する。
     try {
@@ -64,7 +64,9 @@ describe("getUser", () => {
         const response = await delayAsync(() => ff14SnsUserLoader.getUser(idToken));
 
         // 結果を検証する。
-        expect(response.name).toBeDefined();
+        expect(response.id).toBeDefined();
+        expect(response.userName).toBeDefined();
+        expect(response.createdAt).toBeInstanceOf(Date);
     });
 
     test("getUser should throw an error for an invalid token.", async () => {

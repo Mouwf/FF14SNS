@@ -1,4 +1,4 @@
-import FF14SnsUser from "../../libraries/user/ff14-sns-user";
+import FF14SnsUser from "../../models/user/ff14-sns-user";
 import IAuthenticatedUserProvider from "../../libraries/user/i-authenticated-user-provider";
 
 /**
@@ -9,7 +9,9 @@ export default class FF14SnsUserLoader {
      * FF14SNSのユーザーを取得するローダーを生成する。
      * @param authenticatedUserProvider 認証済みユーザーを提供するクラス。
      */
-    constructor(private readonly authenticatedUserProvider: IAuthenticatedUserProvider) {
+    constructor(
+        private readonly authenticatedUserProvider: IAuthenticatedUserProvider
+    ) {
     }
 
     /**

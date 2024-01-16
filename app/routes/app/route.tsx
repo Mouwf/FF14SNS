@@ -1,6 +1,6 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@netlify/remix-runtime";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import FF14SnsUser from "../../libraries/user/ff14-sns-user";
+import FF14SnsUser from "../../models/user/ff14-sns-user";
 import SnsUserProvider from "../../contexts/user/sns-user-provider";
 import { userAuthenticationCookie } from "../../cookies.server";
 import Header from "./components/header";
@@ -97,7 +97,11 @@ export const action = async ({
  * @returns トップページ。
  */
 export default function Top() {
-    const ff14SnsUser: FF14SnsUser = useLoaderData<typeof loader>();
+    const loaderData = useLoaderData<typeof loader>();
+    const ff14SnsUser: FF14SnsUser = {
+        ...loaderData,
+        createdAt: new Date(loaderData.createdAt),
+    };
 
     return (
         <main>

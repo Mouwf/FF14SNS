@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import FF14SnsUser from "../../libraries/user/ff14-sns-user";
+import FF14SnsUser from "../../models/user/ff14-sns-user";
 
 /**
  * SNSのユーザーコンテキスト。

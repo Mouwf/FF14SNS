@@ -1,4 +1,4 @@
-import SignUpResponse from "~/models/firebase/signup-response";
+import SignUpResponse from "../../models/authentication/signup-response";
 
 /**
  * ユーザー登録を行うためのインターフェース。

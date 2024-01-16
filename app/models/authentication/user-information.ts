@@ -7,65 +7,65 @@ export default interface UserInformation {
     /**
      * 現在のユーザーの uid。
      */
-    localId: string;
+    readonly localId: string;
 
     /**
      * アカウントのメールアドレス。
      */
-    email: string;
+    readonly email: string;
 
     /**
      * アカウントのメールアドレスが認証されているかどうか。
      */
-    emailVerified: boolean;
+    readonly emailVerified: boolean;
 
     /**
      * アカウントの表示名。
      */
-    displayName: string;
+    readonly displayName: string;
 
     /**
      * 「providerId」と「federatedId」を含むすべてのリンクされたプロバイダー オブジェクトのリスト。
      */
-    providerUserInfo: ProviderUserInformation[];
+    readonly providerUserInfo: ProviderUserInformation[];
 
     /**
      * アカウントの写真の URL。
      */
-    photoUrl: string;
+    readonly photoUrl: string;
 
     /**
      * パスワードのハッシュバージョン。
      */
-    passwordHash: string;
+    readonly passwordHash: string;
 
     /**
      * アカウントのパスワードが最後に変更されたタイムスタンプ (ミリ秒単位)。
      */
-    passwordUpdatedAt: number;
+    readonly passwordUpdatedAt: number;
 
     /**
      * Firebase ID トークンが取り消されたと見なされるまでの境界を示すタイムスタンプ (秒単位)。
      */
-    validSince: string;
+    readonly validSince: string;
 
     /**
      * アカウントが無効になっているかどうか。
      */
-    disabled: boolean;
+    readonly disabled: boolean;
 
     /**
      * アカウントが最後にログインしたときのタイムスタンプ (ミリ秒単位)。
      */
-    lastLoginAt: string;
+    readonly lastLoginAt: string;
 
     /**
      * アカウントが作成されたタイムスタンプ (ミリ秒単位)。
      */
-    createdAt: string;
+    readonly createdAt: string;
 
     /**
      * アカウントが開発者によって認証されているかどうか。
      */
-    customAuth: boolean;
+    readonly customAuth: boolean;
 }

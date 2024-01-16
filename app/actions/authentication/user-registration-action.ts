@@ -1,5 +1,5 @@
 import IUserRegistrar from "../../libraries/authentication/i-user-registrar";
-import SignUpResponse from "../../models/firebase/signup-response";
+import SignUpResponse from "../../models/authentication/signup-response";
 
 /**
  * ユーザー登録を行うアクション。
@@ -9,7 +9,9 @@ export default class UserRegistrationAction {
      * ユーザー登録を行うアクションを生成する。
      * @param userRegistrar ユーザー登録を行うクラス。
      */
-    constructor(private readonly userRegistrar: IUserRegistrar) {
+    constructor(
+        private readonly userRegistrar: IUserRegistrar
+    ) {
     }
 
     /**
