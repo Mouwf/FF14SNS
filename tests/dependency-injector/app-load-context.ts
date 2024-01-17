@@ -11,8 +11,8 @@ import UserRegistrar from "../../app/libraries/user/user-registrar";
 import MockUserRepository from "../repositories/user/mock-user-repository";
 
 // ユーザー登録を行うためのクラスを生成する。
-const mockauthenticationClient = new MockAuthenticationClient();
-const userAccountManager: UserAccountManager = new UserAccountManager(mockauthenticationClient);
+const authenticationClient = new MockAuthenticationClient();
+const userAccountManager: UserAccountManager = new UserAccountManager(authenticationClient);
 const userRegistrationAction = new UserRegistrationAction(userAccountManager);
 const userRepository = new MockUserRepository();
 const userRegistrar = new UserRegistrar(userRepository);
@@ -22,7 +22,7 @@ const snsUserRegistrationAction = new SnsUserRegistrationAction(userRegistrar);
 const userAuthenticationAction = new UserAuthenticationAction(userAccountManager);
 
 // ユーザー情報を取得するためのクラスを生成する。
-const authenticatedUserProvider = new AuthenticatedUserProvider(mockauthenticationClient);
+const authenticatedUserProvider = new AuthenticatedUserProvider(authenticationClient, userRepository);
 const authenticatedUserLoader = new AuthenticatedUserLoader(authenticatedUserProvider);
 
 // 最新の投稿を取得するためのクラスを生成する。

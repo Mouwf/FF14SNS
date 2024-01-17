@@ -27,7 +27,7 @@ const userAuthenticator: IUserAuthenticator = userAccountManager;
 const userAuthenticationAction = new UserAuthenticationAction(userAuthenticator);
 
 // ユーザー情報を取得するためのクラスを生成する。
-const authenticatedUserProvider = new AuthenticatedUserProvider(authenticationClient);
+const authenticatedUserProvider = new AuthenticatedUserProvider(authenticationClient, userRepository);
 const authenticatedUserLoader = new AuthenticatedUserLoader(authenticatedUserProvider);
 
 // 最新の投稿を取得するためのクラスを生成する。

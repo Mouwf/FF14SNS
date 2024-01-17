@@ -1,6 +1,7 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
 import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
+import PostgresUserRepository from "../../../../app/repositories/user/postgres-user-repository";
 import { AppLoadContext } from "@netlify/remix-runtime";
 import { loader, action } from "../../../../app/routes/app/route";
 import { appLoadContext } from "../../../../app/dependency-injector/get-load-context";
@@ -12,6 +13,11 @@ import { userAuthenticationCookie } from "../../../../app/cookies.server";
 let firebaseClient: FirebaseClient;
 
 /**
+ * Postgresのユーザーリポジトリ。
+ */
+let posgresUserRepository: PostgresUserRepository;
+
+/**
  * テスト用のメールアドレス。
  */
 const mailAddress = "test@example.com";
@@ -20,6 +26,11 @@ const mailAddress = "test@example.com";
  * テスト用のパスワード。
  */
 const password = "testPassword123";
+
+/**
+ * プロフィールID。
+ */
+const profileId = "test_unicorn";
 
 /**
  * コンテキスト。
@@ -35,6 +46,9 @@ beforeEach(async () => {
     // Firebaseのクライアントを生成する。
     firebaseClient = new FirebaseClient();
 
+    // Postgresのユーザーリポジトリを生成する。
+    posgresUserRepository = new PostgresUserRepository();
+
     // テスト用のユーザーが存在する場合、削除する。
     try {
         // テスト用のユーザーをログインする。
@@ -46,6 +60,21 @@ beforeEach(async () => {
         console.info("テスト用のユーザーを削除しました。");
     } catch (error) {
         console.info("テスト用のユーザーは存在しませんでした。");
+    }
+
+    // テスト用のユーザー情報が存在する場合、削除する。
+    try {
+        // テスト用のユーザー情報を取得する。
+        const responseFindByProfileId = await delayAsync(() => posgresUserRepository.findByProfileId(profileId));
+
+        // テスト用のユーザー情報が存在しない場合、エラーを投げる。
+        if (responseFindByProfileId == null) throw new Error("The user does not exist.");
+
+        const id = responseFindByProfileId.id;
+        await delayAsync(() => posgresUserRepository.delete(id));
+        console.info("テスト用のユーザー情報を削除しました。");
+    } catch (error) {
+        console.info("テスト用のユーザー情報は存在しませんでした。");
     }
 
     // コンテキストを設定する。
@@ -80,6 +109,11 @@ describe("loader", () => {
                 }),
             },
         });
+
+        // テスト用のユーザー情報を登録する。
+        const authenticationProviderId = responseSignUp.localId;
+        const userName = "test@Unicorn";
+        await delayAsync(() => posgresUserRepository.create(profileId, authenticationProviderId, userName));
 
         // ローダーを実行し、結果を取得する。
         const response = await loader({
@@ -123,6 +157,34 @@ describe("loader", () => {
             expect(redirect).toBe("/auth/login");
             expect(cookie).toStrictEqual({});
         }
+    });
+
+    test("loader should redirect register user page if user is not loged in.", async () => {
+        // テスト用のユーザーを作成する。
+        const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
+        const requestWithCookie = new Request("https://example.com", {
+            headers: {
+                Cookie: await userAuthenticationCookie.serialize({
+                    idToken: responseSignUp.idToken,
+                    refreshToken: responseSignUp.refreshToken,
+                }),
+            },
+        });
+
+        // ローダーを実行し、結果を取得する。
+        const response = await loader({
+            request: requestWithCookie,
+            params: {},
+            context,
+        });
+
+        // 検証に必要な情報を取得する。
+        const status = response.status;
+        const redirect = response.headers.get("Location");
+
+        // 結果を検証する。
+        expect(status).toBe(302);
+        expect(redirect).toBe("/auth/register-user");
     });
 });
 

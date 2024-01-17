@@ -136,7 +136,7 @@ describe("action", () => {
 
         // 結果を検証する。
         expect(status).toBe(302);
-        expect(location).toBe("/app/register-user");
+        expect(location).toBe("/app");
         expect(cookie).toEqual({
             idToken: "idToken",
             refreshToken: "refreshToken",

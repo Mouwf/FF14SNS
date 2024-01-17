@@ -38,9 +38,16 @@ export const loader = async ({
             },
         });
 
-        // SNSのユーザーを取得する。
+        // 認証済みユーザーを取得する。
         const authenticatedUserLoader = context.authenticatedUserLoader;
         const authenticatedUser = await authenticatedUserLoader.getUser(cookie.idToken);
+
+        // 認証済みユーザーが存在しない場合、ユーザー登録ページにリダイレクトする。
+        if (!authenticatedUser) {
+            return redirect("/auth/register-user");
+        }
+
+        // SNSのユーザーを返す。
         const snsUser: SnsUser = {
             userName: authenticatedUser.userName,
         };

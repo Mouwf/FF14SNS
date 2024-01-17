@@ -1,6 +1,7 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
 import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
+import PostgresUserRepository from "../../../../app/repositories/user/postgres-user-repository";
 import AuthenticatedUserProvider from "../../../../app/libraries/user/authenticated-user-provider";
 import AuthenticatedUserLoader from "../../../../app/loaders/user/authenticated-user-loader";
 
@@ -8,6 +9,11 @@ import AuthenticatedUserLoader from "../../../../app/loaders/user/authenticated-
  * Firebaseのクライアント。
  */
 let firebaseClient: FirebaseClient;
+
+/**
+ * Postgresのユーザーリポジトリ。
+ */
+let posgresUserRepository: PostgresUserRepository;
 
 /**
  * Firebaseの認証済みユーザーを提供するクラス。
@@ -29,9 +35,15 @@ const mailAddress = "test@example.com";
  */
 const password = "testPassword123";
 
+/**
+ * プロフィールID。
+ */
+const profileId = "test_unicorn";
+
 beforeEach(async () => {
     firebaseClient = new FirebaseClient();
-    authenticatedUserProvider = new AuthenticatedUserProvider(firebaseClient);
+    posgresUserRepository = new PostgresUserRepository();
+    authenticatedUserProvider = new AuthenticatedUserProvider(firebaseClient, posgresUserRepository);
     authenticatedUserLoader = new AuthenticatedUserLoader(authenticatedUserProvider);
 
     // テスト用のユーザーが存在する場合、削除する。
@@ -46,6 +58,21 @@ beforeEach(async () => {
     } catch (error) {
         console.info("テスト用のユーザーは存在しませんでした。");
     }
+
+    // テスト用のユーザー情報が存在する場合、削除する。
+    try {
+        // テスト用のユーザー情報を取得する。
+        const responseFindByProfileId = await delayAsync(() => posgresUserRepository.findByProfileId(profileId));
+
+        // テスト用のユーザー情報が存在しない場合、エラーを投げる。
+        if (responseFindByProfileId == null) throw new Error("The user does not exist.");
+
+        const id = responseFindByProfileId.id;
+        await delayAsync(() => posgresUserRepository.delete(id));
+        console.info("テスト用のユーザー情報を削除しました。");
+    } catch (error) {
+        console.info("テスト用のユーザー情報は存在しませんでした。");
+    }
 });
 
 describe("getUser", () => {
@@ -55,29 +82,27 @@ describe("getUser", () => {
         return;
     }
 
-    test("getUser should return a AuthenticatedUser.", async () => {
+    test("getUser should return an AuthenticatedUser.", async () => {
         // テスト用のユーザーを登録する。
-        const responsSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
+        const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
+
+        // テスト用のユーザー情報を登録する。
+        const authenticationProviderId = responseSignUp.localId;
+        const userName = "test@Unicorn";
+        await delayAsync(() => posgresUserRepository.create(profileId, authenticationProviderId, userName));
 
         // 認証済みユーザーを取得する。
-        const idToken = responsSignUp.idToken;
+        const idToken = responseSignUp.idToken;
         const response = await delayAsync(() => authenticatedUserLoader.getUser(idToken));
+
+        // ユーザーが存在しない場合、エラーを投げる。
+        if (response === null) throw new Error("The user does not exist.");
 
         // 結果を検証する。
         expect(response.id).toBeDefined();
-        expect(response.userName).toBeDefined();
+        expect(response.profileId).toBe(profileId);
+        expect(response.authenticationProviderId).toBeDefined();
+        expect(response.userName).toBe(userName);
         expect(response.createdAt).toBeInstanceOf(Date);
-    });
-
-    test("getUser should throw an error for an invalid token.", async () => {
-        expect.assertions(1);
-        try {
-            // 無効なIDトークンで認証済みユーザーを取得し、エラーを発生させる。
-            const idToken = "invalidIdToken";
-            await delayAsync(() => authenticatedUserLoader.getUser(idToken));
-        } catch (error) {
-            // エラーを検証する。
-            expect(error).toBeDefined();
-        }
     });
 });

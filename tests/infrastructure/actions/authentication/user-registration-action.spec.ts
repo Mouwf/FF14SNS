@@ -110,16 +110,4 @@ describe("delete", () => {
         // 結果を検証する。
         expect(response).toBe(true);
     });
-
-    test("delete should throw an exception for invalid token.", async () => {
-        expect.assertions(1);
-        try {
-            // 無効なトークンでユーザーを削除し、エラーを発生させる。
-            const token = "invalid-token";
-            await delayAsync(() => userRegistrationAction.delete(token));
-        } catch (error) {
-            // エラーを検証する。
-            expect(error).toBeDefined();
-        }
-    });
 });

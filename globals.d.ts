@@ -5,6 +5,7 @@ declare global {
     PORT: string;
     RUN_INFRA_TESTS: string;
     FIREBASE_API_KEY: string | undefined;
+    DATABASE_URL: string | undefined;
   }
   interface Process {
     env: ProcessEnv;

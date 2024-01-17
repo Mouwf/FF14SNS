@@ -15,6 +15,11 @@ let requestWithoutCookie: Request;
 let requestWithCookie: Request;
 
 /**
+ * 登録されていないクッキー付きのモックリクエスト。
+ */
+let requestWithNotRegisteredUserCookie: Request;
+
+/**
  * クッキーが不正なモックリクエスト。
  */
 let requestWithInvalidCookie: Request;
@@ -30,6 +35,14 @@ beforeEach(async () => {
         headers: {
             Cookie: await userAuthenticationCookie.serialize({
                 idToken: "idToken",
+                refreshToken: "refreshToken",
+            }),
+        },
+    });
+    requestWithNotRegisteredUserCookie = new Request("https://example.com", {
+        headers: {
+            Cookie: await userAuthenticationCookie.serialize({
+                idToken: "notRegisteredUserIdToken",
                 refreshToken: "refreshToken",
             }),
         },
@@ -81,6 +94,23 @@ describe("loader", () => {
         expect(status).toBe(302);
         expect(redirect).toBe("/auth/login");
         expect(cookie).toStrictEqual({});
+    });
+
+    test("loader should redirect register user page if user is not loged in.", async () => {
+        // ローダーを実行し、結果を取得する。
+        const response = await loader({
+            request: requestWithNotRegisteredUserCookie,
+            params: {},
+            context,
+        });
+
+        // 検証に必要な情報を取得する。
+        const status = response.status;
+        const redirect = response.headers.get("Location");
+
+        // 結果を検証する。
+        expect(status).toBe(302);
+        expect(redirect).toBe("/auth/register-user");
     });
 
     test("loader should redirect to login page if an error occurs.", async () => {

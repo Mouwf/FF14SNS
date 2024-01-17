@@ -6,8 +6,12 @@ import User from "../../models/user/user";
 export default interface IUserRepository {
     /**
      * ユーザーを作成する。
+     * @param profileId プロフィールID。
+     * @param authenticationProvidedId 認証プロバイダID。
+     * @param userName ユーザー名。
+     * @returns 登録に成功したかどうか。
      */
-    create(): Promise<boolean>;
+    create(profileId: string, authenticationProvidedId: string, userName: string): Promise<boolean>;
 
     /**
      * ユーザーを更新する。

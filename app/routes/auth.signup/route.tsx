@@ -41,7 +41,7 @@ export const action = async ({
         const cookie: any = {};
         cookie.idToken = response.idToken;
         cookie.refreshToken = response.refreshToken;
-        return redirect("/app/register-user", {
+        return redirect("/app", {
             headers: {
                 "Set-Cookie": await userAuthenticationCookie.serialize(cookie),
             },
