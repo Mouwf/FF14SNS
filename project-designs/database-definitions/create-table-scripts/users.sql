@@ -5,5 +5,3 @@ CREATE TABLE users (
     user_name VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-CREATE INDEX ON users (profile_id);
-CREATE INDEX ON users (auth_provider_id);

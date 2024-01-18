@@ -14,7 +14,7 @@ export default class ProfileIdCreator {
 
         // プロフィールIDを生成する。
         const splitUserName = userName.split("@");
-        const profileId = splitUserName[0] + "_" + splitUserName[1];
+        const profileId = (splitUserName[0] + "_" + splitUserName[1]).toLowerCase();
 
         // プロフィールIDを返す。
         return profileId;

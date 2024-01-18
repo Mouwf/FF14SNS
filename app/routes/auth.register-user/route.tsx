@@ -34,7 +34,7 @@ export const action = async ({
         const authenticationProviderId = await authenticatedUserLoader.getAuthenticationProviderId(cookie.idToken);
 
         // ユーザーを登録する。
-        context.snsUserRegistrationAction.register(authenticationProviderId, userName);
+        await context.snsUserRegistrationAction.register(authenticationProviderId, userName);
         return redirect("/app");
     } catch (error) {
         console.error(error);
