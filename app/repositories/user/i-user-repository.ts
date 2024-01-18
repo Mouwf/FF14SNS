@@ -23,7 +23,7 @@ export default interface IUserRepository {
      * ユーザーを削除する。
      * @param id ユーザーID。
      */
-    delete(id: string): Promise<boolean>;
+    delete(id: number): Promise<boolean>;
 
     /**
      * ユーザーIDでユーザーを取得する。

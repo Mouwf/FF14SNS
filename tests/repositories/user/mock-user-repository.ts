@@ -5,16 +5,17 @@ import IUserRepository from "../../../app/repositories/user/i-user-repository";
  * ユーザーリポジトリのモック。
  */
 export default class MockUserRepository implements IUserRepository {
-    create(): Promise<boolean> {
-        throw new Error("Method not implemented.");
+    public async create(): Promise<boolean> {
+        return true;
     }
 
     update(user: User): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
 
-    delete(id: string): Promise<boolean> {
-        throw new Error("Method not implemented.");
+    public async delete(id: number): Promise<boolean> {
+        if (id !== 1) return false;
+        return true;
     }
 
     findById(id: string): Promise<User | null> {
@@ -25,7 +26,15 @@ export default class MockUserRepository implements IUserRepository {
         throw new Error("Method not implemented.");
     }
 
-    findByAuthenticationProviderId(authenticationProviderId: string): Promise<User | null> {
-        throw new Error("Method not implemented.");
+    public async findByAuthenticationProviderId(authenticationProviderId: string): Promise<User | null> {
+        if (authenticationProviderId !== "authenticationProviderId") return null;
+        const user = {
+            id: 1,
+            profileId: "profileId",
+            authenticationProviderId: "authenticationProviderId",
+            userName: "UserName@World",
+            createdAt: new Date(),
+        };
+        return user;
     }
 }

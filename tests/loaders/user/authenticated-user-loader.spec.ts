@@ -9,6 +9,11 @@ import AuthenticatedUserLoader from "../../../app/loaders/user/authenticated-use
  */
 let authenticatedUserLoader: AuthenticatedUserLoader;
 
+/**
+ * IDトークン。
+ */
+const idToken = "idToken";
+
 beforeEach(() => {
     const mockauthenticationClient = new MockAuthenticationClient();
     const mockUserRepository = new MockUserRepository();
@@ -19,7 +24,6 @@ beforeEach(() => {
 describe("getUser", () => {
     test("getUser should return an AuthenticatedUser.", async () => {
         // 認証済みユーザーを取得する。
-        const idToken = "idToken";
         const response = await authenticatedUserLoader.getUser(idToken);
 
         // ユーザーが存在しない場合、エラーを投げる。
@@ -27,10 +31,10 @@ describe("getUser", () => {
 
         // 結果を検証する。
         const expectedUser = {
-            id: "id",
+            id: 1,
             profileId: "profileId",
             authenticationProviderId: "authenticationProviderId",
-            userName: "userName",
+            userName: "UserName@World",
             createdAt: new Date(),
         }
         expect(response.id).toBe(expectedUser.id);
@@ -38,5 +42,15 @@ describe("getUser", () => {
         expect(response.authenticationProviderId).toBe(expectedUser.authenticationProviderId);
         expect(response.userName).toBe(expectedUser.userName);
         expect(response.createdAt).toBeInstanceOf(Date);
+    });
+});
+
+describe("getAuthenticationProviderId", () => {
+    test("getAuthenticationProviderId should return an authentication provider ID.", async () => {
+        // 認証プロバイダIDを取得する。
+        const authenticationProviderId = await authenticatedUserLoader.getAuthenticationProviderId(idToken);
+
+        // 結果を検証する。
+        expect(authenticationProviderId).toBe("authenticationProviderId");
     });
 });

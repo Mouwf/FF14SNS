@@ -34,16 +34,16 @@ describe("loader", () => {
 
         // 結果を検証する。
         expect(resultPostContents.length).toBe(10);
-        expect(resultPostContents[0].id).toBe("11");
-        expect(resultPostContents[1].id).toBe("12");
-        expect(resultPostContents[2].id).toBe("13");
-        expect(resultPostContents[3].id).toBe("14");
-        expect(resultPostContents[4].id).toBe("15");
-        expect(resultPostContents[5].id).toBe("16");
-        expect(resultPostContents[6].id).toBe("17");
-        expect(resultPostContents[7].id).toBe("18");
-        expect(resultPostContents[8].id).toBe("19");
-        expect(resultPostContents[9].id).toBe("20");
+        expect(resultPostContents[0].id).toBe(11);
+        expect(resultPostContents[1].id).toBe(12);
+        expect(resultPostContents[2].id).toBe(13);
+        expect(resultPostContents[3].id).toBe(14);
+        expect(resultPostContents[4].id).toBe(15);
+        expect(resultPostContents[5].id).toBe(16);
+        expect(resultPostContents[6].id).toBe(17);
+        expect(resultPostContents[7].id).toBe(18);
+        expect(resultPostContents[8].id).toBe(19);
+        expect(resultPostContents[9].id).toBe(20);
     });
 
     test("loader should return an empty object when no parameter is provided.", async () => {

@@ -72,7 +72,7 @@ describe("loader", () => {
 
         // 結果を検証する。
         const expectedUser = {
-            userName: "test@example.com",
+            userName: "UserName@World",
         };
         expect(resultUser.userName).toBe(expectedUser.userName);
     });
@@ -96,7 +96,7 @@ describe("loader", () => {
         expect(cookie).toStrictEqual({});
     });
 
-    test("loader should redirect register user page if user is not loged in.", async () => {
+    test("loader should redirect to user registration page if user is not registered.", async () => {
         // ローダーを実行し、結果を取得する。
         const response = await loader({
             request: requestWithNotRegisteredUserCookie,

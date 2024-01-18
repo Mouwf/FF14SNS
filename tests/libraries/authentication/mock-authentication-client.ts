@@ -24,7 +24,7 @@ export default class MockAuthenticationClient implements IAuthenticationClient {
             email: "test@example.com",
             refreshToken: "refreshToken",
             expiresIn: "3600",
-            localId: "localId",
+            localId: "authenticationProviderId",
         };
     }
 
@@ -46,22 +46,28 @@ export default class MockAuthenticationClient implements IAuthenticationClient {
             email: "test@example.com",
             refreshToken: "refreshToken",
             expiresIn: "3600",
-            localId: "localId",
+            localId: "authenticationProviderId",
             registered: true,
         };
         return await response;
     }
 
     public async getUserInformation(idToken: string): Promise<GetUserInformationResponse> {
-        // トークンが不正な場合、エラーを投げる。
-        if (idToken !== "idToken") {
+        // トークンが無効な場合、エラーを投げる。
+        if (idToken === "invalidIdToken") {
             throw new Error("Invalid token.");
+        }
+
+        // ユーザーが存在しないIDトークンの場合、現在のユーザーの uidを無効のものにする。
+        let localId = "authenticationProviderId";
+        if (idToken !== "idToken") {
+            localId = "invalidAuthenticationProviderId";
         }
 
         // ユーザー情報を返す。
         const providerUserInfo = [
             {
-                providerId: "password",
+                providerId: "providerId",
                 displayName: "DisplayName",
                 photoUrl: "https://example.com/photo.png",
                 federatedId: "federatedId",
@@ -72,7 +78,7 @@ export default class MockAuthenticationClient implements IAuthenticationClient {
         ];
         const userInformation = [
             {
-                localId: "id",
+                localId: localId,
                 email: "test@example.com",
                 emailVerified: true,
                 displayName: "DisplayName",

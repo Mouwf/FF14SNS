@@ -39,7 +39,7 @@ export default class PostgresUserRepository implements IUserRepository {
         throw new Error('Method not implemented.');
     }
 
-    public async delete(id: string): Promise<boolean> {
+    public async delete(id: number): Promise<boolean> {
         throw new Error('Method not implemented.');
     }
 

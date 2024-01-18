@@ -225,31 +225,31 @@ describe("action", () => {
         expect(cookie).toStrictEqual({});
     });
 
-    test("action should redirect to login page if an error occurs.", async () => {
-        // TODO: ログアウトの処理を実装していないので後に実装する。
-        // expect.assertions(3);
-        // try {
-        //     // アクションを実行し、エラーを発生させる。
-        //     await action({
-        //         request: requestWithInvalidCookie,
-        //         params: {},
-        //         context,
-        //     });
-        // } catch (error) {
-        //     // エラーがResponseでない場合、エラーを投げる。
-        //     if (!(error instanceof Response)) {
-        //         throw error;
-        //     }
+    // test("action should redirect to login page if an error occurs.", async () => {
+    //     // TODO: ログアウトの処理を実装していないので後に実装する。
+    //     expect.assertions(3);
+    //     try {
+    //         // アクションを実行し、エラーを発生させる。
+    //         await action({
+    //             request: requestWithInvalidCookie,
+    //             params: {},
+    //             context,
+    //         });
+    //     } catch (error) {
+    //         // エラーがResponseでない場合、エラーを投げる。
+    //         if (!(error instanceof Response)) {
+    //             throw error;
+    //         }
 
-        //     // 検証に必要な情報を取得する。
-        //     const status = error.status;
-        //     const redirect = error.headers.get("Location");
-        //     const cookie = await userAuthenticationCookie.parse(error.headers.get("Set-Cookie"));
+    //         // 検証に必要な情報を取得する。
+    //         const status = error.status;
+    //         const redirect = error.headers.get("Location");
+    //         const cookie = await userAuthenticationCookie.parse(error.headers.get("Set-Cookie"));
 
-        //     // 結果を検証する。
-        //     expect(status).toBe(302);
-        //     expect(redirect).toBe("/auth/login");
-        //     expect(cookie).toStrictEqual({});
-        // }
-    });
+    //         // 結果を検証する。
+    //         expect(status).toBe(302);
+    //         expect(redirect).toBe("/auth/login");
+    //         expect(cookie).toStrictEqual({});
+    //     }
+    // });
 });

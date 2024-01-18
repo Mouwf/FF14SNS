@@ -29,7 +29,7 @@ export default class SnsUserRegistrationAction {
      * @param id ユーザーID。
      * @returns 削除に成功したかどうか。
      */
-    public async delete(id: string): Promise<boolean> {
+    public async delete(id: number): Promise<boolean> {
         const response = await this.userRegistrar.delete(id);
         return response;
     }

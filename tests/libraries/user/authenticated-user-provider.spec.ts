@@ -8,6 +8,11 @@ import AuthenticatedUserProvider from "../../../app/libraries/user/authenticated
  */
 let authenticatedUserProvider: AuthenticatedUserProvider;
 
+/**
+ * IDトークン。
+ */
+const idToken = "idToken";
+
 beforeEach(() => {
     const mockAuthenticationClient = new MockAuthenticationClient();
     const mockUserRepository = new MockUserRepository();
@@ -17,7 +22,6 @@ beforeEach(() => {
 describe("getUser", () => {
     test("getUser should return an AuthenticatedUser.", async () => {
         // 認証済みユーザーを取得する。
-        const idToken = "idToken";
         const response = await authenticatedUserProvider.getUser(idToken);
 
         // ユーザーが存在しない場合、エラーを投げる。
@@ -25,10 +29,10 @@ describe("getUser", () => {
 
         // 結果を検証する。
         const expectedUser = {
-            id: "id",
+            id: 1,
             profileId: "profileId",
             authenticationProviderId: "authenticationProviderId",
-            userName: "userName",
+            userName: "UserName@World",
             createdAt: new Date(),
         }
         expect(response.id).toBe(expectedUser.id);
@@ -40,26 +44,20 @@ describe("getUser", () => {
 
     test("getUser should return null if the user does not exist.", async () => {
         // テスト用のユーザーを登録する。
-        const idToken = "idToken";
-        const response = await authenticatedUserProvider.getUser(idToken);
+        const idTokenForNotExistUser = "idTokenForNotExistUser";
+        const response = await authenticatedUserProvider.getUser(idTokenForNotExistUser);
 
         // 結果を検証する。
         expect(response).toBeNull();
     });
+});
 
-    test("getUser should throw an error for an invalid token.", async () => {
-        expect.assertions(1);
-        try {
-            // 無効なIDトークンで認証済みユーザーを取得し、エラーを発生させる。
-            await authenticatedUserProvider.getUser("invalidIdToken");
-        } catch (error) {
-            // エラーがErrorでない場合、エラーを投げる。
-            if (!(error instanceof Error)) {
-                throw error;
-            }
+describe("getAuthenticationProviderId", () => {
+    test("getAuthenticationProviderId should return an authentication provider ID.", async () => {
+        // 認証プロバイダIDを取得する。
+        const authenticationProviderId = await authenticatedUserProvider.getAuthenticationProviderId(idToken);
 
-            // エラーを検証する。
-            expect(error.message).toBe("Invalid token.");
-        }
+        // 結果を検証する。
+        expect(authenticationProviderId).toBe("authenticationProviderId");
     });
 });

@@ -15,5 +15,5 @@ export default interface IUserRegistrar {
      * @param id ユーザーID。
      * @returns 削除に成功したかどうか。
      */
-    delete(id: string): Promise<boolean>;
+    delete(id: number): Promise<boolean>;
 }

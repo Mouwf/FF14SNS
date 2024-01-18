@@ -12,11 +12,6 @@ let requestWithCookie: Request;
 /**
  * ユーザー名が未入力なモックリクエスト。
  */
-let requestWithNotInputUserName: Request;
-
-/**
- * ユーザー名が未入力なモックリクエスト。
- */
 let requestWithInvalidUserName: Request;
 
 /**
@@ -39,19 +34,7 @@ beforeEach(async () => {
         },
         method: "POST",
         body: new URLSearchParams({
-            userName: "userName",
-        }),
-    });
-    requestWithNotInputUserName = new Request("https://example.com", {
-        headers: {
-            Cookie: await userAuthenticationCookie.serialize({
-                idToken: "idToken",
-                refreshToken: "refreshToken",
-            }),
-        },
-        method: "POST",
-        body: new URLSearchParams({
-            userName: "",
+            userName: "UserName@World",
         }),
     });
     requestWithInvalidUserName = new Request("https://example.com", {
@@ -88,7 +71,7 @@ describe("action", () => {
         expect(location).toBe("/app");
     });
 
-    test("action should redirect register user page if user is not loged in.", async () => {
+    test("action should redirect login page if user is not authenticated.", async () => {
         // アクションを実行し、結果を取得する。
         const response = await action({
             request: requestWithoutCookie,
@@ -103,26 +86,8 @@ describe("action", () => {
 
         // 結果を検証する。
         expect(status).toBe(302);
-        expect(redirect).toBe("/auth/register-user");
+        expect(redirect).toBe("/auth/login");
         expect(cookie).toStrictEqual({});
-    });
-
-    test("action should return error information for not input user name.", async () => {
-        // アクションを実行し、結果を取得する。
-        const response = await action({
-            request: requestWithNotInputUserName,
-            params: {},
-            context,
-        });
-
-        // 検証に必要な情報を取得する。
-        const errorInformation = await response.json();
-
-        // 結果を検証する。
-        const expectedErrorInformation = {
-            error: "ユーザー名が入力されていません。",
-        };
-        expect(errorInformation).toEqual(expectedErrorInformation);
     });
 
     test("loader should redirect to login page if an error occurs.", async () => {

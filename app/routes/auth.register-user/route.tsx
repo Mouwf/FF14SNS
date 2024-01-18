@@ -26,9 +26,6 @@ export const action = async ({
         const formData = await request.formData();
         const userName = formData.get("userName") as string;
 
-        // ユーザー名がない場合、エラーを返す。
-        if (!userName) return json({ error: "ユーザー名が入力されていません。" });
-
         // 認証プロバイダーIDを取得する。
         const authenticatedUserLoader = context.authenticatedUserLoader;
         const authenticationProviderId = await authenticatedUserLoader.getAuthenticationProviderId(cookie.idToken);
