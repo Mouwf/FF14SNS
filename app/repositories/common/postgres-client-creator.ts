@@ -9,6 +9,12 @@ export default class PostgresClientCreator {
      * @returns Posgresのクライアント。
      */
     public static create(): pg.Client {
+        // 環境変数が設定されていない場合、エラーを投げる。
+        if (!process.env.DATABASE_URL) {
+            throw new Error("DATABASE_URLが設定されていません。");
+        }
+
+        // Posgresのクライアントを生成する。
         const { Client } = pg;
         return new Client({
             connectionString: process.env.DATABASE_URL,
