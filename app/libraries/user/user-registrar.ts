@@ -16,13 +16,13 @@ export default class UserRegistrar implements IUserRegistrar {
     ) {
     }
 
-    public async register(authenticationProvidedId: string, userName: string): Promise<boolean> {
+    public async register(authenticationProviderId: string, userName: string): Promise<boolean> {
         // ユーザー登録バリデーションを行う。
-        UserRegistrationValidator.validate(authenticationProvidedId, userName);
+        UserRegistrationValidator.validate(authenticationProviderId, userName);
 
         // ユーザーを登録する。
         const profileId = ProfileIdCreator.create(userName);
-        const response = await this.userRepository.create(profileId, authenticationProvidedId, userName);
+        const response = await this.userRepository.create(profileId, authenticationProviderId, userName);
         return response;
     }
 

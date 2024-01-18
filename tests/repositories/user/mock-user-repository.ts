@@ -5,7 +5,7 @@ import IUserRepository from "../../../app/repositories/user/i-user-repository";
  * ユーザーリポジトリのモック。
  */
 export default class MockUserRepository implements IUserRepository {
-    public async create(): Promise<boolean> {
+    public async create(profileId: string, authenticationProviderId: string, userName: string): Promise<boolean> {
         return true;
     }
 

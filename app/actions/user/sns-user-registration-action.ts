@@ -15,12 +15,12 @@ export default class SnsUserRegistrationAction {
 
     /**
      * ユーザーを登録する。
-     * @param authenticationProvidedId 認証プロバイダID。
+     * @param authenticationProviderId 認証プロバイダID。
      * @param userName ユーザー名。
      * @returns 登録に成功したかどうか。
      */
-    public async register(authenticationProvidedId: string, userName: string): Promise<boolean> {
-        const response = await this.userRegistrar.register(authenticationProvidedId, userName);
+    public async register(authenticationProviderId: string, userName: string): Promise<boolean> {
+        const response = await this.userRegistrar.register(authenticationProviderId, userName);
         return response;
     }
 

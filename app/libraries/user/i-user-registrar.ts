@@ -4,11 +4,11 @@
 export default interface IUserRegistrar {
     /**
      * ユーザーを登録する。
-     * @param authenticationProvidedId 認証プロバイダID。
+     * @param authenticationProviderId 認証プロバイダID。
      * @param userName ユーザー名。
      * @returns 登録に成功したかどうか。
      */
-    register(authenticationProvidedId: string, userName: string): Promise<boolean>;
+    register(authenticationProviderId: string, userName: string): Promise<boolean>;
 
     /**
      * ユーザーを削除する。
