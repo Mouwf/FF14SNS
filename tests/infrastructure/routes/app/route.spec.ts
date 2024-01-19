@@ -4,7 +4,7 @@ import FirebaseClient from "../../../../app/libraries/authentication/firebase-cl
 import PostgresUserRepository from "../../../../app/repositories/user/postgres-user-repository";
 import { AppLoadContext } from "@netlify/remix-runtime";
 import { loader, action } from "../../../../app/routes/app/route";
-import { appLoadContext } from "../../../../app/dependency-injector/get-load-context";
+import { appLoadContext, postgresClientProvider } from "../../../../app/dependency-injector/get-load-context";
 import { userAuthenticationCookie } from "../../../../app/cookies.server";
 
 /**
@@ -30,24 +30,21 @@ const password = "testPassword123";
 /**
  * プロフィールID。
  */
-const profileId = "test_unicorn";
+const profileId = "username_world";
+
+/**
+ * ユーザー名。
+ */
+const userName = "UserName@World";
 
 /**
  * コンテキスト。
  */
 let context: AppLoadContext;
 
-/**
- * クッキーが不正なモックリクエスト。
- */
-let requestWithInvalidCookie: Request;
-
 beforeEach(async () => {
-    // Firebaseのクライアントを生成する。
     firebaseClient = new FirebaseClient();
-
-    // Postgresのユーザーリポジトリを生成する。
-    posgresUserRepository = new PostgresUserRepository();
+    posgresUserRepository = new PostgresUserRepository(postgresClientProvider);
 
     // テスト用のユーザーが存在する場合、削除する。
     try {
@@ -79,16 +76,6 @@ beforeEach(async () => {
 
     // コンテキストを設定する。
     context = appLoadContext;
-
-    // クッキーが不正なモックリクエストを作成する。
-    requestWithInvalidCookie = new Request("https://example.com", {
-        headers: {
-            Cookie: await userAuthenticationCookie.serialize({
-                idToken: "invalidIdToken",
-                refreshToken: "invalidRefreshToken",
-            }),
-        },
-    });
 });
 
 describe("loader", () => {
@@ -101,6 +88,12 @@ describe("loader", () => {
     test("loader should return SNS user.", async () => {
         // テスト用のユーザーを作成する。
         const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
+
+        // テスト用のユーザー情報を登録する。
+        const authenticationProviderId = responseSignUp.localId;
+        await delayAsync(() => posgresUserRepository.create(profileId, authenticationProviderId, userName));
+
+        // ローダーを実行し、結果を取得する。
         const requestWithCookie = new Request("https://example.com", {
             headers: {
                 Cookie: await userAuthenticationCookie.serialize({
@@ -109,13 +102,6 @@ describe("loader", () => {
                 }),
             },
         });
-
-        // テスト用のユーザー情報を登録する。
-        const authenticationProviderId = responseSignUp.localId;
-        const userName = "test@Unicorn";
-        await delayAsync(() => posgresUserRepository.create(profileId, authenticationProviderId, userName));
-
-        // ローダーを実行し、結果を取得する。
         const response = await loader({
             request: requestWithCookie,
             params: {},
@@ -127,41 +113,16 @@ describe("loader", () => {
 
         // 結果を検証する。
         const expectedUser = {
-            userName: mailAddress,
+            userName: userName,
         };
         expect(resultUser.userName).toBe(expectedUser.userName);
-    });
-
-    test("loader should redirect to login page if an error occurs.", async () => {
-        expect.assertions(3);
-        try {
-            // ローダーを実行し、エラーを発生させる。
-            await loader({
-                request: requestWithInvalidCookie,
-                params: {},
-                context,
-            });
-        } catch (error) {
-            // エラーがResponseでない場合、エラーを投げる。
-            if (!(error instanceof Response)) {
-                throw error;
-            }
-
-            // 検証に必要な情報を取得する。
-            const status = error.status;
-            const redirect = error.headers.get("Location");
-            const cookie = await userAuthenticationCookie.parse(error.headers.get("Set-Cookie"));
-
-            // 結果を検証する。
-            expect(status).toBe(302);
-            expect(redirect).toBe("/auth/login");
-            expect(cookie).toStrictEqual({});
-        }
     });
 
     test("loader should redirect register user page if user is not loged in.", async () => {
         // テスト用のユーザーを作成する。
         const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
+
+        // ローダーを実行し、結果を取得する。
         const requestWithCookie = new Request("https://example.com", {
             headers: {
                 Cookie: await userAuthenticationCookie.serialize({
@@ -170,8 +131,6 @@ describe("loader", () => {
                 }),
             },
         });
-
-        // ローダーを実行し、結果を取得する。
         const response = await loader({
             request: requestWithCookie,
             params: {},

@@ -1,6 +1,7 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
 import PostgresUserRepository from "../../../../app/repositories/user/postgres-user-repository";
+import { postgresClientProvider } from "../../../../app/dependency-injector/get-load-context";
 
 /**
  * Postgresのユーザーリポジトリ。
@@ -10,7 +11,7 @@ let postgresUserRepository: PostgresUserRepository;
 /**
  * プロフィールID。
  */
-const profileId = "test_unicorn";
+const profileId = "username_world";
 
 /**
  * 認証プロバイダーID。
@@ -23,8 +24,7 @@ const authenticationProviderId = "test_authentication_provider_id";
 const userName = "UserName@World";
 
 beforeEach(async () => {
-    // Postgresのユーザーリポジトリを生成する。
-    postgresUserRepository = new PostgresUserRepository();
+    postgresUserRepository = new PostgresUserRepository(postgresClientProvider);
 
     // テスト用のユーザー情報が存在する場合、削除する。
     try {
@@ -123,5 +123,33 @@ describe("findByAuthenticationProviderId", () => {
 
         // 結果を検証する。
         expect(response).toBeNull();
+    });
+});
+
+describe("delete", () => {
+    // 環境変数が設定されていない場合、テストをスキップする。
+    if (!process.env.RUN_INFRA_TESTS) {
+        test.skip("Skipping infrastructure tests.", () => {});
+        return;
+    }
+
+    test("delete should delete a user", async () => {
+        // テスト用のユーザー情報を作成する。
+        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName));
+
+        // テスト用のユーザー情報を取得する。
+        const responseFindByProfileId = await delayAsync(() => postgresUserRepository.findByProfileId(profileId));
+
+        // テスト用のユーザー情報が存在しない場合、エラーを投げる。
+        if (responseFindByProfileId == null) throw new Error("The user does not exist.");
+
+        // テスト用のユーザー情報を削除する。
+        const id = responseFindByProfileId.id;
+        const responseDelete = await delayAsync(() => postgresUserRepository.delete(id));
+        const responseFindByProfileIdAfterDelete = await delayAsync(() => postgresUserRepository.findByProfileId(profileId));
+
+        // 結果を検証する。
+        expect(responseDelete).toBe(true);
+        expect(responseFindByProfileIdAfterDelete).toBeNull();
     });
 });

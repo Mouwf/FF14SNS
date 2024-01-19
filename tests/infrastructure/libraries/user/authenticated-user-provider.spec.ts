@@ -3,6 +3,7 @@ import delayAsync from "../../../test-utilityies/delay-async";
 import AuthenticatedUserProvider from "../../../../app/libraries/user/authenticated-user-provider";
 import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
 import PostgresUserRepository from "../../../../app/repositories/user/postgres-user-repository";
+import { postgresClientProvider } from "../../../../app/dependency-injector/get-load-context";
 
 /**
  * Firebaseのクライアント。
@@ -12,7 +13,7 @@ let firebaseClient: FirebaseClient;
 /**
  * Postgresのユーザーリポジトリ。
  */
-let posgresUserRepository: PostgresUserRepository;
+let postgresUserRepository: PostgresUserRepository;
 
 /**
  * 認証済みユーザーを提供するクラス。
@@ -32,12 +33,17 @@ const password = "testPassword123";
 /**
  * プロフィールID。
  */
-const profileId = "test_unicorn";
+const profileId = "username_world";
+
+/**
+ * ユーザー名。
+ */
+const userName = "UserName@World";
 
 beforeEach(async () => {
     firebaseClient = new FirebaseClient();
-    posgresUserRepository = new PostgresUserRepository();
-    authenticatedUserProvider = new AuthenticatedUserProvider(firebaseClient, posgresUserRepository);
+    postgresUserRepository = new PostgresUserRepository(postgresClientProvider);
+    authenticatedUserProvider = new AuthenticatedUserProvider(firebaseClient, postgresUserRepository);
 
     // テスト用のユーザーが存在する場合、削除する。
     try {
@@ -55,13 +61,13 @@ beforeEach(async () => {
     // テスト用のユーザー情報が存在する場合、削除する。
     try {
         // テスト用のユーザー情報を取得する。
-        const responseFindByProfileId = await delayAsync(() => posgresUserRepository.findByProfileId(profileId));
+        const responseFindByProfileId = await delayAsync(() => postgresUserRepository.findByProfileId(profileId));
 
         // テスト用のユーザー情報が存在しない場合、エラーを投げる。
         if (responseFindByProfileId == null) throw new Error("The user does not exist.");
 
         const id = responseFindByProfileId.id;
-        await delayAsync(() => posgresUserRepository.delete(id));
+        await delayAsync(() => postgresUserRepository.delete(id));
         console.info("テスト用のユーザー情報を削除しました。");
     } catch (error) {
         console.info("テスト用のユーザー情報は存在しませんでした。");
@@ -81,8 +87,7 @@ describe("getUser", () => {
 
         // テスト用のユーザー情報を登録する。
         const authenticationProviderId = responseSignUp.localId;
-        const userName = "test@Unicorn";
-        await delayAsync(() => posgresUserRepository.create(profileId, authenticationProviderId, userName));
+        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName));
 
         // テスト用のユーザー情報を取得する。
         const idToken = responseSignUp.idToken;
@@ -92,13 +97,10 @@ describe("getUser", () => {
         if (responseUser === null) throw new Error("The user does not exist.");
 
         // 結果を検証する。
-        const expectedUser = {
-            userName: mailAddress,
-        };
         expect(responseUser.id).toBeDefined();
         expect(responseUser.profileId).toBe(profileId);
-        expect(responseUser.authenticationProviderId).toBeDefined();
-        expect(responseUser.userName).toBe(expectedUser.userName);
+        expect(responseUser.authenticationProviderId).toBe(authenticationProviderId);
+        expect(responseUser.userName).toBe(userName);
         expect(new Date(responseUser.createdAt)).toBeInstanceOf(Date);
     });
 
@@ -112,5 +114,25 @@ describe("getUser", () => {
     
         // 結果を検証する。
         expect(responseUser).toBeNull();
+    });
+});
+
+describe("getAuthenticationProviderId", () => {
+    // 環境変数が設定されていない場合、テストをスキップする。
+    if (!process.env.RUN_INFRA_TESTS) {
+        test.skip("Skipping infrastructure tests.", () => {});
+        return;
+    }
+
+    test("getAuthenticationProviderId should return an authentication provider ID.", async () => {
+        // テスト用のユーザーを登録する。
+        const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
+
+        // ユーザー情報を取得する。
+        const idToken = responseSignUp.idToken;
+        const responseAuthenticationProviderId = await delayAsync(() => authenticatedUserProvider.getAuthenticationProviderId(idToken));
+    
+        // 結果を検証する。
+        expect(responseAuthenticationProviderId).toBe(responseSignUp.localId);
     });
 });

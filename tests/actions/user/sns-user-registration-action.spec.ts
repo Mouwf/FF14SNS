@@ -11,7 +11,7 @@ let snsUserRegistrationAction: SnsUserRegistrationAction;
 /**
  * 認証プロバイダID。
  */
-const authenticationProvidedId = "authenticationProvidedId";
+const authenticationProviderId = "authenticationProviderId";
 
 /**
  * ユーザー名。
@@ -32,7 +32,7 @@ beforeEach(() => {
 describe("register", () => {
     test("register should register a user and return true.", async () => {
         // ユーザーを登録する。
-        const response = await snsUserRegistrationAction.register(authenticationProvidedId, userName);
+        const response = await snsUserRegistrationAction.register(authenticationProviderId, userName);
 
         // 結果を検証する。
         expect(response).toBe(true);

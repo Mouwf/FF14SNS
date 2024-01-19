@@ -1,8 +1,7 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
-import PostgresUserRepository from "../../../../app/repositories/user/postgres-user-repository";
 import UserRegistrar from "../../../../app/libraries/user/user-registrar";
-import SnsUserRegistrationAction from "../../../../app/actions/user/sns-user-registration-action";
+import PostgresUserRepository from "../../../../app/repositories/user/postgres-user-repository";
 import { postgresClientProvider } from "../../../../app/dependency-injector/get-load-context";
 
 /**
@@ -11,9 +10,9 @@ import { postgresClientProvider } from "../../../../app/dependency-injector/get-
 let postgresUserRepository: PostgresUserRepository;
 
 /**
- * SNSのユーザー登録を行うアクション。
+ * ユーザーの登録を行うクラス。
  */
-let snsUserRegistrationAction: SnsUserRegistrationAction;
+let userRegistrar: UserRegistrar;
 
 /**
  * プロフィールID。
@@ -25,15 +24,9 @@ const profileId = "username_world";
  */
 const userName = "UserName@World";
 
-/**
- * ユーザーID。
- */
-const id = 1;
-
 beforeEach(async () => {
     postgresUserRepository = new PostgresUserRepository(postgresClientProvider);
-    const userAccountManager = new UserRegistrar(postgresUserRepository);
-    snsUserRegistrationAction = new SnsUserRegistrationAction(userAccountManager);
+    userRegistrar = new UserRegistrar(postgresUserRepository);
 
     // テスト用のユーザー情報が存在する場合、削除する。
     try {
@@ -60,10 +53,58 @@ describe("register", () => {
 
     test("register should register a new user", async () => {
         // テスト用のユーザー情報を作成する。
-        const response = await delayAsync(() => snsUserRegistrationAction.register(profileId, userName));
+        const response = await delayAsync(() => userRegistrar.register(profileId, userName));
 
         // 結果を検証する。
         expect(response).toBe(true);
+    });
+
+    test("register should throw an error when the authenticationProviderId is empty", async () => {
+        expect.assertions(1);
+        try {
+            // テスト用のユーザー情報を作成する。
+            await delayAsync(() => userRegistrar.register("", userName));
+        } catch (error) {
+            // エラーがResponseでない場合、エラーを投げる。
+            if (!(error instanceof Error)) {
+                throw error;
+            }
+
+            // エラーを検証する。
+            expect(error.message).toBe("認証プロバイダIDは必須です。");
+        }
+    });
+
+    test("register should throw an error when the userName is empty", async () => {
+        expect.assertions(1);
+        try {
+            // テスト用のユーザー情報を作成する。
+            await delayAsync(() => userRegistrar.register(profileId, ""));
+        } catch (error) {
+            // エラーがResponseでない場合、エラーを投げる。
+            if (!(error instanceof Error)) {
+                throw error;
+            }
+
+            // エラーを検証する。
+            expect(error.message).toBe("ユーザー名は「username@world」で入力してください。");
+        }
+    });
+
+    test("register should throw an error when the userName is invalid", async () => {
+        expect.assertions(1);
+        try {
+            // テスト用のユーザー情報を作成する。
+            await delayAsync(() => userRegistrar.register(profileId, "invalidUserName"));
+        } catch (error) {
+            // エラーがResponseでない場合、エラーを投げる。
+            if (!(error instanceof Error)) {
+                throw error;
+            }
+
+            // エラーを検証する。
+            expect(error.message).toBe("ユーザー名は「username@world」で入力してください。");
+        }
     });
 });
 
@@ -76,7 +117,7 @@ describe("delete", () => {
 
     test("delete should delete a user", async () => {
         // テスト用のユーザー情報を作成する。
-        await delayAsync(() => snsUserRegistrationAction.register(profileId, userName));
+        await delayAsync(() => userRegistrar.register(profileId, userName));
 
         // テスト用のユーザー情報を取得する。
         const responseFindByProfileId = await delayAsync(() => postgresUserRepository.findByProfileId(profileId));
@@ -86,7 +127,7 @@ describe("delete", () => {
 
         // テスト用のユーザー情報を削除する。
         const id = responseFindByProfileId.id;
-        const responseDelete = await delayAsync(() => snsUserRegistrationAction.delete(id));
+        const responseDelete = await delayAsync(() => userRegistrar.delete(id));
 
         // 結果を検証する。
         expect(responseDelete).toBe(true);

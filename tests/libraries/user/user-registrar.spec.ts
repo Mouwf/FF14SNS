@@ -10,7 +10,7 @@ let userAccountManager: UserRegistrar;
 /**
  * 認証プロバイダID。
  */
-const authenticationProvidedId = "authenticationProvidedId";
+const authenticationProviderId = "authenticationProviderId";
 
 /**
  * ユーザー名。
@@ -30,7 +30,7 @@ beforeEach(() => {
 describe("register", () => {
     test("register should register a user and return true.", async () => {
         // ユーザーを登録する。
-        const response = await userAccountManager.register(authenticationProvidedId, userName);
+        const response = await userAccountManager.register(authenticationProviderId, userName);
 
         // 結果を検証する。
         expect(response).toBe(true);
@@ -40,8 +40,8 @@ describe("register", () => {
         expect.assertions(1);
         try {
             // ユーザーを登録する。
-            const invalidAuthenticationProvidedId = "";
-            await userAccountManager.register(invalidAuthenticationProvidedId, userName)
+            const invalidAuthenticationProviderId = "";
+            await userAccountManager.register(invalidAuthenticationProviderId, userName)
         } catch (error) {
             // エラーがErrorでない場合、エラーを投げる。
             if (!(error instanceof Error)) {
@@ -58,7 +58,7 @@ describe("register", () => {
         try {
             // ユーザーを登録する。
             const invalidUserName = "invalidUserName";
-            await userAccountManager.register(authenticationProvidedId, invalidUserName)
+            await userAccountManager.register(authenticationProviderId, invalidUserName)
         } catch (error) {
             // エラーがErrorでない場合、エラーを投げる。
             if (!(error instanceof Error)) {
