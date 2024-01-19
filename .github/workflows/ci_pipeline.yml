@@ -41,4 +41,5 @@ jobs:
       - name: Run Jest tests
         env:
           FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: npm run test:all
