@@ -14,7 +14,7 @@ let firebaseClient: FirebaseClient;
 /**
  * Postgresのユーザーリポジトリ。
  */
-let posgresUserRepository: PostgresUserRepository;
+let postgresUserRepository: PostgresUserRepository;
 
 /**
  * Firebaseの認証済みユーザーを提供するクラス。
@@ -48,8 +48,8 @@ const userName = "UserName@World";
 
 beforeEach(async () => {
     firebaseClient = new FirebaseClient();
-    posgresUserRepository = new PostgresUserRepository(postgresClientProvider);
-    authenticatedUserProvider = new AuthenticatedUserProvider(firebaseClient, posgresUserRepository);
+    postgresUserRepository = new PostgresUserRepository(postgresClientProvider);
+    authenticatedUserProvider = new AuthenticatedUserProvider(firebaseClient, postgresUserRepository);
     authenticatedUserLoader = new AuthenticatedUserLoader(authenticatedUserProvider);
 
     // テスト用のユーザーが存在する場合、削除する。
@@ -68,13 +68,13 @@ beforeEach(async () => {
     // テスト用のユーザー情報が存在する場合、削除する。
     try {
         // テスト用のユーザー情報を取得する。
-        const responseFindByProfileId = await delayAsync(() => posgresUserRepository.findByProfileId(profileId));
+        const responseFindByProfileId = await delayAsync(() => postgresUserRepository.findByProfileId(profileId));
 
         // テスト用のユーザー情報が存在しない場合、エラーを投げる。
         if (responseFindByProfileId == null) throw new Error("The user does not exist.");
 
         const id = responseFindByProfileId.id;
-        await delayAsync(() => posgresUserRepository.delete(id));
+        await delayAsync(() => postgresUserRepository.delete(id));
         console.info("テスト用のユーザー情報を削除しました。");
     } catch (error) {
         console.info("テスト用のユーザー情報は存在しませんでした。");
@@ -94,7 +94,7 @@ describe("getUser", () => {
 
         // テスト用のユーザー情報を登録する。
         const authenticationProviderId = responseSignUp.localId;
-        await delayAsync(() => posgresUserRepository.create(profileId, authenticationProviderId, userName));
+        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName));
 
         // 認証済みユーザーを取得する。
         const idToken = responseSignUp.idToken;
