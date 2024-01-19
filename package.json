@@ -9,7 +9,7 @@
     "dev:server": "tsx watch --clear-screen=false --ignore 'app/**' --ignore 'build/**' --ignore 'node_modules/**' --inspect ./server.ts",
     "start": "netlify serve",
     "test": "jest",
-    "test:all": "RUN_INFRA_TESTS=true FIREBASE_API_KEY=TEST_FIREBASE_API_KEY DATABASE_URL=TEST_DATABASE_URL jest --runInBand",
+    "test:all": "RUN_INFRA_TESTS=true jest --runInBand",
     "typecheck": "tsc -b"
   },
   "dependencies": {
