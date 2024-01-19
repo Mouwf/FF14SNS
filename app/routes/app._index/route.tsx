@@ -23,7 +23,7 @@ export const loader = async ({
     const postContents: PostContent[] = await context.latestPostsLoader.getLatestPosts("0");
     if (cookie.isPosted) {
         const userPostContent: PostContent = {
-            id: "userPost",
+            id: 100,
             createdAt: new Date(),
             releaseVersion: cookie.releaseVersion,
             tag: cookie.tag,

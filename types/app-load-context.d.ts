@@ -1,13 +1,15 @@
 import LatestPostsLoader from "../app/loaders/post/latest-posts-loader";
 import UserAuthenticationAction from "../app/actions/authentication/user-authentication-action";
 import UserRegistrationAction from "../app/actions/authentication/user-registration-action";
-import FF14SnsUserLoader from "../app/loaders/user/ff14-sns-user-loader";
+import AuthenticatedUserLoader from "../app/loaders/user/authenticated-user-loader";
+import SnsUserRegistrationAction from "../app/actions/user/sns-user-registration-action";
 
 declare module '@netlify/remix-runtime' {
     export interface AppLoadContext {
         userRegistrationAction: UserRegistrationAction;
+        snsUserRegistrationAction: SnsUserRegistrationAction;
         userAuthenticationAction: UserAuthenticationAction;
-        ff14SnsUserLoader: FF14SnsUserLoader;
+        authenticatedUserLoader: AuthenticatedUserLoader;
         latestPostsLoader: LatestPostsLoader;
     }
 }

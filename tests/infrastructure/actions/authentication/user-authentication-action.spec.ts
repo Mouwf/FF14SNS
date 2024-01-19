@@ -120,17 +120,4 @@ describe("logout", () => {
         // 結果を検証する。
         expect(response).toBe(true);
     });
-
-    test("logout should throw an exception for invalid token.", async () => {
-        // TODO: ログアウトの処理を実装していないので後に実装する。
-        // expect.assertions(1);
-        // try {
-        //     // 無効なトークンでログアウトし、エラーを発生させる。
-        //     const invalidToken = "invalid-token";
-        //     await delayAsync(() => userAuthenticationAction.logout(invalidToken));
-        // } catch (error) {
-        //     // エラーを検証する。
-        //     expect(error).toBeDefined();
-        // }
-    });
 });

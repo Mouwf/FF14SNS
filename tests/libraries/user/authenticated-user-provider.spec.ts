@@ -1,5 +1,6 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import MockAuthenticationClient from "../../libraries/authentication/mock-authentication-client";
+import MockUserRepository from "../../repositories/user/mock-user-repository";
 import AuthenticatedUserProvider from "../../../app/libraries/user/authenticated-user-provider";
 
 /**
@@ -7,41 +8,56 @@ import AuthenticatedUserProvider from "../../../app/libraries/user/authenticated
  */
 let authenticatedUserProvider: AuthenticatedUserProvider;
 
+/**
+ * IDトークン。
+ */
+const idToken = "idToken";
+
 beforeEach(() => {
     const mockAuthenticationClient = new MockAuthenticationClient();
-    authenticatedUserProvider = new AuthenticatedUserProvider(mockAuthenticationClient);
+    const mockUserRepository = new MockUserRepository();
+    authenticatedUserProvider = new AuthenticatedUserProvider(mockAuthenticationClient, mockUserRepository);
 });
 
 describe("getUser", () => {
-    test("getUser should return a FF14SnsUser.", async () => {
-        // FF14SNSのユーザーを取得する。
-        const idToken = "idToken";
+    test("getUser should return an AuthenticatedUser.", async () => {
+        // 認証済みユーザーを取得する。
         const response = await authenticatedUserProvider.getUser(idToken);
+
+        // ユーザーが存在しない場合、エラーを投げる。
+        if (response === null) throw new Error("The user does not exist.");
 
         // 結果を検証する。
         const expectedUser = {
-            id: "id",
-            userName: "test@example.com",
+            id: 1,
+            profileId: "profileId",
+            authenticationProviderId: "authenticationProviderId",
+            userName: "UserName@World",
             createdAt: new Date(),
         }
         expect(response.id).toBe(expectedUser.id);
+        expect(response.profileId).toBe(expectedUser.profileId);
+        expect(response.authenticationProviderId).toBe(expectedUser.authenticationProviderId);
         expect(response.userName).toBe(expectedUser.userName);
         expect(response.createdAt).toBeInstanceOf(Date);
     });
 
-    test("getUser should throw an error for an invalid token.", async () => {
-        expect.assertions(1);
-        try {
-            // 無効なIDトークンでFF14SNSのユーザーを取得し、エラーを発生させる。
-            await authenticatedUserProvider.getUser("invalidIdToken");
-        } catch (error) {
-            // エラーがErrorでない場合、エラーを投げる。
-            if (!(error instanceof Error)) {
-                throw error;
-            }
+    test("getUser should return null if the user does not exist.", async () => {
+        // テスト用のユーザーを登録する。
+        const idTokenForNotExistUser = "idTokenForNotExistUser";
+        const response = await authenticatedUserProvider.getUser(idTokenForNotExistUser);
 
-            // エラーを検証する。
-            expect(error.message).toBe("Invalid token.");
-        }
+        // 結果を検証する。
+        expect(response).toBeNull();
+    });
+});
+
+describe("getAuthenticationProviderId", () => {
+    test("getAuthenticationProviderId should return an authentication provider ID.", async () => {
+        // 認証プロバイダIDを取得する。
+        const authenticationProviderId = await authenticatedUserProvider.getAuthenticationProviderId(idToken);
+
+        // 結果を検証する。
+        expect(authenticationProviderId).toBe("authenticationProviderId");
     });
 });

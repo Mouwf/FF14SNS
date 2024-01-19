@@ -1,11 +1,11 @@
 import { ReactNode } from "react"
-import FF14SnsUser from "../../models/user/ff14-sns-user";
+import SnsUser from "../../models/user/sns-user";
 import { SnsUserContext } from "./sns-user-context";
 
 /**
  * SNSのユーザープロバイダー。
  * @param children 子要素。
- * @param snsUser SNSのユーザー。
+ * @param snsUser SNSユーザー情報。
  * @returns SNSのユーザープロバイダー。
  */
 const SnsUserProvider = ({
@@ -13,7 +13,7 @@ const SnsUserProvider = ({
     snsUser,
 } : {
     children: ReactNode,
-    snsUser: FF14SnsUser,
+    snsUser: SnsUser,
 }) => {
     return (
         <SnsUserContext.Provider value={snsUser}>

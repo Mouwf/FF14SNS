@@ -36,7 +36,7 @@ describe("login", () => {
             email: mailAddress,
             refreshToken: "refreshToken",
             expiresIn: "3600",
-            localId: "localId",
+            localId: "authenticationProviderId",
             registered: true,
         }
         expect(response).toEqual(expectedResponse);

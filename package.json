@@ -13,6 +13,7 @@
     "typecheck": "tsc -b"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^0.7.2",
     "@netlify/edge-functions": "^2.0.0",
     "@netlify/remix-edge-adapter": "^3.0.0",
     "@netlify/remix-runtime": "^2.0.0",

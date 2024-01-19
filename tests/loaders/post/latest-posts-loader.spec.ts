@@ -19,7 +19,7 @@ describe("getLatestPosts", () => {
         // 結果を検証する。
         expect(response.length).toBe(10);
         response.forEach((postContent, i) => {
-            const incrementedId = (i + Number(id) + 1).toString();
+            const incrementedId = (i + Number(id) + 1);
             const content = `
                 これはポスト${incrementedId}のテストです。\n
                 これはポスト${incrementedId}のテストです。\n

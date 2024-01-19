@@ -7,7 +7,7 @@ import SignInWithEmailPasswordResponse from "../../models/authentication/signin-
 export default class UserAuthenticationAction {
     /**
      * ユーザー認証を行うアクションを生成する。
-     * @param userAuthenticator 
+     * @param userAuthenticator ユーザー認証を行うクラス。
      */
     constructor(
         private readonly userAuthenticator: IUserAuthenticator

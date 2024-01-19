@@ -24,7 +24,7 @@ export default class LatestPostsLoader {
             `;
 
             return ({
-                id: incrementedId.toString(),
+                id: incrementedId,
                 releaseVersion: "5.5",
                 tag: "考察",
                 createdAt: new Date(),

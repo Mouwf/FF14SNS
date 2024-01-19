@@ -33,7 +33,7 @@ describe("register", () => {
             email: "test@example.com",
             refreshToken: "refreshToken",
             expiresIn: "3600",
-            localId: "localId",
+            localId: "authenticationProviderId",
         };
         expect(response).toEqual(expectedResponse);
     });
@@ -85,7 +85,7 @@ describe("login", () => {
             email: mailAddress,
             refreshToken: "refreshToken",
             expiresIn: "3600",
-            localId: "localId",
+            localId: "authenticationProviderId",
             registered: true,
         }
         expect(response).toEqual(expectedResponse);

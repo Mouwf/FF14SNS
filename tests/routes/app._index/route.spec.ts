@@ -63,7 +63,7 @@ describe("loader", () => {
 
         // 結果を検証する。
         const expectedUserPost = {
-            id: "userPost",
+            id: 100,
             releaseVersion: "パッチ5",
             tag: "タグ2",
             content: "クッキー経由の投稿テスト！",

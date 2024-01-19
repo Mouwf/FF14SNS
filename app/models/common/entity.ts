@@ -5,10 +5,10 @@ export default interface Entity {
     /**
      * ID。
      */
-    id: string;
+    readonly id: number;
 
     /**
      * 作成日時。
      */
-    createdAt: Date;
+    readonly createdAt: Date;
 }
