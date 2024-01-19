@@ -1,13 +1,13 @@
-import pg from "pg";
+import { neon, NeonQueryFunction } from '@neondatabase/serverless';
 
 /**
  * Postgresのクライアントを生成するクラス。
  */
 export default class PostgresClientProvider {
     /**
-     * Posgresのプール。
+     * Postgresのクライアント。
      */
-    private readonly pool: pg.Pool;
+    private readonly client: NeonQueryFunction<false, false>;
 
     /**
      * Postgresのクライアントを生成する。
@@ -16,22 +16,14 @@ export default class PostgresClientProvider {
         if (!process.env.DATABASE_URL) {
             throw new Error('DATABASE_URLが設定されていません。');
         }
-
-        this.pool = new pg.Pool({
-            connectionString: process.env.DATABASE_URL,
-            ssl: true,
-        });
-
-        this.pool.on('error', (error) => {
-            console.error('Postgres pool error', error);
-        });
+        this.client = neon(process.env.DATABASE_URL);
     }
 
     /**
      * Postgresのクライアントを取得する。
      * @returns Posgresのクライアント。
      */
-    public async get(): Promise<pg.PoolClient> {
-        return await this.pool.connect();
+    public async get(): Promise<NeonQueryFunction<false, false>> {
+        return await this.client;
     }
 }

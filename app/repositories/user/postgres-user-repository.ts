@@ -14,7 +14,6 @@ export default class PostgresUserRepository implements IUserRepository {
     public async create(profileId: string, authenticationProviderId: string, userName: string): Promise<boolean> {
         const client = await this.postgresClientProvider.get();
         try {
-            await client.query("BEGIN");
             const query = `
                 INSERT INTO users (
                     profile_id,
@@ -28,14 +27,10 @@ export default class PostgresUserRepository implements IUserRepository {
                 );
             `;
             const values = [profileId, authenticationProviderId, userName];
-            await client.query(query, values);
-            await client.query("COMMIT");
+            await client(query, values);
             return true;
         } catch (error) {
-            await client.query("ROLLBACK");
             throw error;
-        } finally {
-            await client.release();
         }
     }
 
@@ -46,19 +41,14 @@ export default class PostgresUserRepository implements IUserRepository {
     public async delete(id: number): Promise<boolean> {
         const client = await this.postgresClientProvider.get();
         try {
-            await client.query("BEGIN");
             const query = `
                 DELETE FROM users WHERE id = $1;
             `;
             const values = [id];
-            await client.query(query, values);
-            await client.query("COMMIT");
+            await client(query, values);
             return true;
         } catch (error) {
-            await client.query("ROLLBACK");
             throw error;
-        } finally {
-            await client.release();
         }
     }
 
@@ -74,24 +64,22 @@ export default class PostgresUserRepository implements IUserRepository {
                 SELECT * FROM users WHERE profile_id = $1;
             `;
             const values = [profileId];
-            const response = await client.query(query, values);
+            const response = await client(query, values);
 
             // ユーザーが存在しない場合、nullを返す。
-            if (response.rows.length === 0) return null;
+            if (response.length === 0) return null;
 
             // ユーザー情報を生成する。
             const user = {
-                id: response.rows[0].id,
-                profileId: response.rows[0].profile_id,
-                authenticationProviderId: response.rows[0].authentication_provider_id,
-                userName: response.rows[0].user_name,
-                createdAt: response.rows[0].created_at,
+                id: response[0].id,
+                profileId: response[0].profile_id,
+                authenticationProviderId: response[0].authentication_provider_id,
+                userName: response[0].user_name,
+                createdAt: response[0].created_at,
             };
             return user;
         } catch (error) {
             throw error;
-        } finally {
-            await client.release();
         }
     }
 
@@ -103,24 +91,22 @@ export default class PostgresUserRepository implements IUserRepository {
                 SELECT * FROM users WHERE authentication_provider_id = $1;
             `;
             const values = [authenticationProviderId];
-            const response = await client.query(query, values);
+            const response = await client(query, values);
 
             // ユーザーが存在しない場合、nullを返す。
-            if (response.rows.length === 0) return null;
+            if (response.length === 0) return null;
 
             // ユーザー情報を生成する。
             const user = {
-                id: response.rows[0].id,
-                profileId: response.rows[0].profile_id,
-                authenticationProviderId: response.rows[0].authentication_provider_id,
-                userName: response.rows[0].user_name,
-                createdAt: response.rows[0].created_at,
+                id: response[0].id,
+                profileId: response[0].profile_id,
+                authenticationProviderId: response[0].authentication_provider_id,
+                userName: response[0].user_name,
+                createdAt: response[0].created_at,
             };
             return user;
         } catch (error) {
             throw error;
-        } finally {
-            await client.release();
         }
     }
 }

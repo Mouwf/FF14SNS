@@ -13,6 +13,7 @@
     "typecheck": "tsc -b"
   },
   "dependencies": {
+    "@neondatabase/serverless": "^0.7.2",
     "@netlify/edge-functions": "^2.0.0",
     "@netlify/remix-edge-adapter": "^3.0.0",
     "@netlify/remix-runtime": "^2.0.0",
@@ -25,7 +26,6 @@
     "express": "^4.18.2",
     "isbot": "^3.6.8",
     "morgan": "^1.10.0",
-    "pg": "^8.11.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "source-map-support": "^0.5.21"
@@ -38,7 +38,6 @@
     "@types/compression": "^1.7.2",
     "@types/express": "^4.17.17",
     "@types/morgan": "^1.9.4",
-    "@types/pg": "^8.10.9",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@types/source-map-support": "^0.5.6",
