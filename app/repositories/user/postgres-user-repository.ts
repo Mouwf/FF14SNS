@@ -1,4 +1,4 @@
-import PostgresClientCreator from "../common/postgres-client-creator";
+import PostgresClientProvider from "../common/postgres-client-provider";
 import User from "../../models/user/user";
 import IUserRepository from "./i-user-repository";
 
@@ -6,10 +6,14 @@ import IUserRepository from "./i-user-repository";
  * Postgresのユーザーリポジトリ。
  */
 export default class PostgresUserRepository implements IUserRepository {
+    constructor(
+        private readonly postgresClientProvider: PostgresClientProvider,
+    ) {
+    }
+
     public async create(profileId: string, authenticationProviderId: string, userName: string): Promise<boolean> {
-        const client = PostgresClientCreator.create();
+        const client = await this.postgresClientProvider.get();
         try {
-            await client.connect();
             await client.query("BEGIN");
             const query = `
                 INSERT INTO users (
@@ -31,7 +35,7 @@ export default class PostgresUserRepository implements IUserRepository {
             await client.query("ROLLBACK");
             throw error;
         } finally {
-            await client.end();
+            await client.release();
         }
     }
 
@@ -40,9 +44,8 @@ export default class PostgresUserRepository implements IUserRepository {
     }
 
     public async delete(id: number): Promise<boolean> {
-        const client = PostgresClientCreator.create();
+        const client = await this.postgresClientProvider.get();
         try {
-            await client.connect();
             await client.query("BEGIN");
             const query = `
                 DELETE FROM users WHERE id = $1;
@@ -55,7 +58,7 @@ export default class PostgresUserRepository implements IUserRepository {
             await client.query("ROLLBACK");
             throw error;
         } finally {
-            await client.end();
+            await client.release();
         }
     }
 
@@ -64,10 +67,9 @@ export default class PostgresUserRepository implements IUserRepository {
     }
 
     public async findByProfileId(profileId: string): Promise<User | null> {
-        const client = PostgresClientCreator.create();
+        const client = await this.postgresClientProvider.get();
         try {
             // ユーザー情報を取得する。
-            await client.connect();
             const query = `
                 SELECT * FROM users WHERE profile_id = $1;
             `;
@@ -89,15 +91,14 @@ export default class PostgresUserRepository implements IUserRepository {
         } catch (error) {
             throw error;
         } finally {
-            await client.end();
+            await client.release();
         }
     }
 
     public async findByAuthenticationProviderId(authenticationProviderId: string): Promise<User | null> {
-        const client = PostgresClientCreator.create();
+        const client = await this.postgresClientProvider.get();
         try {
             // ユーザー情報を取得する。
-            await client.connect();
             const query = `
                 SELECT * FROM users WHERE authentication_provider_id = $1;
             `;
@@ -119,7 +120,7 @@ export default class PostgresUserRepository implements IUserRepository {
         } catch (error) {
             throw error;
         } finally {
-            await client.end();
+            await client.release();
         }
     }
 }

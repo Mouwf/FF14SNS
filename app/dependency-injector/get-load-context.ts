@@ -8,6 +8,7 @@ import IUserAuthenticator from "../libraries/authentication/i-user-authenticator
 import UserRegistrationAction from "../actions/authentication/user-registration-action";
 import SnsUserRegistrationAction from "../actions/user/sns-user-registration-action";
 import UserRegistrar from "../libraries/user/user-registrar";
+import PostgresClientProvider from "../repositories/common/postgres-client-provider";
 import PostgresUserRepository from "../repositories/user/postgres-user-repository";
 import IAuthenticationUserRegistrar from "../libraries/authentication/i-authentication-user-registrar";
 import LatestPostsLoader from "../loaders/post/latest-posts-loader";
@@ -18,7 +19,8 @@ const authenticationClient = new FirebaseClient();
 const userAccountManager = new UserAccountManager(authenticationClient);
 const authenticationUserRegistrar: IAuthenticationUserRegistrar = userAccountManager;
 const userRegistrationAction = new UserRegistrationAction(authenticationUserRegistrar);
-const userRepository = new PostgresUserRepository();
+export const postgresClientProvider = new PostgresClientProvider();
+const userRepository = new PostgresUserRepository(postgresClientProvider);
 const userRegistrar = new UserRegistrar(userRepository);
 const snsUserRegistrationAction = new SnsUserRegistrationAction(userRegistrar);
 
