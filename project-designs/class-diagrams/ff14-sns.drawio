@@ -64,7 +64,7 @@
         </mxGraphModel>
     </diagram>
     <diagram id="3-kz5vick1raBAcmtaBs" name="AuthenticationModule">
-        <mxGraphModel dx="1370" dy="522" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4681" pageHeight="3300" math="0" shadow="0">
+        <mxGraphModel dx="1130" dy="522" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4681" pageHeight="3300" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -190,6 +190,9 @@
                 <mxCell id="M9VEGRyNzAQKCecDsUDK-132" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="M9VEGRyNzAQKCecDsUDK-131" vertex="1">
                     <mxGeometry y="30" width="350" height="8" as="geometry"/>
                 </mxCell>
+                <mxCell id="oQThxyx3VZY3kqbTmfve-131" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;dashed=1;endArrow=open;endFill=0;endSize=12;" edge="1" parent="1" source="M9VEGRyNzAQKCecDsUDK-139" target="dV3yvDb8gSkLtUbUvPCk-131">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
                 <mxCell id="M9VEGRyNzAQKCecDsUDK-139" value="PostgresUserRepository" style="swimlane;fontStyle=0;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;" parent="1" vertex="1">
                     <mxGeometry x="1240" y="80" width="350" height="38" as="geometry"/>
                 </mxCell>
@@ -217,11 +220,20 @@
                 <mxCell id="BQsiOzL3-zcLT21oY1g6-132" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.1;entryDx=0;entryDy=0;entryPerimeter=0;endArrow=none;endFill=0;endSize=12;" parent="1" source="piYIkX6O2MntI5kPEJgt-131" target="tOkZ-eHImCjVZPXvjKDY-134" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
+                <mxCell id="dV3yvDb8gSkLtUbUvPCk-131" value="PostgresClientProvider" style="swimlane;fontStyle=0;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="1680" y="70" width="180" height="58" as="geometry"/>
+                </mxCell>
+                <mxCell id="dV3yvDb8gSkLtUbUvPCk-132" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="dV3yvDb8gSkLtUbUvPCk-131">
+                    <mxGeometry y="30" width="180" height="8" as="geometry"/>
+                </mxCell>
+                <mxCell id="dV3yvDb8gSkLtUbUvPCk-133" value="+ get" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="dV3yvDb8gSkLtUbUvPCk-131">
+                    <mxGeometry y="38" width="180" height="20" as="geometry"/>
+                </mxCell>
             </root>
         </mxGraphModel>
     </diagram>
     <diagram name="UserModule" id="nv-yH4P3eAEJZ1VODmPg">
-        <mxGraphModel dx="1370" dy="779" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4681" pageHeight="3300" math="0" shadow="0">
+        <mxGraphModel dx="1370" dy="522" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4681" pageHeight="3300" math="0" shadow="0">
             <root>
                 <mxCell id="PNC22y-YUvZ2O8BG3Lub-0"/>
                 <mxCell id="PNC22y-YUvZ2O8BG3Lub-1" parent="PNC22y-YUvZ2O8BG3Lub-0"/>
@@ -249,7 +261,7 @@
                 <mxCell id="PNC22y-YUvZ2O8BG3Lub-24" value="+ getUser :&amp;nbsp;&lt;span style=&quot;text-align: center;&quot;&gt;AuthenticatedUser&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="PNC22y-YUvZ2O8BG3Lub-22" vertex="1">
                     <mxGeometry y="38" width="175" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="fsvCz5deO5v4VCZJ9iMR-1" value="+ getAuthenticationProviderId" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="PNC22y-YUvZ2O8BG3Lub-22">
+                <mxCell id="fsvCz5deO5v4VCZJ9iMR-1" value="+ getAuthenticationProviderId" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="PNC22y-YUvZ2O8BG3Lub-22" vertex="1">
                     <mxGeometry y="58" width="175" height="20" as="geometry"/>
                 </mxCell>
                 <mxCell id="qCu1tEPEtduTOhcFV7-0-0" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;dashed=1;endArrow=block;endFill=0;endSize=12;" parent="PNC22y-YUvZ2O8BG3Lub-1" source="PNC22y-YUvZ2O8BG3Lub-27" target="PNC22y-YUvZ2O8BG3Lub-22" edge="1">
@@ -274,7 +286,7 @@
                 <mxCell id="PNC22y-YUvZ2O8BG3Lub-29" value="+ getUser :&amp;nbsp;&lt;span style=&quot;text-align: center;&quot;&gt;AuthenticatedUser&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="PNC22y-YUvZ2O8BG3Lub-27" vertex="1">
                     <mxGeometry y="38" width="210" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="fsvCz5deO5v4VCZJ9iMR-2" value="+ getAuthenticationProviderId" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="PNC22y-YUvZ2O8BG3Lub-27">
+                <mxCell id="fsvCz5deO5v4VCZJ9iMR-2" value="+ getAuthenticationProviderId" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="PNC22y-YUvZ2O8BG3Lub-27" vertex="1">
                     <mxGeometry y="58" width="210" height="20" as="geometry"/>
                 </mxCell>
                 <mxCell id="5KONOnyu4_Xv4qoVRS9m-0" value="AuthenticatedUserLoader" style="swimlane;fontStyle=0;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;" parent="PNC22y-YUvZ2O8BG3Lub-1" vertex="1">
@@ -286,7 +298,7 @@
                 <mxCell id="5KONOnyu4_Xv4qoVRS9m-2" value="+ getUser :&amp;nbsp;&lt;span style=&quot;text-align: center;&quot;&gt;AuthenticatedUser&lt;/span&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="5KONOnyu4_Xv4qoVRS9m-0" vertex="1">
                     <mxGeometry y="38" width="190" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="fsvCz5deO5v4VCZJ9iMR-0" value="+ getAuthenticationProviderId" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="5KONOnyu4_Xv4qoVRS9m-0">
+                <mxCell id="fsvCz5deO5v4VCZJ9iMR-0" value="+ getAuthenticationProviderId" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="5KONOnyu4_Xv4qoVRS9m-0" vertex="1">
                     <mxGeometry y="58" width="190" height="20" as="geometry"/>
                 </mxCell>
                 <mxCell id="q8Un9Da1RGaQRMpkmEg1-0" style="edgeStyle=none;rounded=0;jumpSize=6;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeWidth=1;endArrow=none;endFill=0;startSize=6;endSize=12;targetPerimeterSpacing=0;" parent="PNC22y-YUvZ2O8BG3Lub-1" source="5KONOnyu4_Xv4qoVRS9m-0" target="PNC22y-YUvZ2O8BG3Lub-22" edge="1">
@@ -315,13 +327,13 @@
                 <mxCell id="hDx7-XK5xaxcWgQPoxVC-1" style="edgeStyle=none;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;endArrow=open;endFill=0;endSize=12;" parent="PNC22y-YUvZ2O8BG3Lub-1" source="PNC22y-YUvZ2O8BG3Lub-24" target="PNC22y-YUvZ2O8BG3Lub-6" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
-                <mxCell id="CgHtUZADvTQVacolw53A-0" value="PostgresClientCreator" style="swimlane;fontStyle=0;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;" parent="PNC22y-YUvZ2O8BG3Lub-1" vertex="1">
+                <mxCell id="CgHtUZADvTQVacolw53A-0" value="PostgresClientProvider" style="swimlane;fontStyle=0;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;" parent="PNC22y-YUvZ2O8BG3Lub-1" vertex="1">
                     <mxGeometry x="1760" y="330" width="180" height="58" as="geometry"/>
                 </mxCell>
                 <mxCell id="CgHtUZADvTQVacolw53A-1" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="CgHtUZADvTQVacolw53A-0" vertex="1">
                     <mxGeometry y="30" width="180" height="8" as="geometry"/>
                 </mxCell>
-                <mxCell id="CgHtUZADvTQVacolw53A-2" value="+ create" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="CgHtUZADvTQVacolw53A-0" vertex="1">
+                <mxCell id="CgHtUZADvTQVacolw53A-2" value="+ get" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="CgHtUZADvTQVacolw53A-0" vertex="1">
                     <mxGeometry y="38" width="180" height="20" as="geometry"/>
                 </mxCell>
                 <mxCell id="8SH-aP08yQrZ4ex-GWql-0" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;endArrow=open;endFill=0;endSize=12;dashed=1;" parent="PNC22y-YUvZ2O8BG3Lub-1" source="CgHtUZADvTQVacolw53A-3" target="NK9lsmeSJY5UJ_eAUXaL-0" edge="1">
@@ -492,13 +504,13 @@
                 <mxCell id="9g0HJ8j3KMnNtdc1Vj9v-5" value="+ delete : boolean" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="9g0HJ8j3KMnNtdc1Vj9v-2" vertex="1">
                     <mxGeometry y="58" width="170" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="9g0HJ8j3KMnNtdc1Vj9v-6" value="PostgresClientCreator" style="swimlane;fontStyle=0;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;" parent="PNC22y-YUvZ2O8BG3Lub-1" vertex="1">
+                <mxCell id="9g0HJ8j3KMnNtdc1Vj9v-6" value="PostgresClientProvider" style="swimlane;fontStyle=0;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;" parent="PNC22y-YUvZ2O8BG3Lub-1" vertex="1">
                     <mxGeometry x="1760" y="650" width="180" height="58" as="geometry"/>
                 </mxCell>
                 <mxCell id="9g0HJ8j3KMnNtdc1Vj9v-7" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="9g0HJ8j3KMnNtdc1Vj9v-6" vertex="1">
                     <mxGeometry y="30" width="180" height="8" as="geometry"/>
                 </mxCell>
-                <mxCell id="9g0HJ8j3KMnNtdc1Vj9v-8" value="+ create" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="9g0HJ8j3KMnNtdc1Vj9v-6" vertex="1">
+                <mxCell id="9g0HJ8j3KMnNtdc1Vj9v-8" value="+ get" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="9g0HJ8j3KMnNtdc1Vj9v-6" vertex="1">
                     <mxGeometry y="38" width="180" height="20" as="geometry"/>
                 </mxCell>
                 <mxCell id="9g0HJ8j3KMnNtdc1Vj9v-9" value="IUserRepository" style="swimlane;fontStyle=0;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;" parent="PNC22y-YUvZ2O8BG3Lub-1" vertex="1">
@@ -559,7 +571,7 @@
         </mxGraphModel>
     </diagram>
     <diagram id="P8e3dbhKrLwSjuZW47kj" name="FirebaseModule">
-        <mxGraphModel dx="1582" dy="779" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4681" pageHeight="3300" math="0" shadow="0">
+        <mxGraphModel dx="1370" dy="522" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4681" pageHeight="3300" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -581,7 +593,7 @@
                 <mxCell id="0n9HFmvgS8qAQ2_e6wYX-3" value="+ getUserInformation : GetUserInformationResponse" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="VD5NZYlz28YNt6wSvWNU-1" vertex="1">
                     <mxGeometry y="98" width="370" height="20" as="geometry"/>
                 </mxCell>
-                <mxCell id="2RM0MB1RM7LpLNBzBMDw-1" value="+ deleteUser" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="VD5NZYlz28YNt6wSvWNU-1">
+                <mxCell id="2RM0MB1RM7LpLNBzBMDw-1" value="+ deleteUser" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="VD5NZYlz28YNt6wSvWNU-1" vertex="1">
                     <mxGeometry y="118" width="370" height="20" as="geometry"/>
                 </mxCell>
                 <mxCell id="7iRVprtNaPUB2IKAm9gp-1" value="HttpClient" style="swimlane;fontStyle=0;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;" parent="1" vertex="1">
@@ -614,18 +626,18 @@
             </root>
         </mxGraphModel>
     </diagram>
-    <diagram id="8n7TeW0tOY6Klq6mFJBu" name="PosgreSQLModule">
-        <mxGraphModel dx="1582" dy="779" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4681" pageHeight="3300" math="0" shadow="0">
+    <diagram id="8n7TeW0tOY6Klq6mFJBu" name="PostgreSQLModule">
+        <mxGraphModel dx="1370" dy="522" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="4681" pageHeight="3300" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="BPi4YgFuCA9cGRB9Jn81-1" value="PostgresClientCreator" style="swimlane;fontStyle=0;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;" parent="1" vertex="1">
+                <mxCell id="BPi4YgFuCA9cGRB9Jn81-1" value="PostgresClientProvider" style="swimlane;fontStyle=0;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=0;marginBottom=0;html=1;" parent="1" vertex="1">
                     <mxGeometry x="80" y="80" width="180" height="58" as="geometry"/>
                 </mxCell>
                 <mxCell id="BPi4YgFuCA9cGRB9Jn81-2" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="BPi4YgFuCA9cGRB9Jn81-1" vertex="1">
                     <mxGeometry y="30" width="180" height="8" as="geometry"/>
                 </mxCell>
-                <mxCell id="0w8WluLrweintLvQE64F-1" value="+ create" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="BPi4YgFuCA9cGRB9Jn81-1" vertex="1">
+                <mxCell id="0w8WluLrweintLvQE64F-1" value="+ get" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="BPi4YgFuCA9cGRB9Jn81-1" vertex="1">
                     <mxGeometry y="38" width="180" height="20" as="geometry"/>
                 </mxCell>
             </root>

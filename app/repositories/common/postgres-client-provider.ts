@@ -21,7 +21,7 @@ export default class PostgresClientProvider {
 
     /**
      * Postgresのクライアントを取得する。
-     * @returns Posgresのクライアント。
+     * @returns Postgresのクライアント。
      */
     public async get(): Promise<NeonQueryFunction<false, false>> {
         return await this.client;

@@ -15,7 +15,7 @@ let firebaseClient: FirebaseClient;
 /**
  * Postgresのユーザーリポジトリ。
  */
-let posgresUserRepository: PostgresUserRepository;
+let postgresUserRepository: PostgresUserRepository;
 
 /**
  * テスト用のメールアドレス。
@@ -44,7 +44,7 @@ let context: AppLoadContext;
 
 beforeEach(async () => {
     firebaseClient = new FirebaseClient();
-    posgresUserRepository = new PostgresUserRepository(postgresClientProvider);
+    postgresUserRepository = new PostgresUserRepository(postgresClientProvider);
 
     // テスト用のユーザーが存在する場合、削除する。
     try {
@@ -62,13 +62,13 @@ beforeEach(async () => {
     // テスト用のユーザー情報が存在する場合、削除する。
     try {
         // テスト用のユーザー情報を取得する。
-        const responseFindByProfileId = await delayAsync(() => posgresUserRepository.findByProfileId(profileId));
+        const responseFindByProfileId = await delayAsync(() => postgresUserRepository.findByProfileId(profileId));
 
         // テスト用のユーザー情報が存在しない場合、エラーを投げる。
         if (responseFindByProfileId == null) throw new Error("The user does not exist.");
 
         const id = responseFindByProfileId.id;
-        await delayAsync(() => posgresUserRepository.delete(id));
+        await delayAsync(() => postgresUserRepository.delete(id));
         console.info("テスト用のユーザー情報を削除しました。");
     } catch (error) {
         console.info("テスト用のユーザー情報は存在しませんでした。");
