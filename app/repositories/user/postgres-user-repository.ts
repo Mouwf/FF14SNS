@@ -68,18 +68,18 @@ export default class PostgresUserRepository implements IUserRepository {
                 SELECT * FROM users WHERE profile_id = $1;
             `;
             const values = [profileId];
-            const response = await client(query, values);
+            const result = await client(query, values);
 
             // ユーザーが存在しない場合、nullを返す。
-            if (response.length === 0) return null;
+            if (result.length === 0) return null;
 
             // ユーザー情報を生成する。
             const user = {
-                id: response[0].id,
-                profileId: response[0].profile_id,
-                authenticationProviderId: response[0].authentication_provider_id,
-                userName: response[0].user_name,
-                createdAt: response[0].created_at,
+                id: result[0].id,
+                profileId: result[0].profile_id,
+                authenticationProviderId: result[0].authentication_provider_id,
+                userName: result[0].user_name,
+                createdAt: result[0].created_at,
             };
             return user;
         } catch (error) {
@@ -95,18 +95,18 @@ export default class PostgresUserRepository implements IUserRepository {
                 SELECT * FROM users WHERE authentication_provider_id = $1;
             `;
             const values = [authenticationProviderId];
-            const response = await client(query, values);
+            const result = await client(query, values);
 
             // ユーザーが存在しない場合、nullを返す。
-            if (response.length === 0) return null;
+            if (result.length === 0) return null;
 
             // ユーザー情報を生成する。
             const user = {
-                id: response[0].id,
-                profileId: response[0].profile_id,
-                authenticationProviderId: response[0].authentication_provider_id,
-                userName: response[0].user_name,
-                createdAt: response[0].created_at,
+                id: result[0].id,
+                profileId: result[0].profile_id,
+                authenticationProviderId: result[0].authentication_provider_id,
+                userName: result[0].user_name,
+                createdAt: result[0].created_at,
             };
             return user;
         } catch (error) {
