@@ -6,6 +6,10 @@ import IUserRepository from "./i-user-repository";
  * Postgresのユーザーリポジトリ。
  */
 export default class PostgresUserRepository implements IUserRepository {
+    /**
+     * Postgresのユーザーリポジトリを生成する。
+     * @param postgresClientProvider Postgresクライアントプロバイダー。
+     */
     constructor(
         private readonly postgresClientProvider: PostgresClientProvider,
     ) {
