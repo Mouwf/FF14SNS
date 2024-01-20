@@ -15,7 +15,7 @@ export default class PostgresReleaseInformationRepository implements IReleaseInf
     ) {
     }
 
-    public async get(releaseId: string): Promise<ReleaseInformation> {
+    public async get(releaseId: number): Promise<ReleaseInformation> {
         const client = await this.postgresClientProvider.get();
         try {
             // リリース情報を取得する。

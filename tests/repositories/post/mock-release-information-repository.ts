@@ -2,11 +2,49 @@ import ReleaseInformation from "../../../app/models/post/release-information";
 import IReleaseInformationRepository from "../../../app/repositories/post/i-release-information-repository";
 
 export default class MockReleaseInformationRepository implements IReleaseInformationRepository {
-    get(releaseId: string): Promise<ReleaseInformation> {
-        throw new Error("Method not implemented.");
+    public async get(releaseId: number): Promise<ReleaseInformation> {
+        const releaseInformation = {
+            id: 1,
+            releaseVersion: "2.5",
+            releaseName: "リリース2.5",
+            createdAt: new Date(),
+        }
+        return releaseInformation;
     }
 
-    getAll(): Promise<ReleaseInformation[]> {
-        throw new Error("Method not implemented.");
+    public async getAll(): Promise<ReleaseInformation[]> {
+        const allReleaseInformation = [
+            {
+                id: 1,
+                releaseVersion: "2.5",
+                releaseName: "リリース2.5",
+                createdAt: new Date(),
+            },
+            {
+                id: 2,
+                releaseVersion: "2.4",
+                releaseName: "リリース2.4",
+                createdAt: new Date(),
+            },
+            {
+                id: 3,
+                releaseVersion: "2.3",
+                releaseName: "リリース2.3",
+                createdAt: new Date(),
+            },
+            {
+                id: 4,
+                releaseVersion: "2.2",
+                releaseName: "リリース2.2",
+                createdAt: new Date(),
+            },
+            {
+                id: 5,
+                releaseVersion: "2.1",
+                releaseName: "リリース2.1",
+                createdAt: new Date(),
+            },
+        ];
+        return allReleaseInformation;
     }
 }

@@ -8,7 +8,7 @@ export default interface IReleaseInformationRepository {
      * リリース情報を取得する。
      * @param releaseId リリースID。
      */
-    get(releaseId: string): Promise<ReleaseInformation>;
+    get(releaseId: number): Promise<ReleaseInformation>;
 
     /**
      * リリース情報を全件取得する。

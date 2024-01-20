@@ -14,7 +14,7 @@ export default class ReleaseInformationGetter implements IReleaseInformationGett
     ) {
     }
 
-    public async getReleaseInformation(releaseId: string): Promise<ReleaseInformation> {
+    public async getReleaseInformation(releaseId: number): Promise<ReleaseInformation> {
         const response = await this.releaseInformationRepository.get(releaseId);
         return response;
     }

@@ -19,7 +19,7 @@ export default class ReleaseInformationLoader {
      * @param releaseId リリースID。
      * @returns リリース情報。
      */
-    public async getReleaseInformation(releaseId: string): Promise<ReleaseInformation> {
+    public async getReleaseInformation(releaseId: number): Promise<ReleaseInformation> {
         const releaseInformation = await this.releaseInformationGetter.getReleaseInformation(releaseId);
         return releaseInformation;
     }
