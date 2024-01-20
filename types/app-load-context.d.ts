@@ -3,6 +3,7 @@ import UserAuthenticationAction from "../app/actions/authentication/user-authent
 import UserRegistrationAction from "../app/actions/authentication/user-registration-action";
 import AuthenticatedUserLoader from "../app/loaders/user/authenticated-user-loader";
 import SnsUserRegistrationAction from "../app/actions/user/sns-user-registration-action";
+import ReleaseInformationLoader from "../app/loaders/post/release-information-loader";
 
 declare module '@netlify/remix-runtime' {
     export interface AppLoadContext {
@@ -11,5 +12,6 @@ declare module '@netlify/remix-runtime' {
         userAuthenticationAction: UserAuthenticationAction;
         authenticatedUserLoader: AuthenticatedUserLoader;
         latestPostsLoader: LatestPostsLoader;
+        releaseInformationLoader: ReleaseInformationLoader;
     }
 }

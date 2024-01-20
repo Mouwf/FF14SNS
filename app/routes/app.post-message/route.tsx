@@ -1,5 +1,5 @@
-import { ActionFunctionArgs, MetaFunction, redirect } from "@netlify/remix-runtime";
-import { Form } from "@remix-run/react";
+import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@netlify/remix-runtime";
+import { Form, useLoaderData } from "@remix-run/react";
 import { newlyPostedPostCookie } from "../../cookies.server";
 
 /**
@@ -14,6 +14,20 @@ export const meta: MetaFunction = () => {
 }
 
 /**
+ * リリース情報を取得するローダー。
+ * @param request リクエスト。
+ * @param context コンテキスト。
+ */
+export const loader = async ({
+    request,
+    context,
+}: LoaderFunctionArgs) => {
+    const releaseInformationLoader = context.releaseInformationLoader;
+    const allReleaseInformation = await releaseInformationLoader.getAllReleaseInformation();
+    return json(allReleaseInformation);
+}
+
+/**
  * メッセージを投稿するアクション。
  * @param request リクエスト。
  * @param context コンテキスト。
@@ -25,14 +39,12 @@ export const action = async ({
 }: ActionFunctionArgs) => {
     // フォームデータを取得する。
     const formData = await request.formData();
-    const releaseVersion = formData.get("releaseVersion");
-    const tag = formData.get("tag");
+    const releaseInformation = formData.get("releaseInformationId");
     const content = formData.get("content");
 
     // 投稿を保存する。
     const cookie = {
-        releaseVersion: releaseVersion,
-        tag: tag,
+        releaseVersion: releaseInformation,
         content: content,
         isPosted: true,
     };
@@ -48,31 +60,11 @@ export const action = async ({
  * @returns メッセージ投稿ページ。
  */
 export default function PostMessage() {
-    const releaseVersions = [
-        "パッチ5",
-        "パッチ4",
-        "パッチ3",
-        "パッチ2",
-        "パッチ1",
-    ];
+    const allReleaseInformation = useLoaderData<typeof loader>();
     const getReleaseVersionOptions = () => {
-        return <select name="releaseVersion">
-            {releaseVersions.map((releaseVersion, index) => {
-                return <option key={index} value={releaseVersion}>{releaseVersion}</option>;
-            })}
-        </select>;
-    }
-
-    const tags = [
-        "タグ1",
-        "タグ2",
-        "タグ3",
-        "タグ4",
-    ];
-    const getTagOptions = () => {
-        return <select name="tag">
-            {tags.map((tag, index) => {
-                return <option key={index} value={tag}>{tag}</option>;
+        return <select name="releaseInformationId">
+            {allReleaseInformation.map((releaseInformation) => {
+                return <option key={releaseInformation.id} value={releaseInformation.id}>{`${releaseInformation.releaseVersion} ${releaseInformation.releaseName}`}</option>;
             })}
         </select>;
     }
@@ -81,7 +73,6 @@ export default function PostMessage() {
         <Form method="post">
             <div>
                 {getReleaseVersionOptions()}
-                {getTagOptions()}
             </div>
             <div>
                 <textarea name="content" placeholder="メッセージを入力してください" />
