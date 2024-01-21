@@ -11,7 +11,7 @@ export default function PostEntry() {
 
     return (
         <Link to="app/post">
-            <div className={styles["test12"]}>
+            <div className={styles["post-entry-erea"]}>
                 <p>{snsUser.name}</p>
                 <p>投稿</p>
             </div>
