@@ -1,6 +1,13 @@
+html {
+    box-sizing: border-box;
+}
+
+
 body {
     padding: 0;
     margin: 0;
+    background: #131313;
+    color: #e3e3e3;
 }
 
 p {
@@ -11,4 +18,16 @@ p {
 h1 {
     padding: 0;
     margin: 0;
+}
+
+.content-bg-style {
+    border: 1px solid #4B4B4B;
+    background: #1e1e1e;
+}
+
+
+@media (max-width: 599px) {
+    body {
+        font-size: 15px;
+    }
 }
