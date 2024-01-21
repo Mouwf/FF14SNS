@@ -1,31 +1,46 @@
-.test {
+.post {
     display: flex;
     border: solid 1px #999;
     padding: 12px;
 }
 
-.test3 {
-    width: 57px;
-    background-color: blueviolet;
+.post-user-img-area {
+    min-width: 57px;
+    border: solid 1px #6876f3;
 }
 
-.test4 {
+.post-contents-area {
     width: 100%;
+    margin-left: 10px;
 }
 
-.test5 {
+.post-release-version {
+    margin-left: 16px;
+}
+
+.post-date {
+    color: #737373;
+}
+
+.post-main-contents-area {
+    margin-top: 4px;
+}
+
+.post-emotions {
     display: flex;
 }
 
-.test6 {
+.post-reactions-area {
     display: flex;
+    margin-top: 12px;
 }
 
-.test7 {
+.post-user-name {
     display: inline;
+    font-weight: 700;
 }
 
-.test8 {
+.post-basic-information {
     display: flex;
     justify-content: space-between;
 }

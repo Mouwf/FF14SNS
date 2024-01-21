@@ -28,13 +28,13 @@ export default function PostDisplay({
         });
 
         return (
-            <time>{formattedDate}</time>
+            <time className={styles["post-date"]}>{formattedDate}</time>
         );
     }
 
     const getReaction = () => {
         return (
-            <div className={styles["test5"]}>
+            <div className={styles["post-emotions"]}>
                 {reactionTypes.map((reactionType, index) => {
                     const reactionName = reactionNames[index];
 
@@ -52,23 +52,23 @@ export default function PostDisplay({
     const snsUser = useSnsUser();
 
     return (
-        <div className={styles["test"]}>
-            <div className={styles["test3"]}></div>
-            <div className={styles["test4"]}>
-                <div className={styles["test8"]}>
+        <div className={styles["post"]}>
+            <div className={styles["post-user-img-area"]}></div>
+            <div className={styles["post-contents-area"]}>
+                <div className={styles["post-basic-information"]}>
                     <div>
-                        <p className={styles["test7"]}>{snsUser.name}</p>
-                        <time>{postContent.releaseVersion}</time>
+                        <p className={styles["post-user-name"]}>{snsUser.name}</p>
+                        <span className={styles["post-release-version"]}>{postContent.releaseVersion}</span>
                         <span>{postContent.tag}</span>
                     </div>
                     <div>
                         {getPostTime()}
                     </div>
                 </div>
-                <div>
+                <div className={styles["post-main-contents-area"]}>
                     <p>{postContent.content}</p>
                 </div>
-                <div className={styles["test6"]}>
+                <div className={styles["post-reactions-area"]}>
                     <div>
                         <Link to="app/reply">リプライ</Link>
                         <button>リポスト</button>

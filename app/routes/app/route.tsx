@@ -103,7 +103,7 @@ export default function Top() {
     return (
         <main>
             <SnsUserProvider snsUser={ff14SnsUser}>
-                <div className={styles["test10"]}>
+                <div className={styles["top-layout"]}>
                     <Header />
                     <Outlet />
                 </div>
