@@ -13,7 +13,7 @@ export default function LatestPostTimeLine({
     postContents: PostContent[];
 }) { 
     return (
-        <div className={styles["test2"]}>
+        <div className={styles["post-time-line"]}>
             {postContents.map((postContent) => {
                 return (
                     <PostDisplay key={postContent.id} postContent={postContent} />
