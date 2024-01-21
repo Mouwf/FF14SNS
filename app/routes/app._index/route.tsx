@@ -18,21 +18,24 @@ export const loader = async ({
     request,
     context,
 }: LoaderFunctionArgs) => {
+    // 新規投稿した投稿のIDを保持するCookieを取得する。
     const cookieHeader = request.headers.get("Cookie");
     const cookie = (await newlyPostedPostCookie.parse(cookieHeader)) || {};
-    const latestPostsLoader = context.latestPostsLoader;
-    const postContents: PostContent[] = await latestPostsLoader.getLatestPosts("0");
-    if (cookie.isPosted) {
-        const userPostContent: PostContent = {
-            id: 100,
-            createdAt: new Date(),
-            releaseVersion: cookie.releaseVersion,
-            tag: cookie.tag,
-            content: cookie.content,
-        };
-        postContents.unshift(userPostContent);
-        return json(postContents);
+
+    // ユーザーが投稿した直後の場合、ユーザーの投稿が最初に含まれる投稿を返す。
+    if (cookie.postId) {
+        const latestPostsLoader = context.latestPostsLoader;
+        const postContents: PostContent[] = await latestPostsLoader.getLatestPosts();
+        return json(postContents, {
+            headers: {
+                "Set-Cookie": await newlyPostedPostCookie.serialize({}),
+            },
+        });
     }
+
+    // 最新の投稿を取得する。
+    const latestPostsLoader = context.latestPostsLoader;
+    const postContents: PostContent[] = await latestPostsLoader.getLatestPosts();
     return json(postContents);
 }
 

@@ -1,4 +1,6 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
+import MockPostContentRepository from "../../repositories/post/mock-post-content-repository";
+import PostsFetcher from "../../../app/libraries/post/posts-fetcher";
 import LatestPostsLoader from "../../../app/loaders/post/latest-posts-loader";
 
 /**
@@ -7,14 +9,16 @@ import LatestPostsLoader from "../../../app/loaders/post/latest-posts-loader";
 let latestPostsLoader: LatestPostsLoader;
 
 beforeEach(() => {
-    latestPostsLoader = new LatestPostsLoader();
+    const postContentRepository = new MockPostContentRepository();
+    const postsFetcher = new PostsFetcher(postContentRepository);
+    latestPostsLoader = new LatestPostsLoader(postsFetcher);
 });
 
 describe("getLatestPosts", () => {
     test("getLatestPosts should return 10 PostContent objects with correct values.", async () => {
         // 最新の投稿を取得する。
         const id = "0";
-        const response = await latestPostsLoader.getLatestPosts(id);
+        const response = await latestPostsLoader.getLatestPosts();
 
         // 結果を検証する。
         expect(response.length).toBe(10);
@@ -30,7 +34,6 @@ describe("getLatestPosts", () => {
             expect(postContent).toEqual({
                 id: incrementedId,
                 releaseVersion: "5.5",
-                tag: "考察",
                 createdAt: expect.any(Date),
                 content: content,
             });

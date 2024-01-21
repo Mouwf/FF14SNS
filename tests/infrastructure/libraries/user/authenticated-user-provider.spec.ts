@@ -74,14 +74,14 @@ beforeEach(async () => {
     }
 });
 
-describe("getUser", () => {
+describe("getUserByToken", () => {
     // 環境変数が設定されていない場合、テストをスキップする。
     if (!process.env.RUN_INFRA_TESTS) {
         test.skip("Skipping infrastructure tests.", () => {});
         return;
     }
 
-    test("getUser should return an AuthenticatedUser.", async () => {
+    test("getUserByToken should return an AuthenticatedUser.", async () => {
         // テスト用のユーザーを登録する。
         const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
 
@@ -91,7 +91,7 @@ describe("getUser", () => {
 
         // テスト用のユーザー情報を取得する。
         const idToken = responseSignUp.idToken;
-        const responseUser = await delayAsync(() => authenticatedUserProvider.getUser(idToken));
+        const responseUser = await delayAsync(() => authenticatedUserProvider.getUserByToken(idToken));
 
         // ユーザーが存在しない場合、エラーを投げる。
         if (responseUser === null) throw new Error("The user does not exist.");
@@ -104,13 +104,13 @@ describe("getUser", () => {
         expect(new Date(responseUser.createdAt)).toBeInstanceOf(Date);
     });
 
-    test("getUser should return null if the user does not exist.", async () => {
+    test("getUserByToken should return null if the user does not exist.", async () => {
         // テスト用のユーザーを登録する。
         const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
 
         // ユーザー情報を取得する。
         const idToken = responseSignUp.idToken;
-        const responseUser = await delayAsync(() => authenticatedUserProvider.getUser(idToken));
+        const responseUser = await delayAsync(() => authenticatedUserProvider.getUserByToken(idToken));
     
         // 結果を検証する。
         expect(responseUser).toBeNull();

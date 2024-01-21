@@ -23,21 +23,23 @@ export default class PostgresReleaseInformationRepository implements IReleaseInf
                 SELECT * FROM release_information WHERE id = $1;
             `;
             const values = [releaseId];
-            const result = await client(query, values);
+            const result = await client.query(query, values);
 
             // リリース情報が存在しない場合、エラーを投げる。
-            if (result.length === 0) throw new Error(`リリース情報が存在しません。releaseId=${releaseId}`);
+            if (result.rows.length === 0) throw new Error(`リリース情報が存在しません。releaseId=${releaseId}`);
 
             // リリース情報を生成する。
             const releaseInformation = {
-                id: result[0].id,
-                releaseVersion: result[0].release_version,
-                releaseName: result[0].release_name,
-                createdAt: result[0].created_at,
+                id: result.rows[0].id,
+                releaseVersion: result.rows[0].release_version,
+                releaseName: result.rows[0].release_name,
+                createdAt: result.rows[0].created_at,
             };
             return releaseInformation;
         } catch (error) {
             throw error;
+        } finally {
+            client.release();
         }
     }
 
@@ -48,13 +50,13 @@ export default class PostgresReleaseInformationRepository implements IReleaseInf
             const query = `
                 SELECT * FROM release_information;
             `;
-            const result = await client(query);
+            const result = await client.query(query);
 
             // リリース情報が存在しない場合、エラーを投げる。
-            if (result.length === 0) throw new Error(`リリース情報が存在しません。`);
+            if (result.rows.length === 0) throw new Error(`リリース情報が存在しません。`);
 
             // リリース情報を生成する。
-            const allReleaseInformation = result.map((releaseInformation) => {
+            const allReleaseInformation = result.rows.map((releaseInformation) => {
                 return {
                     id: releaseInformation.id,
                     releaseVersion: releaseInformation.release_version,
@@ -65,6 +67,8 @@ export default class PostgresReleaseInformationRepository implements IReleaseInf
             return allReleaseInformation;
         } catch (error) {
             throw error;
+        } finally {
+            client.release();
         }
     }
 }

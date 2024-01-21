@@ -1,6 +1,7 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@netlify/remix-runtime";
 import { Form, useLoaderData } from "@remix-run/react";
-import { newlyPostedPostCookie } from "../../cookies.server";
+import { userAuthenticationCookie, newlyPostedPostCookie } from "../../cookies.server";
+import useSnsUser from "../../contexts/user/use-sns-user";
 
 /**
  * メッセージ投稿ページのメタ情報を設定する。
@@ -37,22 +38,44 @@ export const action = async ({
     request,
     context,
 }: ActionFunctionArgs) => {
-    // フォームデータを取得する。
-    const formData = await request.formData();
-    const releaseInformation = formData.get("releaseInformationId");
-    const content = formData.get("content");
+    try {
+        // ユーザー認証用のCookieを取得する。
+        const cookieHeader = request.headers.get("Cookie");
+        const cookieUserAuthentication = (await userAuthenticationCookie.parse(cookieHeader));
 
-    // 投稿を保存する。
-    const cookie = {
-        releaseVersion: releaseInformation,
-        content: content,
-        isPosted: true,
-    };
-    return redirect("/app", {
-        headers: {
-            "Set-Cookie": await newlyPostedPostCookie.serialize(cookie),
-        },
-    });
+        // 認証済みユーザーを取得する。
+        const formData = await request.formData();
+        const profileId = formData.get("userId") as string;
+        const authenticatedUserLoader = context.authenticatedUserLoader;
+        const authenticatedUser = await authenticatedUserLoader.getUserByProfileId(profileId);
+
+        // 認証済みユーザーが存在しない場合、エラーを返す。
+        if (!authenticatedUser) return json({ error: "ユーザーが存在しません。" });
+
+        // ユーザーIDを取得する。
+        const userId = authenticatedUser.id;
+
+        // フォームデータを取得する。
+        const releaseInformationId = Number(formData.get("releaseInformationId"));
+        const content = formData.get("content") as string;
+
+        // メッセージを投稿する。
+        const postMessageAction = context.postMessageAction;
+        const postId = await postMessageAction.post(userId, releaseInformationId, content);
+
+        // 投稿を保存する。
+        const cookieNewlyPostedPost = {
+            postId: postId,
+        };
+        return redirect("/app", {
+            headers: {
+                "Set-Cookie": await newlyPostedPostCookie.serialize(cookieNewlyPostedPost),
+            },
+        });
+    } catch (error) {
+        console.error(error);
+        return json({ error: "メッセージの投稿に失敗しました。" });
+    }
 }
 
 /**
@@ -60,6 +83,8 @@ export const action = async ({
  * @returns メッセージ投稿ページ。
  */
 export default function PostMessage() {
+    const snsUser = useSnsUser();
+
     const allReleaseInformation = useLoaderData<typeof loader>();
     const getReleaseVersionOptions = () => {
         return <select name="releaseInformationId">
@@ -71,6 +96,7 @@ export default function PostMessage() {
 
     return (
         <Form method="post">
+            <input type="hidden" name="userId" value={snsUser.userId} />
             <div>
                 {getReleaseVersionOptions()}
             </div>

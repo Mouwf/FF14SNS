@@ -40,7 +40,7 @@ export const loader = async ({
 
         // 認証済みユーザーを取得する。
         const authenticatedUserLoader = context.authenticatedUserLoader;
-        const authenticatedUser = await authenticatedUserLoader.getUser(cookie.idToken);
+        const authenticatedUser = await authenticatedUserLoader.getUserByToken(cookie.idToken);
 
         // 認証済みユーザーが存在しない場合、ユーザー登録ページにリダイレクトする。
         if (!authenticatedUser) {
@@ -49,6 +49,7 @@ export const loader = async ({
 
         // SNSのユーザーを返す。
         const snsUser: SnsUser = {
+            userId: authenticatedUser.profileId,
             userName: authenticatedUser.userName,
         };
         return json(snsUser);

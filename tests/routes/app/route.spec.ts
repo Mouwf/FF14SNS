@@ -72,8 +72,10 @@ describe("loader", () => {
 
         // 結果を検証する。
         const expectedUser = {
+            userId: "profileId",
             userName: "UserName@World",
         };
+        expect(resultUser.userId).toBe(expectedUser.userId);
         expect(resultUser.userName).toBe(expectedUser.userName);
     });
 
