@@ -37,5 +37,7 @@
         width: 100%;
         max-width: 100%;
         min-width: 100%;
+        backdrop-filter: blur(12px);
+        background: #1e1e1eb0;
     }
 }
