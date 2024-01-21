@@ -7,11 +7,13 @@ export default function Header() {
 
     return (
         <header className={styles["header"]}>
-            <h1 className={styles["test-class"]}>FF14 Header</h1>
-            <p>{ff14SnsUser.name}</p>
-            <Form method="post">
-                <button type="submit">ログアウト</button>
-            </Form>
+            <div className={styles["test11"]}>
+                <h1 className={styles["test-class"]}>FF14 Header</h1>
+                <p>{ff14SnsUser.name}</p>
+                <Form method="post">
+                    <button type="submit">ログアウト</button>
+                </Form>
+            </div>
         </header>
     );
 }

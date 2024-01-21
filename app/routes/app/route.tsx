@@ -5,6 +5,7 @@ import SnsUserProvider from "../../contexts/user/sns-user-provider";
 import { userAuthenticationCookie } from "../../cookies.server";
 import Header from "./components/header";
 import Footer from "./components/footer";
+import styles from "./route.module.css";
 
 /**
  * トップページのメタ情報を取得する。
@@ -102,8 +103,10 @@ export default function Top() {
     return (
         <main>
             <SnsUserProvider snsUser={ff14SnsUser}>
-                <Header />
-                <Outlet />
+                <div className={styles["test10"]}>
+                    <Header />
+                    <Outlet />
+                </div>
                 <Footer />
             </SnsUserProvider>
         </main>

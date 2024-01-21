@@ -1,0 +1,31 @@
+.test {
+    display: flex;
+    border: solid 1px #999;
+    padding: 12px;
+}
+
+.test3 {
+    width: 57px;
+    background-color: blueviolet;
+}
+
+.test4 {
+    width: 100%;
+}
+
+.test5 {
+    display: flex;
+}
+
+.test6 {
+    display: flex;
+}
+
+.test7 {
+    display: inline;
+}
+
+.test8 {
+    display: flex;
+    justify-content: space-between;
+}

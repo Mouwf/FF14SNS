@@ -1,6 +1,7 @@
 import { Link, useFetcher } from "@remix-run/react";
 import useSnsUser from "../../contexts/user/use-sns-user";
 import PostContent from "../../models/post/post-content";
+import styles from "./post-display.module.css";
 
 /**
  * 投稿表示。
@@ -33,7 +34,7 @@ export default function PostDisplay({
 
     const getReaction = () => {
         return (
-            <div>
+            <div className={styles["test5"]}>
                 {reactionTypes.map((reactionType, index) => {
                     const reactionName = reactionNames[index];
 
@@ -51,22 +52,29 @@ export default function PostDisplay({
     const snsUser = useSnsUser();
 
     return (
-        <div>
-            <div>
-                <p>{snsUser.name}</p>
-                <span>{postContent.releaseVersion}</span>
-                <span>{postContent.tag}</span>
-                {getPostTime()}
-            </div>
-            <div>
-                <p>{postContent.content}</p>
-            </div>
-            <div>
-                <div>
-                    <Link to="app/reply">リプライ</Link>
-                    <button>リポスト</button>
+        <div className={styles["test"]}>
+            <div className={styles["test3"]}></div>
+            <div className={styles["test4"]}>
+                <div className={styles["test8"]}>
+                    <div>
+                        <p className={styles["test7"]}>{snsUser.name}</p>
+                        <time>{postContent.releaseVersion}</time>
+                        <span>{postContent.tag}</span>
+                    </div>
+                    <div>
+                        {getPostTime()}
+                    </div>
                 </div>
-                {getReaction()}
+                <div>
+                    <p>{postContent.content}</p>
+                </div>
+                <div className={styles["test6"]}>
+                    <div>
+                        <Link to="app/reply">リプライ</Link>
+                        <button>リポスト</button>
+                    </div>
+                    {getReaction()}
+                </div>
             </div>
         </div>
     );
