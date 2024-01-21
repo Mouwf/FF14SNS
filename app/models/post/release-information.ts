@@ -10,7 +10,7 @@ export default interface ReleaseInformation extends Entity {
     readonly releaseVersion: string;
 
     /**
-     * リリース日時。
+     * リリース名。
      */
     readonly releaseName: string;
 }
