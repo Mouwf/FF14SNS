@@ -1,6 +1,9 @@
 import ReleaseInformation from "../../../app/models/post/release-information";
 import IReleaseInformationRepository from "../../../app/repositories/post/i-release-information-repository";
 
+/**
+ * モックのリリース情報リポジトリ。
+ */
 export default class MockReleaseInformationRepository implements IReleaseInformationRepository {
     public async get(releaseId: number): Promise<ReleaseInformation> {
         const releaseInformation = {
