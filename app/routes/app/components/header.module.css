@@ -1,5 +1,4 @@
 .header {
-    color: #333;
     display: flex;
     justify-content: end;
 }
@@ -11,8 +10,9 @@
 .header-contents-area {
     position: sticky;
     top: 0px;
-    border: solid 1px #333;
     width: 390px;
+    max-width: 390px;
+    min-width: 100px;
     height: fit-content;
     margin-right: 8px;
     padding: 32px;

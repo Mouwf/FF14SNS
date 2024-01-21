@@ -1,6 +1,5 @@
 .post-time-line {
     display: grid;
     row-gap: 8px;
-    max-width: 600px;
     margin-top: 8px;
 }
