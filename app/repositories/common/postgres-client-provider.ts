@@ -1,4 +1,4 @@
-import { neon, NeonQueryFunction } from '@neondatabase/serverless';
+import { neon, NeonQueryFunction } from "@neondatabase/serverless";
 
 /**
  * Postgresのクライアントを生成するクラス。
@@ -14,7 +14,7 @@ export default class PostgresClientProvider {
      */
     constructor() {
         if (!process.env.DATABASE_URL) {
-            throw new Error('DATABASE_URLが設定されていません。');
+            throw new Error("DATABASE_URLが設定されていません。");
         }
         this.client = neon(process.env.DATABASE_URL);
     }
