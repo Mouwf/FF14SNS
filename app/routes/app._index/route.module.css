@@ -2,3 +2,10 @@
     max-width: 600px;
     min-width: 300px;
 }
+
+@media (max-width: 599px) {
+    .test-class {
+        max-width: 100%;
+        min-width: 100%;
+    }
+}

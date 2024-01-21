@@ -23,3 +23,19 @@
     border: 1px solid #4B4B4B;
     background: #1e1e1e;
 }
+
+@media (max-width: 599px) {
+    .header {
+        display: block;
+    }
+
+    .header-contents-area {
+        position: fixed;
+        left: 0;
+        margin-right: 0;
+        padding: 10px;
+        width: 100%;
+        max-width: 100%;
+        min-width: 100%;
+    }
+}

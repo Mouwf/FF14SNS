@@ -43,3 +43,14 @@
     display: flex;
     justify-content: space-between;
 }
+
+
+@media (max-width: 599px) {
+    .post-user-img-area {
+        min-width: 32px;
+    }
+
+    .post-basic-information {
+        display: block;
+    }
+}
