@@ -4,3 +4,4 @@ CREATE TABLE posts (
     content TEXT NOT NULL,
     created_at TIMESTAMP NOT NULL
 );
+CREATE INDEX idx_user_id ON posts (user_id);
