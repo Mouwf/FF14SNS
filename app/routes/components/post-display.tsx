@@ -52,7 +52,7 @@ export default function PostDisplay({
     const snsUser = useSnsUser();
 
     return (
-        <div className={styles["post"]}>
+        <div className={`${styles.post} ${['content-bg-style']}`}>
             <div className={styles["post-user-img-area"]}></div>
             <div className={styles["post-contents-area"]}>
                 <div className={styles["post-basic-information"]}>

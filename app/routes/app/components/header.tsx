@@ -7,7 +7,7 @@ export default function Header() {
 
     return (
         <header className={styles["header"]}>
-            <div className={styles["header-contents-area"]}>
+            <div className={`${styles['header-contents-area']} ${styles['content-bg-style']}`}>
                 <h1 className={styles["test-class"]}>FF14 SNS</h1>
                 <p>{ff14SnsUser.name}</p>
                 <Form method="post">
