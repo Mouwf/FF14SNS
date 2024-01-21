@@ -7,8 +7,8 @@ export default function Header() {
 
     return (
         <header className={styles["header"]}>
-            <div className={styles["test11"]}>
-                <h1 className={styles["test-class"]}>FF14 Header</h1>
+            <div className={styles["header-contents-area"]}>
+                <h1 className={styles["test-class"]}>FF14 SNS</h1>
                 <p>{ff14SnsUser.name}</p>
                 <Form method="post">
                     <button type="submit">ログアウト</button>
