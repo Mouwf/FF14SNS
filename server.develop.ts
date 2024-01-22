@@ -9,7 +9,6 @@ import express from "express";
 import https from "https";
 import morgan from "morgan";
 import sourceMapSupport from "source-map-support";
-import getLoadContext from "./app/dependency-injector/get-load-context";
 
 sourceMapSupport.install({
   retrieveSourceMap: function (source) {
@@ -114,7 +113,6 @@ async function createDevRequestHandler(initialBuild: any) {
       return createRequestHandler({
         build,
         mode: "development",
-        getLoadContext: getLoadContext,
       })(req, res, next);
     } catch (error) {
       next(error);

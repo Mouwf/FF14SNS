@@ -4,7 +4,7 @@ import UserRegistrationAction from "../app/actions/authentication/user-registrat
 import AuthenticatedUserLoader from "../app/loaders/user/authenticated-user-loader";
 import SnsUserRegistrationAction from "../app/actions/user/sns-user-registration-action";
 
-declare module '@netlify/remix-runtime' {
+declare module '@remix-run/node' {
     export interface AppLoadContext {
         userRegistrationAction: UserRegistrationAction;
         snsUserRegistrationAction: SnsUserRegistrationAction;

@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, MetaFunction, redirect } from "@netlify/remix-runtime";
+import { ActionFunctionArgs, MetaFunction, redirect } from "@remix-run/node";
 import { Form } from "@remix-run/react";
 import { newlyPostedPostCookie } from "../../cookies.server";
 
@@ -21,7 +21,6 @@ export const meta: MetaFunction = () => {
  */
 export const action = async ({
     request,
-    context,
 }: ActionFunctionArgs) => {
     // フォームデータを取得する。
     const formData = await request.formData();

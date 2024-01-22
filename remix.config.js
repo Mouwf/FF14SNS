@@ -1,7 +1,10 @@
-import { config } from '@netlify/remix-edge-adapter'
-
 const productionConfig = {
-  ...config,
+  ignoredRouteFiles: ["**/.*"],
+  // appDirectory: "app",
+  // assetsBuildDirectory: "public/build",
+  // serverBuildPath: "build/index.js",
+  // publicPath: "/build/",
+  serverModuleFormat: "esm",
 }
 
 const developmentConfig = {

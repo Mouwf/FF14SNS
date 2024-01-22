@@ -1,4 +1,4 @@
-import { AppLoadContext } from "@netlify/remix-runtime";
+import { AppLoadContext } from "@remix-run/node";
 import AuthenticatedUserLoader from "../../app/loaders/user/authenticated-user-loader";
 import UserAuthenticationAction from "../../app/actions/authentication/user-authentication-action";
 import UserRegistrationAction from "../../app/actions/authentication/user-registration-action";

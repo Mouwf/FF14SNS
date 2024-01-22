@@ -1,6 +1,7 @@
-import { ActionFunctionArgs, json, redirect } from "@netlify/remix-runtime";
+import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
 import { Form } from "@remix-run/react";
 import { userAuthenticationCookie } from "../../cookies.server";
+import { appLoadContext as context } from "../../dependency-injector/get-load-context";
 
 /**
  * SNSのユーザー登録を行うアクション。
@@ -10,7 +11,6 @@ import { userAuthenticationCookie } from "../../cookies.server";
  */
 export const action = async ({
     request,
-    context,
 }: ActionFunctionArgs) => {
     try {
         // ログインしていない場合、ログインページにリダイレクトする。

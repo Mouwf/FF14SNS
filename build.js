@@ -10,7 +10,7 @@ const targetEntryPath = "app/entry.server.tsx"
 
 // 環境に応じてファイルを選択する。
 const serverSourcePath = process.env.NODE_ENV === 'development' ? devServerPath : prodServerPath;
-const entrySourcePath = process.env.NODE_ENV === 'development' ? devEntryPath : prodEntryPath;
+const entrySourcePath = process.env.NODE_ENV === 'development' ? devEntryPath : devEntryPath;
 
 // 選択したファイルをコピーする。
 fs.copyFile(serverSourcePath, targetServerPath, (err) => {
