@@ -1,4 +1,4 @@
-import { createCookie } from "@netlify/remix-runtime";
+import { createCookie } from "@remix-run/node";
 
 /**
  * ユーザー認証用のCookie。

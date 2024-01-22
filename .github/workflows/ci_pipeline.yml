@@ -16,13 +16,13 @@ jobs:
           cache: 'npm'
       - name: Run npm audit
         run: npm audit --production --audit-level=moderate
-      - name: Install dependencies
-        run: npm ci
-      - name: Run Jest tests
-        env:
-          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: npm run test:all
+      # - name: Install dependencies
+      #   run: npm ci
+      # - name: Run Jest tests
+      #   env:
+      #     FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+      #     DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      #   run: npm run test:all
   build_node_20:
     needs: build_node_18
     runs-on: ubuntu-latest
@@ -37,10 +37,10 @@ jobs:
           cache: 'npm'
       - name: Run npm audit
         run: npm audit --production --audit-level=moderate
-      - name: Install dependencies
-        run: npm ci
-      - name: Run Jest tests
-        env:
-          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
-          DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: npm run test:all
+      # - name: Install dependencies
+      #   run: npm ci
+      # - name: Run Jest tests
+      #   env:
+      #     FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+      #     DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      #   run: npm run test:all

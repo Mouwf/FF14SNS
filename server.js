@@ -6,20 +6,21 @@ import { createRequestHandler } from "@remix-run/express";
 import { broadcastDevReady, installGlobals } from "@remix-run/node";
 import compression from "compression";
 import express from "express";
-import https from "https";
 import morgan from "morgan";
 import sourceMapSupport from "source-map-support";
-import getLoadContext from "./app/dependency-injector/get-load-context";
 
 sourceMapSupport.install({
   retrieveSourceMap: function (source) {
-    // get source file without the `file://` prefix or `?t=...` suffix
-    const match = source.match(/^file:\/\/(.*)\?t=[.\d]+$/);
+    const match = source.startsWith("file://");
     if (match) {
-      return {
-        url: source,
-        map: fs.readFileSync(`${match[1]}.map`, "utf8"),
-      };
+      const filePath = url.fileURLToPath(source);
+      const sourceMapPath = `${filePath}.map`;
+      if (fs.existsSync(sourceMapPath)) {
+        return {
+          url: source,
+          map: fs.readFileSync(sourceMapPath, "utf8"),
+        };
+      }
     }
     return null;
   },
@@ -61,16 +62,9 @@ app.use(morgan("tiny"));
 
 app.all("*", remixHandler);
 
-const privateKey = fs.readFileSync("server.key", "utf8");
-const certificate = fs.readFileSync("server.cert", "utf8");
-const credentials = {
-  key: privateKey,
-  cert: certificate
-};
-const httpsServer = https.createServer(credentials, app);
-const port = parseInt(process.env.PORT, 10) || 3000;
-httpsServer.listen(port, async () => {
-  console.log(`Express server listening on port ${port}`);
+const port = process.env.PORT || 3000;
+app.listen(port, async () => {
+  console.log(`Express server listening at http://localhost:${port}`);
 
   if (process.env.NODE_ENV === "development") {
     broadcastDevReady(initialBuild);
@@ -94,7 +88,7 @@ async function reimportServer() {
  * @param {ServerBuild} initialBuild
  * @returns {Promise<import('@remix-run/express').RequestHandler>}
  */
-async function createDevRequestHandler(initialBuild: any) {
+async function createDevRequestHandler(initialBuild) {
   let build = initialBuild;
   async function handleServerUpdate() {
     // 1. re-import the server build
@@ -109,12 +103,11 @@ async function createDevRequestHandler(initialBuild: any) {
     .on("change", handleServerUpdate);
 
   // wrap request handler to make sure its recreated with the latest build for every request
-  return async (req: any, res: any, next: any) => {
+  return async (req, res, next) => {
     try {
       return createRequestHandler({
         build,
         mode: "development",
-        getLoadContext: getLoadContext,
       })(req, res, next);
     } catch (error) {
       next(error);

@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
-import { AppLoadContext } from "@netlify/remix-runtime";
-import appLoadContext from "../../dependency-injector/app-load-context";
+import { AppLoadContext } from "@remix-run/node";
+import { appLoadContext } from "../../../app/dependency-injector/get-load-context";
 import { loader, action } from "../../../app/routes/app.post-message/route";
 import { newlyPostedPostCookie } from "../../../app/cookies.server";
 

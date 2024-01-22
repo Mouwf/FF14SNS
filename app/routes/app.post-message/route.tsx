@@ -1,7 +1,8 @@
-import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@netlify/remix-runtime";
+import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
 import { userAuthenticationCookie, newlyPostedPostCookie } from "../../cookies.server";
 import useSnsUser from "../../contexts/user/use-sns-user";
+import { appLoadContext as context } from "../../dependency-injector/get-load-context";
 
 /**
  * メッセージ投稿ページのメタ情報を設定する。
@@ -36,7 +37,6 @@ export const loader = async ({
  */
 export const action = async ({
     request,
-    context,
 }: ActionFunctionArgs) => {
     try {
         // ユーザー認証用のCookieを取得する。

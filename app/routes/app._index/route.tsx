@@ -1,4 +1,4 @@
-import { LoaderFunctionArgs, json } from "@netlify/remix-runtime";
+import { LoaderFunctionArgs, json } from "@remix-run/node";
 import PostEntry from "./components/post-entry";
 import LatestPostTimeLine from "./components/latest-post-time-line";
 import { newlyPostedPostCookie } from "../../cookies.server";
@@ -6,6 +6,7 @@ import { useFetcher, useLoaderData } from "@remix-run/react";
 import PostContent from "../../models/post/post-content";
 import InfiniteScroll from "../components/infinite-scroll";
 import { useState } from "react";
+import { appLoadContext as context } from "../../dependency-injector/get-load-context";
 
 /**
  * 最新の投稿を取得するローダー。
@@ -16,7 +17,6 @@ import { useState } from "react";
  */
 export const loader = async ({
     request,
-    context,
 }: LoaderFunctionArgs) => {
     // 新規投稿した投稿のIDを保持するCookieを取得する。
     const cookieHeader = request.headers.get("Cookie");

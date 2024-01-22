@@ -1,10 +1,11 @@
-import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@netlify/remix-runtime";
+import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import SnsUserProvider from "../../contexts/user/sns-user-provider";
 import { userAuthenticationCookie } from "../../cookies.server";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import SnsUser from "../../models/user/sns-user";
+import { appLoadContext as context } from "../../dependency-injector/get-load-context";
 
 /**
  * トップページのメタ情報を設定する。
@@ -26,7 +27,6 @@ export const meta: MetaFunction = () => {
  */
 export const loader = async ({
     request,
-    context,
 }: LoaderFunctionArgs) => {
     try {
         // ログインしていない場合、ログインページにリダイレクトする。
@@ -71,7 +71,6 @@ export const loader = async ({
  */
 export const action = async ({
     request,
-    context,
 }: ActionFunctionArgs) => {
     try {
         // ログインしていない場合、ログインページにリダイレクトする。
