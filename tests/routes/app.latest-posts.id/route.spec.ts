@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import { AppLoadContext } from "@remix-run/node";
-import appLoadContext from "../../dependency-injector/app-load-context";
+import { appLoadContext } from "../../../app/dependency-injector/get-load-context";
 import { loader } from "../../../app/routes/app.latest-posts.$id/route";
 
 /**

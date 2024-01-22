@@ -35,12 +35,3 @@ export const unitTestAppLoadContext: AppLoadContext = {
     authenticatedUserLoader,
     latestPostsLoader,
 };
-
-const appLoadContext: AppLoadContext = {
-    userRegistrationAction,
-    snsUserRegistrationAction,
-    userAuthenticationAction,
-    authenticatedUserLoader,
-    latestPostsLoader,
-};
-export default appLoadContext;

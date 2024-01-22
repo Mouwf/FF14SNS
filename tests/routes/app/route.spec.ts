@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import { AppLoadContext } from "@remix-run/node";
 import { loader, action } from "../../../app/routes/app/route";
-import appLoadContext from "../../dependency-injector/app-load-context";
+import { appLoadContext } from "../../../app/dependency-injector/get-load-context";
 import { userAuthenticationCookie } from "../../../app/cookies.server";
 
 /**
