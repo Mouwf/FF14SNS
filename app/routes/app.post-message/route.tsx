@@ -22,7 +22,6 @@ export const meta: MetaFunction = () => {
  */
 export const loader = async ({
     request,
-    context,
 }: LoaderFunctionArgs) => {
     const releaseInformationLoader = context.releaseInformationLoader;
     const allReleaseInformation = await releaseInformationLoader.getAllReleaseInformation();
