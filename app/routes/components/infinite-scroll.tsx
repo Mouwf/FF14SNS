@@ -1,4 +1,4 @@
-import { SerializeFrom } from "@netlify/remix-runtime";
+import { SerializeFrom } from "@remix-run/node";
 import { FetcherWithComponents } from "@remix-run/react";
 import { Dispatch, ReactNode, SetStateAction, useCallback, useEffect, useState } from "react";
 import Entity from "../../models/common/entity";

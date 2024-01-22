@@ -1,4 +1,4 @@
-import { AppLoadContext } from "@netlify/remix-runtime";
+import { AppLoadContext } from "@remix-run/node";
 import AuthenticatedUserLoader from "../../app/loaders/user/authenticated-user-loader";
 import UserAuthenticationAction from "../../app/actions/authentication/user-authentication-action";
 import UserRegistrationAction from "../../app/actions/authentication/user-registration-action";
@@ -28,11 +28,10 @@ const authenticatedUserLoader = new AuthenticatedUserLoader(authenticatedUserPro
 // 最新の投稿を取得するためのクラスを生成する。
 const latestPostsLoader = new LatestPostsLoader();
 
-const appLoadContext: AppLoadContext = {
+export const unitTestAppLoadContext: AppLoadContext = {
     userRegistrationAction,
     snsUserRegistrationAction,
     userAuthenticationAction,
     authenticatedUserLoader,
     latestPostsLoader,
 };
-export default appLoadContext;
