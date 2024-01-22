@@ -10,7 +10,7 @@
     "dev": "node build.js && CHOKIDAR_USEPOLLING=true remix dev --manual -c \"npm run dev:server\"",
     "dev:server": "tsx watch --clear-screen=false --ignore 'app/**' --ignore 'build/**' --ignore 'node_modules/**' --inspect ./server.ts",
     "start": "cross-env NODE_ENV=production node ./server.js",
-    "test": "jest",
+    "test": "RUN_UNIT_TESTS=true jest",
     "test:all": "RUN_INFRA_TESTS=true jest --runInBand",
     "typecheck": "tsc -b"
   },

@@ -28,6 +28,14 @@ const authenticatedUserLoader = new AuthenticatedUserLoader(authenticatedUserPro
 // 最新の投稿を取得するためのクラスを生成する。
 const latestPostsLoader = new LatestPostsLoader();
 
+export const unitTestAppLoadContext: AppLoadContext = {
+    userRegistrationAction,
+    snsUserRegistrationAction,
+    userAuthenticationAction,
+    authenticatedUserLoader,
+    latestPostsLoader,
+};
+
 const appLoadContext: AppLoadContext = {
     userRegistrationAction,
     snsUserRegistrationAction,
