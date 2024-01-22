@@ -7,6 +7,3 @@ node_modules
 
 server.cert
 server.key
-
-server.ts
-app/entry.server.tsx
