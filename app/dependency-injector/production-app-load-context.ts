@@ -12,6 +12,14 @@ import PostgresUserRepository from "../repositories/user/postgres-user-repositor
 import IAuthenticationUserRegistrar from "../libraries/authentication/i-authentication-user-registrar";
 import LatestPostsLoader from "../loaders/post/latest-posts-loader";
 import FirebaseClient from "../libraries/authentication/firebase-client";
+import ReleaseInformationGetter from "../libraries/post/release-information-getter";
+import ReleaseInformationLoader from "../loaders/post/release-information-loader";
+import PostgresReleaseInformationRepository from "../repositories/post/postgres-release-information-repository";
+import PostgresPostContentRepository from "../repositories/post/postgres-post-content-repository";
+import IPoster from "../libraries/post/i-poster";
+import PostInteractor from "../libraries/post/post-interactor";
+import PostMessageAction from "../actions/post/post-message-action";
+import PostsFetcher from "../libraries/post/posts-fetcher";
 
 // ユーザー登録を行うためのクラスを生成する。
 const authenticationClient = new FirebaseClient();
@@ -31,8 +39,19 @@ const userAuthenticationAction = new UserAuthenticationAction(userAuthenticator)
 const authenticatedUserProvider = new AuthenticatedUserProvider(authenticationClient, userRepository);
 const authenticatedUserLoader = new AuthenticatedUserLoader(authenticatedUserProvider);
 
+// メッセージを投稿するためのクラスを生成する。
+const postContentRepository = new PostgresPostContentRepository(postgresClientProvider);
+const poster: IPoster = new PostInteractor(postContentRepository);
+const postMessageAction = new PostMessageAction(poster);
+
 // 最新の投稿を取得するためのクラスを生成する。
-const latestPostsLoader = new LatestPostsLoader();
+const postsFetcher = new PostsFetcher(postContentRepository);
+const latestPostsLoader = new LatestPostsLoader(postsFetcher);
+
+// リリース情報を取得するためのクラスを生成する。
+const releaseInformationRepository = new PostgresReleaseInformationRepository(postgresClientProvider);
+const releaseInformationGetter = new ReleaseInformationGetter(releaseInformationRepository);
+const releaseInformationLoader = new ReleaseInformationLoader(releaseInformationGetter);
 
 export const productionAppLoadContext: AppLoadContext = {
     userRegistrationAction,
@@ -40,4 +59,6 @@ export const productionAppLoadContext: AppLoadContext = {
     userAuthenticationAction,
     authenticatedUserLoader,
     latestPostsLoader,
+    releaseInformationLoader,
+    postMessageAction,
 };
