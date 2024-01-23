@@ -38,10 +38,6 @@ export const action = async ({
     request,
 }: ActionFunctionArgs) => {
     try {
-        // ユーザー認証用のCookieを取得する。
-        const cookieHeader = request.headers.get("Cookie");
-        const cookieUserAuthentication = (await userAuthenticationCookie.parse(cookieHeader));
-
         // 認証済みユーザーを取得する。
         const formData = await request.formData();
         const profileId = formData.get("userId") as string;
