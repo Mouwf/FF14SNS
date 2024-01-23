@@ -18,6 +18,7 @@ export default class PostgresUserRepository implements IUserRepository {
     public async create(profileId: string, authenticationProviderId: string, userName: string): Promise<boolean> {
         const client = await this.postgresClientProvider.get();
         try {
+            await client.query("BEGIN");
             const query = `
                 INSERT INTO users (
                     profile_id,
@@ -32,8 +33,10 @@ export default class PostgresUserRepository implements IUserRepository {
             `;
             const values = [profileId, authenticationProviderId, userName];
             await client.query(query, values);
+            await client.query("COMMIT");
             return true;
         } catch (error) {
+            await client.query("ROLLBACK");
             throw error;
         } finally {
             client.release();
@@ -47,13 +50,16 @@ export default class PostgresUserRepository implements IUserRepository {
     public async delete(id: number): Promise<boolean> {
         const client = await this.postgresClientProvider.get();
         try {
+            await client.query("BEGIN");
             const query = `
                 DELETE FROM users WHERE id = $1;
             `;
             const values = [id];
             await client.query(query, values);
+            await client.query("COMMIT");
             return true;
         } catch (error) {
+            await client.query("ROLLBACK");
             throw error;
         } finally {
             client.release();

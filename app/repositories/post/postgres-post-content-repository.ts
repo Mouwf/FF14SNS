@@ -18,6 +18,8 @@ export default class PostgresPostContentRepository implements IPostContentReposi
     public async create(posterId: number, releaseId: number, content: string): Promise<number> {
         const client = await this.postgresClientProvider.get();
         try {
+            await client.query("BEGIN");
+
             // 投稿を作成する。
             const query = `
                 WITH inserted_post AS (
@@ -50,10 +52,14 @@ export default class PostgresPostContentRepository implements IPostContentReposi
             // 投稿結果がない場合はnullを返す。
             if (result.rows.length === 0) throw new Error("投稿に失敗しました。");
 
+            // コミットする。
+            await client.query("COMMIT");
+
             // 投稿IDを返す。
             const postId = result.rows[0].id;
             return postId;
         } catch (error) {
+            await client.query("ROLLBACK");
             console.error("Error during transaction:", error);
             throw error;
         } finally {
@@ -62,7 +68,33 @@ export default class PostgresPostContentRepository implements IPostContentReposi
     }
 
     public async delete(postId: number): Promise<boolean> {
-        throw new Error("Method not implemented.");
+        const client = await this.postgresClientProvider.get();
+        try {
+            await client.query("BEGIN");
+
+            // 投稿とリリース情報の関連テーブルから関連するレコードを削除する。
+            let query = `
+                DELETE FROM post_release_information_association WHERE post_id = $1;
+            `;
+            let values = [postId];
+            await client.query(query, values);
+
+            // 投稿テーブルからレコードを削除する。
+            query = `
+                DELETE FROM posts WHERE id = $1;
+            `;
+            values = [postId];
+            await client.query(query, values);
+
+            // コミットする。
+            await client.query("COMMIT");
+            return true;
+        } catch (error) {
+            await client.query("ROLLBACK");
+            throw error;
+        } finally {
+            client.release();
+        }
     }
 
     public async getById(postId: number): Promise<PostContent> {
