@@ -24,7 +24,7 @@ beforeEach(async () => {
     requestWithBody = new Request("https://example.com", {
         method: "POST",
         body: new URLSearchParams({
-            releaseInformationId: "パッチ5",
+            userId: "profileId",
             content: "アクション経由の投稿テスト！",
         }),
     });
@@ -54,7 +54,7 @@ describe("loader", () => {
 });
 
 describe("action", () => {
-    test("action should set cookie about post.", async () => {
+    test("action should redirect to app page and return posted postId in the cookies.", async () => {
         // アクションを実行し、結果を取得する。
         const response = await action({
             request: requestWithBody,
@@ -71,9 +71,7 @@ describe("action", () => {
         expect(status).toBe(302);
         expect(location).toBe("/app");
         expect(cookie).toEqual({
-            releaseVersion: "パッチ5",
-            content: "アクション経由の投稿テスト！",
-            isPosted: true,
+            postId: 1,
         });
     });
 });

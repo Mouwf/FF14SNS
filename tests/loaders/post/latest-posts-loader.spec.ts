@@ -15,27 +15,24 @@ beforeEach(() => {
 });
 
 describe("getLatestPosts", () => {
-    test("getLatestPosts should return 10 PostContent objects with correct values.", async () => {
+    test("getLatestPosts should return 1000 PostContent objects with correct values.", async () => {
         // 最新の投稿を取得する。
-        const id = "0";
         const response = await latestPostsLoader.getLatestPosts();
 
         // 結果を検証する。
-        expect(response.length).toBe(10);
+        expect(response.length).toBe(1000);
         response.forEach((postContent, i) => {
-            const incrementedId = (i + Number(id) + 1);
-            const content = `
-                これはポスト${incrementedId}のテストです。\n
-                これはポスト${incrementedId}のテストです。\n
-                これはポスト${incrementedId}のテストです。\n
-                これはポスト${incrementedId}のテストです。\n
-                これはポスト${incrementedId}のテストです。\n
-            `
+            const incrementedId = i + 1;
+            const content = `Content ${incrementedId}`;
             expect(postContent).toEqual({
                 id: incrementedId,
+                posterId: 1,
+                posterName: "UserName@World",
+                releaseId: 1,
                 releaseVersion: "5.5",
-                createdAt: expect.any(Date),
+                releaseName: "ReleaseName",
                 content: content,
+                createdAt: expect.any(Date),
             });
         });
     });
