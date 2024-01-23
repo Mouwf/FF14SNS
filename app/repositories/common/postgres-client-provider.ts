@@ -13,6 +13,12 @@ export default class PostgresClientProvider {
      * Postgresのクライアントを生成する。
      */
     constructor() {
+        if (process.env.RUN_INFRA_TESTS) {
+            if (!process.env.TEST_DATABASE_URL) {
+                throw new Error("TEST_DATABASE_URLが設定されていません。");
+            }
+            process.env.DATABASE_URL = process.env.TEST_DATABASE_URL;
+        }
         if (!process.env.DATABASE_URL) {
             throw new Error("DATABASE_URLが設定されていません。");
         }

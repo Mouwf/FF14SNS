@@ -22,6 +22,12 @@ export default class FirebaseClient implements IAuthenticationClient {
      * Firebaseのクライアントを生成する。
      */
     constructor() {
+        if (process.env.RUN_INFRA_TESTS) {
+            if (!process.env.TEST_FIREBASE_API_KEY) {
+                throw new Error("TEST_FIREBASE_API_KEYが設定されていません。");
+            }
+            process.env.FIREBASE_API_KEY = process.env.TEST_FIREBASE_API_KEY;
+        }
         if (!process.env.FIREBASE_API_KEY) {
             throw new Error("FIREBASE_API_KEYが設定されていません。");
         }

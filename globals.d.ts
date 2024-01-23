@@ -7,6 +7,8 @@ declare global {
     RUN_INFRA_TESTS: string;
     FIREBASE_API_KEY: string | undefined;
     DATABASE_URL: string | undefined;
+    TEST_FIREBASE_API_KEY: string | undefined;
+    TEST_DATABASE_URL: string | undefined;
   }
   interface Process {
     env: ProcessEnv;

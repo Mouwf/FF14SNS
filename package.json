@@ -7,8 +7,8 @@
     "build": "remix build",
     "dev": "CHOKIDAR_USEPOLLING=true remix dev --manual -c \"node --watch-path server.js --watch server.js\"",
     "start": "cross-env NODE_ENV=production node ./server.js",
-    "test": "RUN_UNIT_TESTS=true jest",
-    "test:all": "RUN_INFRA_TESTS=true jest --runInBand",
+    "test": "RUN_UNIT_TESTS=true jest --testPathIgnorePatterns \"/tests/infrastructure/\"",
+    "test:infra": "RUN_INFRA_TESTS=true jest --runInBand --testMatch \"**/tests/infrastructure/**/*.spec.ts\"",
     "typecheck": "tsc -b"
   },
   "dependencies": {
