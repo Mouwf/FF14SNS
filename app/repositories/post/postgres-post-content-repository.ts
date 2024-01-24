@@ -70,7 +70,6 @@ export default class PostgresPostContentRepository implements IPostContentReposi
             return postId;
         } catch (error) {
             await client.query("ROLLBACK");
-            console.error("Error during transaction:", error);
             throw error;
         } finally {
             client.release();
