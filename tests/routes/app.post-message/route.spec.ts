@@ -89,7 +89,7 @@ describe("action", () => {
         });
     });
 
-    test("action should return 400 when the body is invalid.", async () => {
+    test("action should return error message when the body is invalid.", async () => {
         // アクションを実行し、結果を取得する。
         const response = await action({
             request: requestWithInvalidBody,
