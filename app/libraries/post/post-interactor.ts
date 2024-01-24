@@ -14,8 +14,8 @@ export default class PostInteractor implements IPoster {
     ) {
     }
 
-    public async post(posterId: number, releaseId: number, content: string): Promise<number> {
-        const postId = await this.postContentRepository.create(posterId, releaseId, content);
+    public async post(posterId: number, releaseInformationId: number, content: string): Promise<number> {
+        const postId = await this.postContentRepository.create(posterId, releaseInformationId, content);
         return postId;
     }
 }

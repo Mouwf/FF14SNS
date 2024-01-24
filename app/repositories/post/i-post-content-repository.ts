@@ -7,11 +7,11 @@ export default interface IPostContentRepository {
     /**
      * 投稿を作成する。
      * @param posterId 投稿者ID。
-     * @param releaseId 投稿に関連するリリース情報ID。
+     * @param releaseInformationId 投稿に関連するリリース情報ID。
      * @param content 投稿内容。
      * @returns 投稿ID。
      */
-    create(posterId: number, releaseId: number, content: string): Promise<number>;
+    create(posterId: number, releaseInformationId: number, content: string): Promise<number>;
 
     /**
      * 投稿を削除する。

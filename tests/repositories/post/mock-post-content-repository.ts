@@ -5,7 +5,7 @@ import IPostContentRepository from "../../../app/repositories/post/i-post-conten
  * モックの投稿内容リポジトリ。
  */
 export default class MockPostContentRepository implements IPostContentRepository {
-    public async create(posterId: number, releaseId: number, content: string): Promise<number> {
+    public async create(posterId: number, releaseInformationId: number, content: string): Promise<number> {
         return 1;
     }
 

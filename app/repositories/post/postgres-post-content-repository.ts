@@ -15,7 +15,7 @@ export default class PostgresPostContentRepository implements IPostContentReposi
     ) {
     }
 
-    public async create(posterId: number, releaseId: number, content: string): Promise<number> {
+    public async create(posterId: number, releaseInformationId: number, content: string): Promise<number> {
         const client = await this.postgresClientProvider.get();
         try {
             await client.query("BEGIN");
@@ -55,7 +55,7 @@ export default class PostgresPostContentRepository implements IPostContentReposi
                 )
                 RETURNING id;
             `;
-            const releaseInformationAssociationInsertValues = [postId, releaseId];
+            const releaseInformationAssociationInsertValues = [postId, releaseInformationId];
             const releaseInformationAssociationResult = await client.query(releaseInformationAssociationInsertQuery, releaseInformationAssociationInsertValues);
 
             // 結果がない場合、エラーを投げる。
