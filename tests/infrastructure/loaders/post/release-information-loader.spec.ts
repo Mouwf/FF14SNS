@@ -24,8 +24,8 @@ describe("getReleaseInformation", () => {
 
     test("getReleaseInformation should return a release information.", async () => {
         // リリース情報を取得する。
-        const releaseId = 1;
-        const response = await releaseInformationLoader.getReleaseInformation(releaseId);
+        const releaseInformationId = 1;
+        const response = await releaseInformationLoader.getReleaseInformation(releaseInformationId);
 
         // 結果を検証する。
         expect(response.id).toBeDefined();

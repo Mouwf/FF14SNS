@@ -16,11 +16,11 @@ export default class ReleaseInformationLoader {
 
     /**
      * リリース情報を取得する。
-     * @param releaseId リリースID。
+     * @param releaseInformationId リリース情報ID。
      * @returns リリース情報。
      */
-    public async getReleaseInformation(releaseId: number): Promise<ReleaseInformation> {
-        const releaseInformation = await this.releaseInformationGetter.getReleaseInformation(releaseId);
+    public async getReleaseInformation(releaseInformationId: number): Promise<ReleaseInformation> {
+        const releaseInformation = await this.releaseInformationGetter.getReleaseInformation(releaseInformationId);
         return releaseInformation;
     }
 

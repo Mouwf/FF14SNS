@@ -80,9 +80,9 @@ describe("create", () => {
         try {
             // メッセージを投稿する。
             const posterId = 1; // 初めてのユーザーIDが1から始まるので、最初はエラーになってしまう。
-            const releaseId = 1;
+            const releaseInformationId = 1;
             const content = "Content";
-            await postgresPostContentRepository.create(posterId, releaseId, content);
+            await postgresPostContentRepository.create(posterId, releaseInformationId, content);
         } catch (error) {
             // エラーを検証する。
             expect(error).toBeDefined();

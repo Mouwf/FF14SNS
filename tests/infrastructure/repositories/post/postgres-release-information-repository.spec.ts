@@ -20,8 +20,8 @@ describe("get", () => {
 
     test("get should return release information", async () => {
         // リリース情報を取得する。
-        const releaseId = 1;
-        const response = await postgresReleaseInformationRepository.get(releaseId);
+        const releaseInformationId = 1;
+        const response = await postgresReleaseInformationRepository.get(releaseInformationId);
 
         // 結果を検証する。
         expect(response.id).toBeDefined();
@@ -33,8 +33,8 @@ describe("get", () => {
         expect.assertions(1);
         try {
             // リリース情報を取得する。
-            const releaseId = 100;
-            await postgresReleaseInformationRepository.get(releaseId);
+            const releaseInformationId = 100;
+            await postgresReleaseInformationRepository.get(releaseInformationId);
         } catch (error) {
             // エラーがResponseでない場合、エラーを投げる。
             if (!(error instanceof Error)) {
@@ -42,7 +42,7 @@ describe("get", () => {
             }
 
             // エラーを検証する。
-            expect(error.message).toBe("リリース情報が存在しません。releaseId=100");
+            expect(error.message).toBe("リリース情報が存在しません。releaseInformationId=100");
         }
     });
 });

@@ -15,18 +15,18 @@ export default class PostgresReleaseInformationRepository implements IReleaseInf
     ) {
     }
 
-    public async get(releaseId: number): Promise<ReleaseInformation> {
+    public async get(releaseInformationId: number): Promise<ReleaseInformation> {
         const client = await this.postgresClientProvider.get();
         try {
             // リリース情報を取得する。
             const query = `
                 SELECT * FROM release_information WHERE id = $1;
             `;
-            const values = [releaseId];
+            const values = [releaseInformationId];
             const result = await client.query(query, values);
 
             // リリース情報が存在しない場合、エラーを投げる。
-            if (result.rows.length === 0) throw new Error(`リリース情報が存在しません。releaseId=${releaseId}`);
+            if (result.rows.length === 0) throw new Error(`リリース情報が存在しません。releaseInformationId=${releaseInformationId}`);
 
             // リリース情報を生成する。
             const releaseInformation = {

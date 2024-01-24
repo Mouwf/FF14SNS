@@ -15,7 +15,7 @@ const posterId = 1;
 /**
  * リリース情報ID。
  */
-const releaseId = 1;
+const releaseInformationId = 1;
 
 /**
  * 投稿内容。
@@ -30,7 +30,7 @@ beforeEach(() => {
 describe("post", () => {
     test("post should post a message and return a post id.", async () => {
         // メッセージを投稿する。
-        const postId = await postInteractor.post(posterId, releaseId, content);
+        const postId = await postInteractor.post(posterId, releaseInformationId, content);
 
         // 結果を検証する。
         expect(postId).toBe(1);

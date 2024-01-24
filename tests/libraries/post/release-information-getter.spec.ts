@@ -15,8 +15,8 @@ beforeEach(() => {
 describe("getReleaseInformation", () => {
     test("getReleaseInformation should return a release information.", async () => {
         // リリース情報を取得する。
-        const releaseId = 1;
-        const response = await releaseInformationGetter.getReleaseInformation(releaseId);
+        const releaseInformationId = 1;
+        const response = await releaseInformationGetter.getReleaseInformation(releaseInformationId);
 
         // 結果を検証する。
         const expectedReleaseInformation = {

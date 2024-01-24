@@ -17,7 +17,7 @@ export default interface PostContent extends Entity {
     /**
      * 投稿に関連するリリース情報ID。
      */
-    readonly releaseId: number;
+    readonly releaseInformationId: number;
 
     /**
      * 投稿に関連するリリースバージョン。

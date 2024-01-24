@@ -92,7 +92,7 @@ describe("fetchLatestPosts" , () => {
         expect(posts.length).toBe(1);
         expect(posts[0].id).toBe(postId);
         expect(posts[0].posterId).toBe(profileId);
-        expect(posts[0].releaseId).toBe(1);
+        expect(posts[0].releaseInformationId).toBe(1);
         expect(posts[0].content).toBe("test");
         expect(posts[0].createdAt).toBeInstanceOf(Date);
     });

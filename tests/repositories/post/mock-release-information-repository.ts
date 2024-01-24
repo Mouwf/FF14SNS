@@ -5,7 +5,7 @@ import IReleaseInformationRepository from "../../../app/repositories/post/i-rele
  * モックのリリース情報リポジトリ。
  */
 export default class MockReleaseInformationRepository implements IReleaseInformationRepository {
-    public async get(releaseId: number): Promise<ReleaseInformation> {
+    public async get(releaseInformationId: number): Promise<ReleaseInformation> {
         const releaseInformation = {
             id: 1,
             releaseVersion: "2.5",

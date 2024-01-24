@@ -24,7 +24,7 @@ export default class MockPostContentRepository implements IPostContentRepository
                 id: incrementedId,
                 posterId: 1,
                 posterName: "UserName@World",
-                releaseId: 1,
+                releaseInformationId: 1,
                 releaseVersion: "5.5",
                 releaseName: "ReleaseName",
                 content: `Content ${incrementedId}`,

@@ -145,7 +145,7 @@ export default class PostgresPostContentRepository implements IPostContentReposi
                 id: post.post_id,
                 posterId: post.profile_id,
                 posterName: post.user_name,
-                releaseId: post.release_id,
+                releaseInformationId: post.release_id,
                 releaseVersion: post.release_version,
                 releaseName: post.release_name,
                 content: post.content,

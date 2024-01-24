@@ -6,9 +6,9 @@ import ReleaseInformation from "../../models/post/release-information";
 export default interface IReleaseInformationGetter {
     /**
      * リリース情報を取得する。
-     * @param releaseId リリースID。
+     * @param releaseInformationId リリース情報ID。
      */
-    getReleaseInformation(releaseId: number): Promise<ReleaseInformation>;
+    getReleaseInformation(releaseInformationId: number): Promise<ReleaseInformation>;
 
     /**
      * リリース情報を全件取得する。
