@@ -36,7 +36,7 @@ export default class PostgresPostContentRepository implements IPostContentReposi
             const postInsertResult = await client.query(postInsertQuery, postInsertValues);
 
             // 結果がない場合、エラーを投げる。
-            if (postInsertResult.rows.length === 0) {
+            if (postInsertResult.rowCount === 0) {
                 throw new Error("投稿に失敗しました。");
             }
 
@@ -52,14 +52,13 @@ export default class PostgresPostContentRepository implements IPostContentReposi
                 VALUES (
                     $1,
                     $2
-                )
-                RETURNING id;
+                );
             `;
             const releaseInformationAssociationInsertValues = [postId, releaseInformationId];
             const releaseInformationAssociationResult = await client.query(releaseInformationAssociationInsertQuery, releaseInformationAssociationInsertValues);
 
             // 結果がない場合、エラーを投げる。
-            if (releaseInformationAssociationResult.rows.length === 0) {
+            if (releaseInformationAssociationResult.rowCount === 0) {
                 throw new Error("投稿に失敗しました。");
             }
 
