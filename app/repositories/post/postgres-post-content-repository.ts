@@ -21,42 +21,52 @@ export default class PostgresPostContentRepository implements IPostContentReposi
             await client.query("BEGIN");
 
             // 投稿を作成する。
-            const query = `
-                WITH inserted_post AS (
-                    INSERT INTO posts (
-                        user_id,
-                        content
-                    )
-                    VALUES (
-                        $1,
-                        $2
-                    )
-                    RETURNING id
-                ),
-                inserted_association AS (
-                    INSERT INTO post_release_information_association (
-                        post_id,
-                        release_information_id
-                    )
-                    SELECT
-                        id,
-                        $3
-                    FROM
-                        inserted_post
+            const postInsertQuery = `
+                INSERT INTO posts (
+                    user_id,
+                    content
                 )
-                SELECT id FROM inserted_post;
+                VALUES (
+                    $1,
+                    $2
+                )
+                RETURNING id;
             `;
-            const values = [posterId, content, releaseId];
-            const result = await client.query(query, values);
+            const postInsertValues = [posterId, content];
+            const postInsertResult = await client.query(postInsertQuery, postInsertValues);
 
-            // 投稿結果がない場合はnullを返す。
-            if (result.rows.length === 0) throw new Error("投稿に失敗しました。");
+            // 結果がない場合、エラーを投げる。
+            if (postInsertResult.rows.length === 0) {
+                throw new Error("投稿に失敗しました。");
+            }
+
+            // 投稿IDを取得する。
+            const postId = postInsertResult.rows[0].id;
+
+            // 投稿とリリース情報の関連を作成する。
+            const releaseInformationAssociationInsertQuery = `
+                INSERT INTO post_release_information_association (
+                    post_id,
+                    release_information_id
+                )
+                VALUES (
+                    $1,
+                    $2
+                )
+                RETURNING id;
+            `;
+            const releaseInformationAssociationInsertValues = [postId, releaseId];
+            const releaseInformationAssociationResult = await client.query(releaseInformationAssociationInsertQuery, releaseInformationAssociationInsertValues);
+
+            // 結果がない場合、エラーを投げる。
+            if (releaseInformationAssociationResult.rows.length === 0) {
+                throw new Error("投稿に失敗しました。");
+            }
 
             // コミットする。
             await client.query("COMMIT");
 
             // 投稿IDを返す。
-            const postId = result.rows[0].id;
             return postId;
         } catch (error) {
             await client.query("ROLLBACK");
@@ -79,7 +89,7 @@ export default class PostgresPostContentRepository implements IPostContentReposi
             let values = [postId];
             const resultDeleteForReleaseInformationAssociation = await client.query(query, values);
 
-            // 投稿結果がない場合はnullを返す。
+            // 投稿結果がない場合、falseを返す。
             if (resultDeleteForReleaseInformationAssociation.rowCount === 0) return false;
 
             // 投稿テーブルからレコードを削除する。
@@ -89,7 +99,7 @@ export default class PostgresPostContentRepository implements IPostContentReposi
             values = [postId];
             const resultForPosts = await client.query(query, values);
 
-            // 投稿結果がない場合はnullを返す。
+            // 投稿結果がない場合、falseを返す。
             if (resultForPosts.rowCount === 0) return false;
 
             // コミットする。
