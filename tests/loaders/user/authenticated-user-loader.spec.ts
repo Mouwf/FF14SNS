@@ -21,10 +21,10 @@ beforeEach(() => {
     authenticatedUserLoader = new AuthenticatedUserLoader(authenticatedUserProvider);
 });
 
-describe("getUser", () => {
-    test("getUser should return an AuthenticatedUser.", async () => {
+describe("getUserByToken", () => {
+    test("getUserByToken should return an AuthenticatedUser.", async () => {
         // 認証済みユーザーを取得する。
-        const response = await authenticatedUserLoader.getUser(idToken);
+        const response = await authenticatedUserLoader.getUserByToken(idToken);
 
         // ユーザーが存在しない場合、エラーを投げる。
         if (response === null) throw new Error("The user does not exist.");

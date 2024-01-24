@@ -9,6 +9,13 @@ import LatestPostsLoader from "../../app/loaders/post/latest-posts-loader";
 import SnsUserRegistrationAction from "../../app/actions/user/sns-user-registration-action";
 import UserRegistrar from "../../app/libraries/user/user-registrar";
 import MockUserRepository from "../repositories/user/mock-user-repository";
+import MockReleaseInformationRepository from "../repositories/post/mock-release-information-repository";
+import ReleaseInformationGetter from "../../app/libraries/post/release-information-getter";
+import ReleaseInformationLoader from "../../app/loaders/post/release-information-loader";
+import MockPostContentRepository from "../repositories/post/mock-post-content-repository";
+import PostInteractor from "../../app/libraries/post/post-interactor";
+import PostMessageAction from "../../app/actions/post/post-message-action";
+import PostsFetcher from "../../app/libraries/post/posts-fetcher";
 
 // ユーザー登録を行うためのクラスを生成する。
 const authenticationClient = new MockAuthenticationClient();
@@ -25,8 +32,19 @@ const userAuthenticationAction = new UserAuthenticationAction(userAccountManager
 const authenticatedUserProvider = new AuthenticatedUserProvider(authenticationClient, userRepository);
 const authenticatedUserLoader = new AuthenticatedUserLoader(authenticatedUserProvider);
 
+// メッセージを投稿するためのクラスを生成する。
+const postContentRepository = new MockPostContentRepository();
+const postInteractor = new PostInteractor(postContentRepository);
+const postMessageAction = new PostMessageAction(postInteractor);
+
 // 最新の投稿を取得するためのクラスを生成する。
-const latestPostsLoader = new LatestPostsLoader();
+const postsFetcher = new PostsFetcher(postContentRepository);
+const latestPostsLoader = new LatestPostsLoader(postsFetcher);
+
+// リリース情報を取得するためのクラスを生成する。
+const releaseInformationRepository = new MockReleaseInformationRepository();
+const releaseInformationGetter = new ReleaseInformationGetter(releaseInformationRepository);
+const releaseInformationLoader = new ReleaseInformationLoader(releaseInformationGetter);
 
 export const unitTestAppLoadContext: AppLoadContext = {
     userRegistrationAction,
@@ -34,4 +52,6 @@ export const unitTestAppLoadContext: AppLoadContext = {
     userAuthenticationAction,
     authenticatedUserLoader,
     latestPostsLoader,
+    releaseInformationLoader,
+    postMessageAction,
 };

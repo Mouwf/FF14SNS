@@ -3,6 +3,8 @@ import UserAuthenticationAction from "../app/actions/authentication/user-authent
 import UserRegistrationAction from "../app/actions/authentication/user-registration-action";
 import AuthenticatedUserLoader from "../app/loaders/user/authenticated-user-loader";
 import SnsUserRegistrationAction from "../app/actions/user/sns-user-registration-action";
+import ReleaseInformationLoader from "../app/loaders/post/release-information-loader";
+import PostMessageAction from "../app/actions/post/post-message-action";
 
 declare module '@remix-run/node' {
     export interface AppLoadContext {
@@ -11,5 +13,7 @@ declare module '@remix-run/node' {
         userAuthenticationAction: UserAuthenticationAction;
         authenticatedUserLoader: AuthenticatedUserLoader;
         latestPostsLoader: LatestPostsLoader;
+        releaseInformationLoader: ReleaseInformationLoader;
+        postMessageAction: PostMessageAction;
     }
 }

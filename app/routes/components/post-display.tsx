@@ -48,14 +48,11 @@ export default function PostDisplay({
         );
     }
 
-    const snsUser = useSnsUser();
-
     return (
         <div>
             <div>
-                <p>{snsUser.userName}</p>
-                <span>{postContent.releaseVersion}</span>
-                <span>{postContent.tag}</span>
+                <p>{postContent.posterName}</p>
+                <span>{`${postContent.releaseVersion} ${postContent.releaseName}`}</span>
                 {getPostTime()}
             </div>
             <div>

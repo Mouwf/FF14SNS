@@ -1,4 +1,6 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
+import MockPostContentRepository from "../../repositories/post/mock-post-content-repository";
+import PostsFetcher from "../../../app/libraries/post/posts-fetcher";
 import LatestPostsLoader from "../../../app/loaders/post/latest-posts-loader";
 
 /**
@@ -7,32 +9,30 @@ import LatestPostsLoader from "../../../app/loaders/post/latest-posts-loader";
 let latestPostsLoader: LatestPostsLoader;
 
 beforeEach(() => {
-    latestPostsLoader = new LatestPostsLoader();
+    const postContentRepository = new MockPostContentRepository();
+    const postsFetcher = new PostsFetcher(postContentRepository);
+    latestPostsLoader = new LatestPostsLoader(postsFetcher);
 });
 
 describe("getLatestPosts", () => {
-    test("getLatestPosts should return 10 PostContent objects with correct values.", async () => {
+    test("getLatestPosts should return 1000 PostContent objects with correct values.", async () => {
         // 最新の投稿を取得する。
-        const id = "0";
-        const response = await latestPostsLoader.getLatestPosts(id);
+        const response = await latestPostsLoader.getLatestPosts();
 
         // 結果を検証する。
-        expect(response.length).toBe(10);
+        expect(response.length).toBe(1000);
         response.forEach((postContent, i) => {
-            const incrementedId = (i + Number(id) + 1);
-            const content = `
-                これはポスト${incrementedId}のテストです。\n
-                これはポスト${incrementedId}のテストです。\n
-                これはポスト${incrementedId}のテストです。\n
-                これはポスト${incrementedId}のテストです。\n
-                これはポスト${incrementedId}のテストです。\n
-            `
+            const incrementedId = i + 1;
+            const content = `Content ${incrementedId}`;
             expect(postContent).toEqual({
                 id: incrementedId,
+                posterId: 1,
+                posterName: "UserName@World",
+                releaseInformationId: 1,
                 releaseVersion: "5.5",
-                tag: "考察",
-                createdAt: expect.any(Date),
+                releaseName: "ReleaseName",
                 content: content,
+                createdAt: expect.any(Date),
             });
         });
     });

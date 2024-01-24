@@ -19,10 +19,10 @@ beforeEach(() => {
     authenticatedUserProvider = new AuthenticatedUserProvider(mockAuthenticationClient, mockUserRepository);
 });
 
-describe("getUser", () => {
-    test("getUser should return an AuthenticatedUser.", async () => {
+describe("getUserByToken", () => {
+    test("getUserByToken should return an AuthenticatedUser.", async () => {
         // 認証済みユーザーを取得する。
-        const response = await authenticatedUserProvider.getUser(idToken);
+        const response = await authenticatedUserProvider.getUserByToken(idToken);
 
         // ユーザーが存在しない場合、エラーを投げる。
         if (response === null) throw new Error("The user does not exist.");
@@ -42,10 +42,10 @@ describe("getUser", () => {
         expect(response.createdAt).toBeInstanceOf(Date);
     });
 
-    test("getUser should return null if the user does not exist.", async () => {
+    test("getUserByToken should return null if the user does not exist.", async () => {
         // テスト用のユーザーを登録する。
         const idTokenForNotExistUser = "idTokenForNotExistUser";
-        const response = await authenticatedUserProvider.getUser(idTokenForNotExistUser);
+        const response = await authenticatedUserProvider.getUserByToken(idTokenForNotExistUser);
 
         // 結果を検証する。
         expect(response).toBeNull();

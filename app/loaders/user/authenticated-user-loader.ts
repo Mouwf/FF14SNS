@@ -20,8 +20,18 @@ export default class AuthenticatedUserLoader {
      * @returns 認証済みユーザー。
      * ユーザーが存在しない場合、nullを返す。
      */
-    public async getUser(token: string): Promise<AuthenticatedUser | null> {
-        const authenticatedUser = await this.authenticatedUserProvider.getUser(token);
+    public async getUserByToken(token: string): Promise<AuthenticatedUser | null> {
+        const authenticatedUser = await this.authenticatedUserProvider.getUserByToken(token);
+        return authenticatedUser;
+    }
+
+    /**
+     * プロフィールIDで認証済みユーザーを取得する。
+     * @param profileId プロフィールID。
+     * @returns 認証済みユーザー。
+     */
+    public async getUserByProfileId(profileId: string): Promise<AuthenticatedUser | null> {
+        const authenticatedUser = await this.authenticatedUserProvider.getUserByProfileId(profileId);
         return authenticatedUser;
     }
 

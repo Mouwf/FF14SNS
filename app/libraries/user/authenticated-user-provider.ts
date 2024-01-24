@@ -18,10 +18,28 @@ export default class AuthenticatedUserProvider implements IAuthenticatedUserProv
     ) {
     }
 
-    public async getUser(token: string): Promise<AuthenticatedUser | null> {
+    public async getUserByToken(token: string): Promise<AuthenticatedUser | null> {
         // ユーザー情報を取得する。
         const clientResponse = await this.authenticationClient.getUserInformation(token);
         const repositoryResponse = await this.userRepository.findByAuthenticationProviderId(clientResponse.users[0].localId);
+
+        // ユーザーが存在しない場合、nullを返す。
+        if (repositoryResponse === null) return null;
+
+        // ユーザー情報を生成する。
+        const authenticatedUser = {
+            id: repositoryResponse.id,
+            profileId: repositoryResponse.profileId,
+            authenticationProviderId: repositoryResponse.authenticationProviderId,
+            userName: repositoryResponse.userName,
+            createdAt: new Date(Number(repositoryResponse.createdAt)),
+        };
+        return authenticatedUser;
+    }
+
+    public async getUserByProfileId(profileId: string): Promise<AuthenticatedUser | null> {
+        // ユーザー情報を取得する。
+        const repositoryResponse = await this.userRepository.findByProfileId(profileId);
 
         // ユーザーが存在しない場合、nullを返す。
         if (repositoryResponse === null) return null;
