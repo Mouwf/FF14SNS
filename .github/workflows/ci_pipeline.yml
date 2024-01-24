@@ -18,13 +18,19 @@ jobs:
         run: npm audit --production --audit-level=moderate
       - name: Install dependencies
         run: npm ci
-      - name: Run Jest tests
+      - name: Run Jest unit tests
         env:
           FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           TEST_FIREBASE_API_KEY: ${{ secrets.TEST_FIREBASE_API_KEY }}
           TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
         run: npm run test
+      - name: Run Jest infrastructure tests
+        env:
+          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          TEST_FIREBASE_API_KEY: ${{ secrets.TEST_FIREBASE_API_KEY }}
+          TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
         run: npm run test:infra
   build_node_20:
     needs: build_node_18
@@ -42,11 +48,17 @@ jobs:
         run: npm audit --production --audit-level=moderate
       - name: Install dependencies
         run: npm ci
-      - name: Run Jest tests
+      - name: Run Jest unit tests
         env:
           FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           TEST_FIREBASE_API_KEY: ${{ secrets.TEST_FIREBASE_API_KEY }}
           TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
         run: npm run test
+      - name: Run Jest infrastructure tests
+        env:
+          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          TEST_FIREBASE_API_KEY: ${{ secrets.TEST_FIREBASE_API_KEY }}
+          TEST_DATABASE_URL: ${{ secrets.TEST_DATABASE_URL }}
         run: npm run test:infra
