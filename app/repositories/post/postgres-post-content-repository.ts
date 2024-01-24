@@ -77,14 +77,20 @@ export default class PostgresPostContentRepository implements IPostContentReposi
                 DELETE FROM post_release_information_association WHERE post_id = $1;
             `;
             let values = [postId];
-            await client.query(query, values);
+            const resultDeleteForReleaseInformationAssociation = await client.query(query, values);
+
+            // 投稿結果がない場合はnullを返す。
+            if (resultDeleteForReleaseInformationAssociation.rowCount === 0) return false;
 
             // 投稿テーブルからレコードを削除する。
             query = `
                 DELETE FROM posts WHERE id = $1;
             `;
             values = [postId];
-            await client.query(query, values);
+            const resultForPosts = await client.query(query, values);
+
+            // 投稿結果がない場合はnullを返す。
+            if (resultForPosts.rowCount === 0) return false;
 
             // コミットする。
             await client.query("COMMIT");

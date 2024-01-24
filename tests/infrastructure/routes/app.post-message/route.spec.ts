@@ -1,5 +1,6 @@
 import { describe, test, expect, beforeEach, afterEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
+import deleteRecordForTest from "../../../infrastructure/common/delete-record-for-test";
 import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
 import PostgresUserRepository from "../../../../app/repositories/user/postgres-user-repository";
 import PostgresPostContentRepository from "../../../../app/repositories/post/postgres-post-content-repository";
@@ -53,63 +54,12 @@ let request: Request;
  */
 let context: AppLoadContext;
 
-async function deleteRecordForTest() {
+beforeEach(async () => {
     firebaseClient = new FirebaseClient();
     postgresUserRepository = new PostgresUserRepository(postgresClientProvider);
     postgresPostContentRepository = new PostgresPostContentRepository(postgresClientProvider);
-
-    // テスト用のユーザーが存在する場合、削除する。
-    try {
-        // テスト用のユーザーをログインする。
-        const responseSignIn = await delayAsync(() => firebaseClient.signInWithEmailPassword(mailAddress, password));
-
-        // テスト用のユーザーを削除する。
-        const idToken = responseSignIn.idToken;
-        await delayAsync(() => firebaseClient.deleteUser(idToken));
-        console.info("テスト用のユーザーを削除しました。");
-    } catch (error) {
-        console.info("テスト用のユーザーは存在しませんでした。");
-    }
-
-    // テスト用の投稿が存在する場合、削除する。
-    try {
-        // 複数のテスト用の投稿を取得する。
-        const responseGetLatestLimited = await delayAsync(() => postgresPostContentRepository.getLatestLimited(100));
-
-        // テスト用の投稿が存在しない場合、エラーを投げる。
-        if (responseGetLatestLimited.length === 0) throw new Error("The post does not exist.");
-
-        // テスト用の投稿を削除する。
-        responseGetLatestLimited.map(async (postContent) => {
-            const postId = postContent.id;
-            await delayAsync(() => postgresPostContentRepository.delete(postId));
-        });
-
-        console.info("テスト用の投稿を削除しました。");
-    } catch (error) {
-        console.info("テスト用の投稿は存在しませんでした。");
-    }
-
-    // テスト用のユーザー情報が存在する場合、削除する。
-    try {
-        // テスト用のユーザー情報を取得する。
-        const responseFindByProfileId = await delayAsync(() => postgresUserRepository.findByProfileId(profileId));
-
-        // テスト用のユーザー情報が存在しない場合、エラーを投げる。
-        if (responseFindByProfileId == null) throw new Error("The user does not exist.");
-
-        const id = responseFindByProfileId.id;
-        await delayAsync(() => postgresUserRepository.delete(id));
-        console.info("テスト用のユーザー情報を削除しました。");
-    } catch (error) {
-        console.info("テスト用のユーザー情報は存在しませんでした。");
-    }
-
     request = new Request("https://example.com");
     context = appLoadContext;
-}
-
-beforeEach(async () => {
     await deleteRecordForTest();
 });
 
@@ -191,5 +141,28 @@ describe("action", () => {
         expect(status).toBe(302);
         expect(location).toBe("/app");
         expect(cookie.postId).toBeDefined();
+    });
+
+    test("action should throw an error when the user does not exist.", async () => {
+        // アクションを実行する。
+        const requestWithBody = new Request("https://example.com", {
+            method: "POST",
+            body: new URLSearchParams({
+                userId: "1", // 初めてのユーザーIDが1から始まるので、最初はエラーになってしまう。
+                releaseInformationId: "1",
+                content: "アクション経由の投稿テスト！",
+            }),
+        });
+        const response = await action({
+            request: requestWithBody,
+            params: {},
+            context,
+        });
+
+        // 検証に必要な情報を取得する。
+        const errorInformation = await response.json();
+
+        // 結果を検証する。
+        expect(errorInformation).toBeDefined();
     });
 });

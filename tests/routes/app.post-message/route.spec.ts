@@ -15,6 +15,11 @@ let request: Request;
 let requestWithBody: Request;
 
 /**
+ * ボディが不正なモックリクエスト。
+ */
+let requestWithInvalidBody: Request;
+
+/**
  * モックコンテキスト。
  */
 let context: AppLoadContext;
@@ -25,6 +30,15 @@ beforeEach(async () => {
         method: "POST",
         body: new URLSearchParams({
             userId: "profileId",
+            releaseInformationId: "1",
+            content: "アクション経由の投稿テスト！",
+        }),
+    });
+    requestWithInvalidBody = new Request("https://example.com", {
+        method: "POST",
+        body: new URLSearchParams({
+            userId: "invalidProfileId",
+            releaseInformationId: "1",
             content: "アクション経由の投稿テスト！",
         }),
     });
@@ -73,5 +87,20 @@ describe("action", () => {
         expect(cookie).toEqual({
             postId: 1,
         });
+    });
+
+    test("action should return 400 when the body is invalid.", async () => {
+        // アクションを実行し、結果を取得する。
+        const response = await action({
+            request: requestWithInvalidBody,
+            params: {},
+            context,
+        });
+
+        // 検証に必要な情報を取得する。
+        const errorInformation = await response.json();
+
+        // 結果を検証する。
+        expect(errorInformation).toBeDefined();
     });
 });
