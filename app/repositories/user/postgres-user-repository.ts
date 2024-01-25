@@ -19,6 +19,8 @@ export default class PostgresUserRepository implements IUserRepository {
         const client = await this.postgresClientProvider.get();
         try {
             await client.query("BEGIN");
+
+            // ユーザーを作成する。
             const query = `
                 INSERT INTO users (
                     profile_id,
@@ -32,7 +34,12 @@ export default class PostgresUserRepository implements IUserRepository {
                 );
             `;
             const values = [profileId, authenticationProviderId, userName];
-            await client.query(query, values);
+            const result = await client.query(query, values);
+
+            // 結果がない場合、falseを返す。
+            if (result.rowCount === 0) return false;
+
+            // コミットする。
             await client.query("COMMIT");
             return true;
         } catch (error) {
@@ -51,11 +58,18 @@ export default class PostgresUserRepository implements IUserRepository {
         const client = await this.postgresClientProvider.get();
         try {
             await client.query("BEGIN");
+
+            // ユーザーを削除する。
             const query = `
                 DELETE FROM users WHERE id = $1;
             `;
             const values = [id];
-            await client.query(query, values);
+            const result = await client.query(query, values);
+
+            // 結果がない場合、falseを返す。
+            if (result.rowCount === 0) return false;
+
+            // コミットする。
             await client.query("COMMIT");
             return true;
         } catch (error) {
