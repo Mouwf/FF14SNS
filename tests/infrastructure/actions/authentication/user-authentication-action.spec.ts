@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
-import FirebaseClient from "../../../../app/libraries/firebase/firebase-client";
-import FirebaseUserAccountManager from "../../../../app/libraries/authentication/firebase-user-account-manager";
+import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
+import UserAccountManager from "../../../../app/libraries/authentication/user-account-manager";
 import UserAuthenticationAction from "../../../../app/actions/authentication/user-authentication-action";
 
 /**
@@ -10,9 +10,9 @@ import UserAuthenticationAction from "../../../../app/actions/authentication/use
 let firebaseClient: FirebaseClient;
 
 /**
- * Firebaseを利用したユーザー管理を行うクラス。
+ * ユーザー管理を行うクラス。
  */
-let firebaseUserAccountManager: FirebaseUserAccountManager;
+let userAccountManager: UserAccountManager;
 
 /**
  * ユーザー認証を行うアクション。
@@ -31,8 +31,8 @@ const password = "testPassword123";
 
 beforeEach(async () => {
     firebaseClient = new FirebaseClient();
-    firebaseUserAccountManager = new FirebaseUserAccountManager();
-    userAuthenticationAction = new UserAuthenticationAction(firebaseUserAccountManager);
+    userAccountManager = new UserAccountManager(firebaseClient);
+    userAuthenticationAction = new UserAuthenticationAction(userAccountManager);
 
     // テスト用のユーザーが存在する場合、削除する。
     try {
@@ -57,7 +57,7 @@ describe("login", () => {
 
     test("login should login and return a SignInWithEmailPasswordResponse.", async () => {
         // テスト用のユーザーを登録する。
-        await delayAsync(() => firebaseUserAccountManager.register(mailAddress, password));
+        await delayAsync(() => userAccountManager.register(mailAddress, password));
 
         // テスト用のユーザーログインする。
         const response = await delayAsync(() => userAuthenticationAction.login(mailAddress, password));
@@ -75,7 +75,7 @@ describe("login", () => {
         expect.assertions(1);
         try {
             // テスト用のユーザーを登録する。
-            await delayAsync(() => firebaseUserAccountManager.register(mailAddress, password));
+            await delayAsync(() => userAccountManager.register(mailAddress, password));
 
             // 無効なメールアドレスでログインし、エラーを発生させる。
             const invalidMailAddress = "invalid-email";
@@ -90,7 +90,7 @@ describe("login", () => {
         expect.assertions(1);
         try {
             // テスト用のユーザーを登録する。
-            await delayAsync(() => firebaseUserAccountManager.register(mailAddress, password));
+            await delayAsync(() => userAccountManager.register(mailAddress, password));
 
             // 無効なパスワードでログインし、エラーを発生させる。
             const invalidPassword = "invalid-password";
@@ -111,7 +111,7 @@ describe("logout", () => {
 
     test("logout should logout and return true.", async () => {
         // テスト用のユーザーを登録する。
-        const responseRegister = await delayAsync(() => firebaseUserAccountManager.register(mailAddress, password));
+        const responseRegister = await delayAsync(() => userAccountManager.register(mailAddress, password));
 
         // テスト用ユーザーをログアウトする。
         const idToken = responseRegister.idToken;
@@ -119,18 +119,5 @@ describe("logout", () => {
 
         // 結果を検証する。
         expect(response).toBe(true);
-    });
-
-    test("logout should throw an exception for invalid token.", async () => {
-        // TODO: ログアウトの処理を実装していないので後に実装する。
-        // expect.assertions(1);
-        // try {
-        //     // 無効なトークンでログアウトし、エラーを発生させる。
-        //     const invalidToken = "invalid-token";
-        //     await delayAsync(() => userAuthenticationAction.logout(invalidToken));
-        // } catch (error) {
-        //     // エラーを検証する。
-        //     expect(error).toBeDefined();
-        // }
     });
 });

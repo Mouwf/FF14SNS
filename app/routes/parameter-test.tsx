@@ -1,4 +1,4 @@
-import { MetaFunction, json } from "@netlify/remix-runtime";
+import { MetaFunction, json } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 
 export const meta: MetaFunction = () => {

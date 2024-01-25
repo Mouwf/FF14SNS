@@ -1,15 +1,17 @@
-import IUserRegistrar from "../../libraries/authentication/i-user-registrar";
-import SignUpResponse from "../../models/firebase/signup-response";
+import IAuthenticationUserRegistrar from "../../libraries/authentication/i-authentication-user-registrar";
+import SignUpResponse from "../../models/authentication/signup-response";
 
 /**
- * ユーザー登録を行うアクション。
+ * 認証するユーザーの登録をを行うアクション。
  */
 export default class UserRegistrationAction {
     /**
-     * ユーザー登録を行うアクションを生成する。
-     * @param userRegistrar ユーザー登録を行うクラス。
+     * 認証するユーザーの登録を行うアクションを生成する。
+     * @param authenticationUserRegistrar 認証するユーザーの登録を行うクラス。
      */
-    constructor(private readonly userRegistrar: IUserRegistrar) {
+    constructor(
+        private readonly authenticationUserRegistrar: IAuthenticationUserRegistrar
+    ) {
     }
 
     /**
@@ -19,7 +21,7 @@ export default class UserRegistrationAction {
      * @returns サインアップのレスポンス。
      */
     public async register(mailAddress: string, password: string): Promise<SignUpResponse> {
-        const response = await this.userRegistrar.register(mailAddress, password);
+        const response = await this.authenticationUserRegistrar.register(mailAddress, password);
         return response;
     }
 
@@ -29,7 +31,7 @@ export default class UserRegistrationAction {
      * @returns 削除に成功したかどうか。
      */
     public async delete(token: string): Promise<boolean> {
-        const response = await this.userRegistrar.delete(token);
+        const response = await this.authenticationUserRegistrar.delete(token);
         return response;
     }
 }

@@ -1,10 +1,16 @@
-import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@netlify/remix-runtime";
+import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import FF14SnsUser from "../../libraries/user/ff14-sns-user";
+import SnsUserProvider from "../../contexts/user/sns-user-provider";
 import { userAuthenticationCookie } from "../../cookies.server";
 import Header from "./components/header";
 import Footer from "./components/footer";
+import SnsUser from "../../models/user/sns-user";
+import { appLoadContext as context } from "../../dependency-injector/get-load-context";
 
+/**
+ * トップページのメタ情報を設定する。
+ * @returns トップページのメタ情報。
+ */
 export const meta: MetaFunction = () => {
     return [
         { title: "FF14 SNS" },
@@ -12,9 +18,15 @@ export const meta: MetaFunction = () => {
     ];
 }
 
+/**
+ * SNSのユーザーを取得するローダー。
+ * @param request リクエスト。
+ * @param context コンテキスト。
+ * @returns SNSのユーザー。
+ * @throws ログインしていない場合、ログインページにリダイレクトする。
+ */
 export const loader = async ({
     request,
-    context,
 }: LoaderFunctionArgs) => {
     try {
         // ログインしていない場合、ログインページにリダイレクトする。
@@ -26,10 +38,21 @@ export const loader = async ({
             },
         });
 
-        // FF14SNSのユーザーを取得する。
-        const ff14SnsUserLoader = context.ff14SnsUserLoader;
-        const ff14SnsUser = await ff14SnsUserLoader.getUser(cookie.idToken);
-        return json(ff14SnsUser);
+        // 認証済みユーザーを取得する。
+        const authenticatedUserLoader = context.authenticatedUserLoader;
+        const authenticatedUser = await authenticatedUserLoader.getUserByToken(cookie.idToken);
+
+        // 認証済みユーザーが存在しない場合、ユーザー登録ページにリダイレクトする。
+        if (!authenticatedUser) {
+            return redirect("/auth/register-user");
+        }
+
+        // SNSのユーザーを返す。
+        const snsUser: SnsUser = {
+            userId: authenticatedUser.profileId,
+            userName: authenticatedUser.userName,
+        };
+        return json(snsUser);
     } catch (error) {
         console.error(error);
         throw redirect("/auth/login", {
@@ -40,9 +63,14 @@ export const loader = async ({
     }
 }
 
+/**
+ * ログアウトするアクション。
+ * @param request リクエスト。
+ * @param context コンテキスト。
+ * @returns ログインページにリダイレクトする。
+ */
 export const action = async ({
     request,
-    context,
 }: ActionFunctionArgs) => {
     try {
         // ログインしていない場合、ログインページにリダイレクトする。
@@ -74,18 +102,20 @@ export const action = async ({
     }
 }
 
-export default function App() {
-    const ff14SnsUserJson = useLoaderData<typeof loader>();
-    const ff14SnsUser: FF14SnsUser = {
-        name: ff14SnsUserJson.name,
-    };
+/**
+ * トップページ。
+ * @returns トップページ。
+ */
+export default function Top() {
+    const snsUser: SnsUser = useLoaderData<typeof loader>();
 
     return (
         <main>
-            <Header ff14SnsUser={ff14SnsUser} />
-            <h1>FF14 SNS</h1>
-            <Outlet />
-            <Footer />
+            <SnsUserProvider snsUser={snsUser}>
+                <Header />
+                <Outlet />
+                <Footer />
+            </SnsUserProvider>
         </main>
     );
 }

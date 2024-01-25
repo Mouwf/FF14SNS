@@ -1,5 +1,5 @@
 import IUserAuthenticator from "../../libraries/authentication/i-user-authenticator";
-import SignInWithEmailPasswordResponse from "../../models/firebase/signin-with-email-password-response";
+import SignInWithEmailPasswordResponse from "../../models/authentication/signin-with-email-password-response";
 
 /**
  * ユーザー認証を行うアクション。
@@ -7,9 +7,11 @@ import SignInWithEmailPasswordResponse from "../../models/firebase/signin-with-e
 export default class UserAuthenticationAction {
     /**
      * ユーザー認証を行うアクションを生成する。
-     * @param userAuthenticator 
+     * @param userAuthenticator ユーザー認証を行うクラス。
      */
-    constructor(private readonly userAuthenticator: IUserAuthenticator) {
+    constructor(
+        private readonly userAuthenticator: IUserAuthenticator
+    ) {
     }
 
     /**

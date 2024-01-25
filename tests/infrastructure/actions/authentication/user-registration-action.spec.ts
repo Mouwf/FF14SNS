@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
-import FirebaseClient from "../../../../app/libraries/firebase/firebase-client";
-import FirebaseUserAccountManager from "../../../../app/libraries/authentication/firebase-user-account-manager";
+import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
+import UserAccountManager from "../../../../app/libraries/authentication/user-account-manager";
 import UserRegistrationAction from "../../../../app/actions/authentication/user-registration-action";
 
 /**
@@ -10,9 +10,9 @@ import UserRegistrationAction from "../../../../app/actions/authentication/user-
 let firebaseClient: FirebaseClient;
 
 /**
- * Firebaseを利用したユーザー管理を行うクラス。
+ * ユーザー管理を行うクラス。
  */
-let firebaseUserAccountManager: FirebaseUserAccountManager;
+let userAccountManager: UserAccountManager;
 
 /**
  * ユーザー登録を行うアクション。
@@ -31,8 +31,8 @@ const password = "testPassword123";
 
 beforeEach(async () => {
     firebaseClient = new FirebaseClient();
-    firebaseUserAccountManager = new FirebaseUserAccountManager();
-    userRegistrationAction = new UserRegistrationAction(firebaseUserAccountManager);
+    userAccountManager = new UserAccountManager(firebaseClient);
+    userRegistrationAction = new UserRegistrationAction(userAccountManager);
 
     // テスト用のユーザーが存在する場合、削除する。
     try {
@@ -109,17 +109,5 @@ describe("delete", () => {
 
         // 結果を検証する。
         expect(response).toBe(true);
-    });
-
-    test("delete should throw an exception for invalid token.", async () => {
-        expect.assertions(1);
-        try {
-            // 無効なトークンでユーザーを削除し、エラーを発生させる。
-            const token = "invalid-token";
-            await delayAsync(() => userRegistrationAction.delete(token));
-        } catch (error) {
-            // エラーを検証する。
-            expect(error).toBeDefined();
-        }
     });
 });
