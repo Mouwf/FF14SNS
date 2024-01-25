@@ -19,6 +19,7 @@ export default function PostDisplay({
     const getPostTime = () => {
         const postDate = postContent.createdAt;
         const formattedDate = postDate.toLocaleString("ja-JP", {
+            timeZone: "Asia/Tokyo",
             year: "numeric",
             month: "2-digit",
             day: "2-digit",
