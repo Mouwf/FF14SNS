@@ -10,6 +10,11 @@ import { userAuthenticationCookie } from "../../../app/cookies.server";
 let requestWithCookie: Request;
 
 /**
+ * エラーを起こすモックリクエスト。
+ */
+let requestWithError: Request;
+
+/**
  * ユーザー名が未入力なモックリクエスト。
  */
 let requestWithInvalidUserName: Request;
@@ -35,6 +40,18 @@ beforeEach(async () => {
         method: "POST",
         body: new URLSearchParams({
             userName: "UserName@World",
+        }),
+    });
+    requestWithError = new Request("https://example.com", {
+        headers: {
+            Cookie: await userAuthenticationCookie.serialize({
+                idToken: "idToken",
+                refreshToken: "refreshToken",
+            }),
+        },
+        method: "POST",
+        body: new URLSearchParams({
+            userName: "errorUserName@World",
         }),
     });
     requestWithInvalidUserName = new Request("https://example.com", {
@@ -90,7 +107,25 @@ describe("action", () => {
         expect(cookie).toStrictEqual({});
     });
 
-    test("loader should redirect to login page if an error occurs.", async () => {
+    test("action should return error message if user can not be registered.", async () => {
+        // アクションを実行し、結果を取得する。
+        const response = await action({
+            request: requestWithError,
+            params: {},
+            context,
+        });
+
+        // 検証に必要な情報を取得する。
+        const errorInformation = await response.json();
+
+        // 結果を検証する。
+        const expectedErrorInformation = {
+            error: "ユーザー登録に失敗しました。",
+        };
+        expect(errorInformation).toEqual(expectedErrorInformation);
+    });
+
+    test("action should return error message if an error occurs.", async () => {
         // アクションを実行し、結果を取得する。
         const response = await action({
             request: requestWithInvalidUserName,

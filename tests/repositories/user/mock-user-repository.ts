@@ -6,6 +6,7 @@ import IUserRepository from "../../../app/repositories/user/i-user-repository";
  */
 export default class MockUserRepository implements IUserRepository {
     public async create(profileId: string, authenticationProviderId: string, userName: string): Promise<boolean> {
+        if (userName === "errorUserName@World") return false;
         return true;
     }
 

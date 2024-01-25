@@ -31,7 +31,12 @@ export const action = async ({
         const authenticationProviderId = await authenticatedUserLoader.getAuthenticationProviderId(cookie.idToken);
 
         // ユーザーを登録する。
-        await context.snsUserRegistrationAction.register(authenticationProviderId, userName);
+        const isRegistered = await context.snsUserRegistrationAction.register(authenticationProviderId, userName);
+
+        // ユーザー登録に失敗した場合、エラーを返す。
+        if (!isRegistered) return json({ error: "ユーザー登録に失敗しました。" });
+
+        // ユーザー登録に成功した場合、トップページにリダイレクトする。
         return redirect("/app");
     } catch (error) {
         console.error(error);
