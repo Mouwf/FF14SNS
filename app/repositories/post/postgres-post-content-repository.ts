@@ -36,9 +36,7 @@ export default class PostgresPostContentRepository implements IPostContentReposi
             const postInsertResult = await client.query(postInsertQuery, postInsertValues);
 
             // 結果がない場合、エラーを投げる。
-            if (postInsertResult.rowCount === 0) {
-                throw new Error("投稿に失敗しました。");
-            }
+            if (postInsertResult.rowCount === 0) throw new Error("投稿に失敗しました。");
 
             // 投稿IDを取得する。
             const postId = postInsertResult.rows[0].id;
@@ -58,9 +56,7 @@ export default class PostgresPostContentRepository implements IPostContentReposi
             const releaseInformationAssociationResult = await client.query(releaseInformationAssociationInsertQuery, releaseInformationAssociationInsertValues);
 
             // 結果がない場合、エラーを投げる。
-            if (releaseInformationAssociationResult.rowCount === 0) {
-                throw new Error("投稿に失敗しました。");
-            }
+            if (releaseInformationAssociationResult.rowCount === 0) throw new Error("投稿に失敗しました。");
 
             // コミットする。
             await client.query("COMMIT");
