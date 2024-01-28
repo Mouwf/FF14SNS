@@ -1,4 +1,4 @@
-import IAuthenticationUserRegistrar from "../../libraries/authentication/i-authentication-user-registrar";
+import UserAccountManager from "../../libraries/authentication/user-account-manager";
 import SignUpResponse from "../../models/authentication/signup-response";
 
 /**
@@ -7,10 +7,10 @@ import SignUpResponse from "../../models/authentication/signup-response";
 export default class UserRegistrationAction {
     /**
      * 認証するユーザーの登録を行うアクションを生成する。
-     * @param authenticationUserRegistrar 認証するユーザーの登録を行うクラス。
+     * @param userAccountManager ユーザー管理を行うクラス。
      */
     constructor(
-        private readonly authenticationUserRegistrar: IAuthenticationUserRegistrar
+        private readonly userAccountManager: UserAccountManager,
     ) {
     }
 
@@ -21,7 +21,7 @@ export default class UserRegistrationAction {
      * @returns サインアップのレスポンス。
      */
     public async register(mailAddress: string, password: string): Promise<SignUpResponse> {
-        const response = await this.authenticationUserRegistrar.register(mailAddress, password);
+        const response = await this.userAccountManager.register(mailAddress, password);
         return response;
     }
 
@@ -31,7 +31,7 @@ export default class UserRegistrationAction {
      * @returns 削除に成功したかどうか。
      */
     public async delete(token: string): Promise<boolean> {
-        const response = await this.authenticationUserRegistrar.delete(token);
+        const response = await this.userAccountManager.delete(token);
         return response;
     }
 }

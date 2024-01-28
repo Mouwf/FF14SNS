@@ -1,5 +1,5 @@
 import AuthenticatedUser from "../../models/user/authenticated-user";
-import IAuthenticatedUserProvider from "../../libraries/user/i-authenticated-user-provider";
+import AuthenticatedUserProvider from "../../libraries/user/authenticated-user-provider";
 
 /**
  * 認証済みユーザーを取得するローダー。
@@ -10,7 +10,7 @@ export default class AuthenticatedUserLoader {
      * @param authenticatedUserProvider 認証済みユーザーを提供するクラス。
      */
     constructor(
-        private readonly authenticatedUserProvider: IAuthenticatedUserProvider
+        private readonly authenticatedUserProvider: AuthenticatedUserProvider,
     ) {
     }
 

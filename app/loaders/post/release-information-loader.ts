@@ -1,4 +1,4 @@
-import IReleaseInformationGetter from "../../libraries/post/i-release-information-getter";
+import ReleaseInformationGetter from "../../libraries/post/release-information-getter";
 import ReleaseInformation from "../../models/post/release-information";
 
 /**
@@ -10,7 +10,7 @@ export default class ReleaseInformationLoader {
      * @param releaseInformationGetter リリース情報を取得するクラス。
      */
     constructor(
-        private readonly releaseInformationGetter: IReleaseInformationGetter
+        private readonly releaseInformationGetter: ReleaseInformationGetter
     ) {
     }
 

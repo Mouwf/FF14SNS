@@ -1,15 +1,15 @@
-import IPoster from "../../libraries/post/i-poster";
+import PostInteractor from "../../libraries/post/post-interactor";
 
 /**
  * メッセージを投稿するアクション。
  */
 export default class PostMessageAction {
     /**
-     * 
-     * @param poster メッセージを投稿するクラス。
+     * メッセージを投稿するアクションを生成する。
+     * @param postInteractor 投稿に関する処理を行うクラス。
      */
     constructor(
-        private readonly poster: IPoster,
+        private readonly postInteractor: PostInteractor,
     ) {
     }
 
@@ -21,7 +21,7 @@ export default class PostMessageAction {
      * @returns 投稿ID。
      */
     public async post(posterId: number, releaseInformationId: number, content: string): Promise<number> {
-        const postId = await this.poster.post(posterId, releaseInformationId, content);
+        const postId = await this.postInteractor.post(posterId, releaseInformationId, content);
         return postId;
     }
 }
