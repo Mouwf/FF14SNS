@@ -2,7 +2,7 @@ import { describe, test, expect, beforeEach } from "@jest/globals";
 import { AppLoadContext } from "@remix-run/node";
 import { appLoadContext } from "../../../app/dependency-injector/get-load-context";
 import { loader, action } from "../../../app/routes/app.post-message/route";
-import { newlyPostedPostCookie } from "../../../app/cookies.server";
+import { userAuthenticationCookie, newlyPostedPostCookie } from "../../../app/cookies.server";
 
 /**
  * モックリクエスト。
@@ -12,12 +12,12 @@ let request: Request;
 /**
  * ボディ付きのモックリクエスト。
  */
-let requestWithBody: Request;
+let requestWithCookieAndBody: Request;
 
 /**
- * ボディが不正なモックリクエスト。
+ * クッキーが不正なモックリクエスト。
  */
-let requestWithInvalidBody: Request;
+let requestWithInvalidCookie: Request;
 
 /**
  * モックコンテキスト。
@@ -26,18 +26,26 @@ let context: AppLoadContext;
 
 beforeEach(async () => {
     request = new Request("https://example.com");
-    requestWithBody = new Request("https://example.com", {
+    requestWithCookieAndBody = new Request("https://example.com", {
+        headers: {
+            Cookie: await userAuthenticationCookie.serialize({
+                idToken: "idToken",
+            }),
+        },
         method: "POST",
         body: new URLSearchParams({
-            userId: "profileId",
             releaseInformationId: "1",
             content: "アクション経由の投稿テスト！",
         }),
     });
-    requestWithInvalidBody = new Request("https://example.com", {
+    requestWithInvalidCookie = new Request("https://example.com", {
+        headers: {
+            Cookie: await userAuthenticationCookie.serialize({
+                idToken: "invalidIdToken",
+            }),
+        },
         method: "POST",
         body: new URLSearchParams({
-            userId: "invalidProfileId",
             releaseInformationId: "1",
             content: "アクション経由の投稿テスト！",
         }),
@@ -71,7 +79,7 @@ describe("action", () => {
     test("action should redirect to app page and return posted postId in the cookies.", async () => {
         // アクションを実行し、結果を取得する。
         const response = await action({
-            request: requestWithBody,
+            request: requestWithCookieAndBody,
             params: {},
             context,
         });
@@ -89,10 +97,10 @@ describe("action", () => {
         });
     });
 
-    test("action should return error message when the body is invalid.", async () => {
+    test("action should return error message when id token is invalid.", async () => {
         // アクションを実行し、結果を取得する。
         const response = await action({
-            request: requestWithInvalidBody,
+            request: requestWithInvalidCookie,
             params: {},
             context,
         });

@@ -112,6 +112,36 @@ describe("getUserByToken", () => {
     });
 });
 
+describe("getUserByProfileId", () => {
+    // 環境変数が設定されていない場合、テストをスキップする。
+    if (!process.env.RUN_INFRA_TESTS) {
+        test.skip("Skipping infrastructure tests.", () => {});
+        return;
+    }
+
+    test("getUserByProfileId should return an AuthenticatedUser.", async () => {
+        // テスト用のユーザーを登録する。
+        const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
+
+        // テスト用のユーザー情報を登録する。
+        const authenticationProviderId = responseSignUp.localId;
+        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName));
+
+        // 認証済みユーザーを取得する。
+        const response = await delayAsync(() => authenticatedUserLoader.getUserByProfileId(profileId));
+
+        // ユーザーが存在しない場合、エラーを投げる。
+        if (response === null) throw new Error("The user does not exist.");
+
+        // 結果を検証する。
+        expect(response.id).toBeDefined();
+        expect(response.profileId).toBe(profileId);
+        expect(response.authenticationProviderId).toBe(authenticationProviderId);
+        expect(response.userName).toBe(userName);
+        expect(response.createdAt).toBeInstanceOf(Date);
+    });
+});
+
 describe("getAuthenticationProviderId", () => {
     // 環境変数が設定されていない場合、テストをスキップする。
     if (!process.env.RUN_INFRA_TESTS) {
