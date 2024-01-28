@@ -71,9 +71,19 @@ export default function PostDisplay({
                     <p>{postContent.content}</p>
                 </div>
                 <div className={styles["post-reactions-area"]}>
-                    <div>
-                        <Link to="app/reply">リプライ</Link>
-                        <button>リポスト</button>
+                    <div className={styles["post-reactions"]}>
+                        <div className={styles["post-reply"]}>
+                            <Link to="app/reply">
+                                <div className={styles["post-reply-x-position"]}>
+                                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M15.3 0H1.7C0.765 0 0 0.765 0 1.7V11.9C0 12.835 0.765 13.6 1.7 13.6H13.6L17 17V1.7C17 0.765 16.235 0 15.3 0ZM15.3 12.92L14.28 11.9H1.7V1.7H15.3V12.92Z" fill="#737373"/>
+                                    </svg>
+                                </div>
+                            </Link>
+                        </div>
+                        <div>
+                            <button>リポスト</button>
+                        </div>
                     </div>
                     {getReaction()}
                 </div>
