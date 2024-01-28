@@ -1,11 +1,12 @@
 .post {
     display: flex;
     padding: 12px;
+    border: 1px solid #4B4B4B;
+    background: #1e1e1e;
 }
 
 .post-user-img-area {
     min-width: 57px;
-    border: solid 1px #6876f3;
 }
 
 .post-contents-area {
@@ -43,7 +44,6 @@
     display: flex;
     justify-content: space-between;
 }
-
 
 @media (max-width: 599px) {
     .post-user-img-area {

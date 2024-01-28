@@ -16,10 +16,6 @@
     height: fit-content;
     margin-right: 8px;
     padding: 32px;
-    box-sizing: border-box;
-}
-
-.content-bg-style {
     border: 1px solid #4B4B4B;
     background: #1e1e1e;
 }
