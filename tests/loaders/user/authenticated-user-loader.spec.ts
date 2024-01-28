@@ -14,6 +14,11 @@ let authenticatedUserLoader: AuthenticatedUserLoader;
  */
 const idToken = "idToken";
 
+/**
+ * プロフィールID。
+ */
+const profileId = "profileId";
+
 beforeEach(() => {
     const mockauthenticationClient = new MockAuthenticationClient();
     const mockUserRepository = new MockUserRepository();
@@ -25,6 +30,30 @@ describe("getUserByToken", () => {
     test("getUserByToken should return an AuthenticatedUser.", async () => {
         // 認証済みユーザーを取得する。
         const response = await authenticatedUserLoader.getUserByToken(idToken);
+
+        // ユーザーが存在しない場合、エラーを投げる。
+        if (response === null) throw new Error("The user does not exist.");
+
+        // 結果を検証する。
+        const expectedUser = {
+            id: 1,
+            profileId: "profileId",
+            authenticationProviderId: "authenticationProviderId",
+            userName: "UserName@World",
+            createdAt: new Date(),
+        }
+        expect(response.id).toBe(expectedUser.id);
+        expect(response.profileId).toBe(expectedUser.profileId);
+        expect(response.authenticationProviderId).toBe(expectedUser.authenticationProviderId);
+        expect(response.userName).toBe(expectedUser.userName);
+        expect(response.createdAt).toBeInstanceOf(Date);
+    });
+});
+
+describe("getUserByProfileId", () => {
+    test("getUserByProfileId should return an AuthenticatedUser.", async () => {
+        // 認証済みユーザーを取得する。
+        const response = await authenticatedUserLoader.getUserByProfileId(profileId);
 
         // ユーザーが存在しない場合、エラーを投げる。
         if (response === null) throw new Error("The user does not exist.");

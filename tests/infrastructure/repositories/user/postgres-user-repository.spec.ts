@@ -58,6 +58,34 @@ describe("create", () => {
     });
 });
 
+describe("delete", () => {
+    // 環境変数が設定されていない場合、テストをスキップする。
+    if (!process.env.RUN_INFRA_TESTS) {
+        test.skip("Skipping infrastructure tests.", () => {});
+        return;
+    }
+
+    test("delete should delete a user", async () => {
+        // テスト用のユーザー情報を作成する。
+        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName));
+
+        // テスト用のユーザー情報を取得する。
+        const responseFindByProfileId = await delayAsync(() => postgresUserRepository.findByProfileId(profileId));
+
+        // テスト用のユーザー情報が存在しない場合、エラーを投げる。
+        if (responseFindByProfileId == null) throw new Error("The user does not exist.");
+
+        // テスト用のユーザー情報を削除する。
+        const id = responseFindByProfileId.id;
+        const responseDelete = await delayAsync(() => postgresUserRepository.delete(id));
+        const responseFindByProfileIdAfterDelete = await delayAsync(() => postgresUserRepository.findByProfileId(profileId));
+
+        // 結果を検証する。
+        expect(responseDelete).toBe(true);
+        expect(responseFindByProfileIdAfterDelete).toBeNull();
+    });
+});
+
 describe("findByProfileId", () => {
     // 環境変数が設定されていない場合、テストをスキップする。
     if (!process.env.RUN_INFRA_TESTS) {
@@ -123,33 +151,5 @@ describe("findByAuthenticationProviderId", () => {
 
         // 結果を検証する。
         expect(response).toBeNull();
-    });
-});
-
-describe("delete", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
-
-    test("delete should delete a user", async () => {
-        // テスト用のユーザー情報を作成する。
-        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName));
-
-        // テスト用のユーザー情報を取得する。
-        const responseFindByProfileId = await delayAsync(() => postgresUserRepository.findByProfileId(profileId));
-
-        // テスト用のユーザー情報が存在しない場合、エラーを投げる。
-        if (responseFindByProfileId == null) throw new Error("The user does not exist.");
-
-        // テスト用のユーザー情報を削除する。
-        const id = responseFindByProfileId.id;
-        const responseDelete = await delayAsync(() => postgresUserRepository.delete(id));
-        const responseFindByProfileIdAfterDelete = await delayAsync(() => postgresUserRepository.findByProfileId(profileId));
-
-        // 結果を検証する。
-        expect(responseDelete).toBe(true);
-        expect(responseFindByProfileIdAfterDelete).toBeNull();
     });
 });

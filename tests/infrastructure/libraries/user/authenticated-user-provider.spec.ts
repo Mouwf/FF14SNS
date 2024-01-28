@@ -117,6 +117,44 @@ describe("getUserByToken", () => {
     });
 });
 
+describe("getUserByProfileId", () => {
+    // 環境変数が設定されていない場合、テストをスキップする。
+    if (!process.env.RUN_INFRA_TESTS) {
+        test.skip("Skipping infrastructure tests.", () => {});
+        return;
+    }
+
+    test("getUserByProfileId should return an AuthenticatedUser.", async () => {
+        // テスト用のユーザーを登録する。
+        const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
+
+        // テスト用のユーザー情報を登録する。
+        const authenticationProviderId = responseSignUp.localId;
+        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName));
+
+        // テスト用のユーザー情報を取得する。
+        const responseUser = await delayAsync(() => authenticatedUserProvider.getUserByProfileId(profileId));
+
+        // ユーザーが存在しない場合、エラーを投げる。
+        if (responseUser === null) throw new Error("The user does not exist.");
+
+        // 結果を検証する。
+        expect(responseUser.id).toBeDefined();
+        expect(responseUser.profileId).toBe(profileId);
+        expect(responseUser.authenticationProviderId).toBe(authenticationProviderId);
+        expect(responseUser.userName).toBe(userName);
+        expect(new Date(responseUser.createdAt)).toBeInstanceOf(Date);
+    });
+
+    test("getUserByProfileId should return null if the user does not exist.", async () => {
+        // テスト用のユーザー情報を取得する。
+        const responseUser = await delayAsync(() => authenticatedUserProvider.getUserByProfileId(profileId));
+    
+        // 結果を検証する。
+        expect(responseUser).toBeNull();
+    });
+});
+
 describe("getAuthenticationProviderId", () => {
     // 環境変数が設定されていない場合、テストをスキップする。
     if (!process.env.RUN_INFRA_TESTS) {
