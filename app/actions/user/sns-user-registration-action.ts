@@ -1,4 +1,4 @@
-import IUserRegistrar from "../../libraries/user/i-user-registrar";
+import UserRegistrar from "../../libraries/user/user-registrar";
 
 /**
  * SNSのユーザー登録を行うアクション。
@@ -9,7 +9,7 @@ export default class SnsUserRegistrationAction {
      * @param userRegistrar ユーザー登録を行うクラス。
      */
     constructor(
-        private readonly userRegistrar: IUserRegistrar,
+        private readonly userRegistrar: UserRegistrar,
     ) {
     }
 

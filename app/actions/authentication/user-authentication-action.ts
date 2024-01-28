@@ -1,4 +1,4 @@
-import IUserAuthenticator from "../../libraries/authentication/i-user-authenticator";
+import UserAccountManager from "../../libraries/authentication/user-account-manager";
 import SignInWithEmailPasswordResponse from "../../models/authentication/signin-with-email-password-response";
 
 /**
@@ -7,10 +7,10 @@ import SignInWithEmailPasswordResponse from "../../models/authentication/signin-
 export default class UserAuthenticationAction {
     /**
      * ユーザー認証を行うアクションを生成する。
-     * @param userAuthenticator ユーザー認証を行うクラス。
+     * @param userAccountManager ユーザー管理を行うクラス。
      */
     constructor(
-        private readonly userAuthenticator: IUserAuthenticator
+        private readonly userAccountManager: UserAccountManager
     ) {
     }
 
@@ -21,7 +21,7 @@ export default class UserAuthenticationAction {
      * @returns メールアドレスとパスワードでサインインのレスポンス。
      */
     public async login(mailAddress: string, password: string): Promise<SignInWithEmailPasswordResponse> {
-        const response = await this.userAuthenticator.login(mailAddress, password);
+        const response = await this.userAccountManager.login(mailAddress, password);
         return response;
     }
 
@@ -30,7 +30,7 @@ export default class UserAuthenticationAction {
      * @returns ログアウトに成功したかどうか。
      */
     public async logout(token: string): Promise<boolean> {
-        const response = await this.userAuthenticator.logout(token);
+        const response = await this.userAccountManager.logout(token);
         return response;
     }
 }
