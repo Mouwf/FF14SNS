@@ -58,10 +58,12 @@ export default function PostDisplay({
             </div>
             <div className={styles["post-contents-area"]}>
                 <div className={styles["post-basic-information"]}>
-                    <div>
+                    <div className={styles["post-about"]}>
                         <p className={styles["post-user-name"]}>{snsUser.name}</p>
-                        <span className={styles["post-release-version"]}>{postContent.releaseVersion}</span>
-                        <span>{postContent.tag}</span>
+                        <div>
+                            <span className={styles["post-release-version"]}>{postContent.releaseVersion}</span>
+                            <span>{postContent.tag}</span>
+                        </div>
                     </div>
                     <div>
                         {getPostTime()}
