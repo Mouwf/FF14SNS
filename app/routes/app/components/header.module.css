@@ -3,10 +3,6 @@
     justify-content: end;
 }
 
-.test-class {
-    color: red;
-}
-
 .header-contents-area {
     position: sticky;
     top: 0px;

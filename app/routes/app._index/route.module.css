@@ -1,10 +1,10 @@
-.test-class {
+.main-contents {
     max-width: 600px;
     min-width: 300px;
 }
 
 @media (max-width: 599px) {
-    .test-class {
+    .main-contents {
         max-width: 100%;
         min-width: 100%;
     }

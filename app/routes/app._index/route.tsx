@@ -53,7 +53,7 @@ export default function TopIndex() {
     const [latestPostContents, setLatestPostContents] = useState<PostContent[]>(initialLatestPostContents);
 
     return (
-        <div className={styles["test-class"]}>
+        <div className={styles["main-contents"]}>
             <InfiniteScroll
                 fetcher={fetcher}
                 targetAddress="/app/latest-posts"

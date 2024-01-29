@@ -8,7 +8,7 @@ export default function Header() {
     return (
         <header className={styles["header"]}>
             <div className={styles["header-contents-area"]}>
-                <h1 className={styles["test-class"]}>FF14 SNS</h1>
+                <h1>FF14 SNS</h1>
                 <p>{snsUser.userName}</p>
                 <Form method="post">
                     <button type="submit">ログアウト</button>
