@@ -1,36 +1,27 @@
+import PostFetchLimit from "../../libraries/post/post-fetch-limit";
+import PostsFetcher from "../../libraries/post/posts-fetcher";
 import PostContent from "../../models/post/post-content";
 
 /**
  * 最新の投稿を取得するローダー。
  */
-export default class LatestPostsLoader {
+export default class LatestPostsLoader extends PostFetchLimit {
+    /**
+     * 最新の投稿を取得するローダーを生成する。
+     * @param postsFetcher 投稿を取得するクラス。
+     */
+    constructor(
+        private readonly postsFetcher: PostsFetcher,
+    ) {
+        super();
+    }
+
     /**
      * 最新の投稿を取得する。
-     * @param id 投稿ID。
      * @returns 最新の投稿。
      */
-    public async getLatestPosts(id: string): Promise<PostContent[]> {
-        const idNumber = Number(id) + 1;
-        const postContents: PostContent[] = Array.from({
-            length: 10,
-        }, (_, i) => {
-            const incrementedId = i + idNumber;
-            const content = `
-                これはポスト${incrementedId}のテストです。\n
-                これはポスト${incrementedId}のテストです。\n
-                これはポスト${incrementedId}のテストです。\n
-                これはポスト${incrementedId}のテストです。\n
-                これはポスト${incrementedId}のテストです。\n
-            `;
-
-            return ({
-                id: incrementedId.toString(),
-                releaseVersion: "5.5",
-                tag: "考察",
-                createdAt: new Date(),
-                content: content,
-            });
-        });
+    public async getLatestPosts(): Promise<PostContent[]> {
+        const postContents = await this.postsFetcher.fetchLatestPosts(this.postsLimit);
         return postContents;
     }
 }

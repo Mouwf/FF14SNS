@@ -1,5 +1,5 @@
-import IUserAuthenticator from "../../libraries/authentication/i-user-authenticator";
-import SignInWithEmailPasswordResponse from "../../models/firebase/signin-with-email-password-response";
+import UserAccountManager from "../../libraries/authentication/user-account-manager";
+import SignInWithEmailPasswordResponse from "../../models/authentication/signin-with-email-password-response";
 
 /**
  * ユーザー認証を行うアクション。
@@ -7,9 +7,11 @@ import SignInWithEmailPasswordResponse from "../../models/firebase/signin-with-e
 export default class UserAuthenticationAction {
     /**
      * ユーザー認証を行うアクションを生成する。
-     * @param userAuthenticator 
+     * @param userAccountManager ユーザー管理を行うクラス。
      */
-    constructor(private readonly userAuthenticator: IUserAuthenticator) {
+    constructor(
+        private readonly userAccountManager: UserAccountManager
+    ) {
     }
 
     /**
@@ -19,7 +21,7 @@ export default class UserAuthenticationAction {
      * @returns メールアドレスとパスワードでサインインのレスポンス。
      */
     public async login(mailAddress: string, password: string): Promise<SignInWithEmailPasswordResponse> {
-        const response = await this.userAuthenticator.login(mailAddress, password);
+        const response = await this.userAccountManager.login(mailAddress, password);
         return response;
     }
 
@@ -28,7 +30,7 @@ export default class UserAuthenticationAction {
      * @returns ログアウトに成功したかどうか。
      */
     public async logout(token: string): Promise<boolean> {
-        const response = await this.userAuthenticator.logout(token);
+        const response = await this.userAccountManager.logout(token);
         return response;
     }
 }

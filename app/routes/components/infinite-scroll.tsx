@@ -1,4 +1,4 @@
-import { SerializeFrom } from "@netlify/remix-runtime";
+import { SerializeFrom } from "@remix-run/node";
 import { FetcherWithComponents } from "@remix-run/react";
 import { Dispatch, ReactNode, SetStateAction, useCallback, useEffect, useState } from "react";
 import Entity from "../../models/common/entity";
@@ -77,7 +77,10 @@ export default function InfiniteScroll<T extends Entity[]>({
         }
 
         // フェッチしたデータを追加する。
-        const data = fetcher.data as T;
+        const data = (fetcher.data as T).map((item) => ({
+            ...item,
+            createdAt: new Date(item.createdAt)
+        }));
         if (data.length > 0) {
             setContents((prevContents: T) => [...prevContents, ...data] as T);
             setShouldFetch(true);

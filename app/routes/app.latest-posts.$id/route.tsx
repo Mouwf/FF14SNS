@@ -1,5 +1,6 @@
-import { LoaderFunctionArgs, json } from "@netlify/remix-runtime";
+import { LoaderFunctionArgs, json } from "@remix-run/node";
 import PostContent from "../../models/post/post-content";
+import { appLoadContext as context } from "../../dependency-injector/get-load-context";
 
 /**
  * 最新の投稿を取得するローダー。
@@ -9,11 +10,9 @@ import PostContent from "../../models/post/post-content";
  * @returns 最新の投稿。
  */
 export const loader = async ({
-    context,
     params,
 }: LoaderFunctionArgs) => {
     if (params.id === undefined || !params.id) return json([]);
-    const postId = params.id;
-    const postContents: PostContent[] = await context.latestPostsLoader.getLatestPosts(postId);
+    const postContents: PostContent[] = await context.latestPostsLoader.getLatestPosts();
     return json(postContents);
 }

@@ -1,5 +1,4 @@
 import { Link, useFetcher } from "@remix-run/react";
-import useSnsUser from "../../contexts/user/use-sns-user";
 import PostContent from "../../models/post/post-content";
 import styles from "./post-display.module.css";
 
@@ -20,6 +19,7 @@ export default function PostDisplay({
     const getPostTime = () => {
         const postDate = postContent.createdAt;
         const formattedDate = postDate.toLocaleString("ja-JP", {
+            timeZone: "Asia/Tokyo",
             year: "numeric",
             month: "2-digit",
             day: "2-digit",
@@ -49,20 +49,17 @@ export default function PostDisplay({
         );
     }
 
-    const snsUser = useSnsUser();
-
     return (
         <div className={styles["post"]}>
             <div className={styles["post-user-img-area"]}>
-                <img src="/images/dummy-profile.png" alt="" />
+                <img src="/images/dummy-profile.png" alt="プロフィール ダミー" />
             </div>
             <div className={styles["post-contents-area"]}>
                 <div className={styles["post-basic-information"]}>
                     <div className={styles["post-about"]}>
-                        <p className={styles["post-user-name"]}>{snsUser.name}</p>
+                        <p className={styles["post-user-name"]}>{postContent.posterName}</p>
                         <div>
-                            <span className={styles["post-release-version"]}>{postContent.releaseVersion}</span>
-                            <span>{postContent.tag}</span>
+                            <span className={styles["post-release-version"]}>{`${postContent.releaseVersion} ${postContent.releaseName}`}</span>
                         </div>
                     </div>
                     <div>

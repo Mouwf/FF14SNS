@@ -10,9 +10,9 @@ export default function PostEntry() {
     const snsUser = useSnsUser();
 
     return (
-        <Link to="app/post">
+        <Link to="/app/post-message">
             <div className={styles["post-entry-erea"]}>
-                <p>{snsUser.name}</p>
+                <p>{snsUser.userName}</p>
                 <p>投稿</p>
             </div>
         </Link>

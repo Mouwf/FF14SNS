@@ -5,17 +5,32 @@ import Entity from '../common/entity';
  */
 export default interface PostContent extends Entity {
     /**
-     * 投稿内容に含まれるリリースバージョン。
+     * 投稿者ID。
      */
-    releaseVersion: string;
+    readonly posterId: number;
 
     /**
-     * タグ。
+     * 投稿者名。
      */
-    tag: string;
+    readonly posterName: string;
+
+    /**
+     * 投稿に関連するリリース情報ID。
+     */
+    readonly releaseInformationId: number;
+
+    /**
+     * 投稿に関連するリリースバージョン。
+     */
+    readonly releaseVersion: string;
+
+    /**
+     * 投稿に関連するリリース名。
+     */
+    readonly releaseName: string;
 
     /**
      * 投稿内容。
      */
-    content: string;
+    readonly content: string;
 }

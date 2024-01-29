@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
-import { AppLoadContext } from "@netlify/remix-runtime";
-import appLoadContext from "../../dependency-injector/app-load-context";
+import { AppLoadContext } from "@remix-run/node";
+import { appLoadContext } from "../../../app/dependency-injector/get-load-context";
 import { loader } from "../../../app/routes/app._index/route";
 import { newlyPostedPostCookie } from "../../../app/cookies.server";
 
@@ -24,6 +24,9 @@ beforeEach(async () => {
     requestWithCookie = new Request("https://example.com", {
         headers: {
             Cookie: await newlyPostedPostCookie.serialize({
+                releaseVersion: "パッチ5",
+                tag: "タグ2",
+                content: "クッキー経由の投稿テスト！",
                 isPosted: true,
             }),
         },
@@ -32,7 +35,7 @@ beforeEach(async () => {
 });
 
 describe("loader", () => {
-    test("loader should return 10 PostContent objects.", async () => {
+    test("loader should return 1000 PostContent objects.", async () => {
         // ローダーを実行し、結果を取得する。
         const response = await loader({
             request: requestWithoutCookie,
@@ -44,10 +47,10 @@ describe("loader", () => {
         const resultPostContents = await response.json();
 
         // 結果を検証する。
-        expect(resultPostContents.length).toBe(10);
+        expect(resultPostContents.length).toBe(1000);
     });
 
-    test("loader should return 10 PostContent objects with cookie.", async () => {
+    test("loader should return 1000 PostContent objects with cookie.", async () => {
         // ローダーを実行し、結果を取得する。
         const response = await loader({
             request: requestWithCookie,
@@ -59,6 +62,6 @@ describe("loader", () => {
         const resultPostContents = await response.json();
 
         // 結果を検証する。
-        expect(resultPostContents.length).toBe(10);
+        expect(resultPostContents.length).toBe(1000);
     });
 });
