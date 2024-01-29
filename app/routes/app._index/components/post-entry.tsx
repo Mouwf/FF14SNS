@@ -11,7 +11,7 @@ export default function PostEntry() {
 
     return (
         <Link to="/app/post-message">
-            <div className={styles["post-entry-erea"]}>
+            <div className={styles["post-entry-area"]}>
                 <p>{snsUser.userName}</p>
                 <p>投稿</p>
             </div>
