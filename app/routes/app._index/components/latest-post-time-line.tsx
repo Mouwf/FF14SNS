@@ -11,7 +11,7 @@ export default function LatestPostTimeLine({
     postContents,
 }: {
     postContents: PostContent[];
-}) { 
+}) {
     return (
         <div className={styles["post-time-line"]}>
             {postContents.map((postContent) => {
