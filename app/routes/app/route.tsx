@@ -1,7 +1,7 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import SnsUserProvider from "../../contexts/user/sns-user-provider";
-import { userAuthenticationCookie } from "../../cookies.server";
+import { commitSession, destroySession, getSession } from "../../sessions";
 import Header from "./components/header";
 import Footer from "./components/footer";
 import SnsUser from "../../models/user/sns-user";
@@ -29,22 +29,39 @@ export const loader = async ({
     request,
 }: LoaderFunctionArgs) => {
     try {
-        // ログインしていない場合、ログインページにリダイレクトする。
+        // ユーザー登録が完了していない場合、ユーザー登録ページにリダイレクトする。
         const cookieHeader = request.headers.get("Cookie");
-        const cookie = (await userAuthenticationCookie.parse(cookieHeader)) || {};
-        if (Object.keys(cookie).length <= 0) return redirect("/auth/login", {
-            headers: {
-                "Set-Cookie": await userAuthenticationCookie.serialize({}),
-            },
-        });
+        const session = await getSession(cookieHeader);
+        if (session.has("idToken") && !session.has("userId")) {
+            return redirect("/auth/register-user", {
+                headers: {
+                    "Set-Cookie": await commitSession(session),
+                },
+            });
+        }
+
+        // ログインしていない場合、ログインページにリダイレクトする。
+        if (!session.has("userId")) {
+            return redirect("/auth/login", {
+                headers: {
+                    "Set-Cookie": await destroySession(session),
+                },
+            });
+        }
 
         // 認証済みユーザーを取得する。
+        const profileId = session.get("userId") as string;
         const authenticatedUserLoader = context.authenticatedUserLoader;
-        const authenticatedUser = await authenticatedUserLoader.getUserByToken(cookie.idToken);
+        const authenticatedUser = await authenticatedUserLoader.getUserByProfileId(profileId);
 
         // 認証済みユーザーが存在しない場合、ユーザー登録ページにリダイレクトする。
         if (!authenticatedUser) {
-            return redirect("/auth/register-user");
+            session.unset("userId");
+            return redirect("/auth/register-user", {
+                headers: {
+                    "Set-Cookie": await commitSession(session),
+                },
+            });
         }
 
         // SNSのユーザーを返す。
@@ -52,12 +69,20 @@ export const loader = async ({
             userId: authenticatedUser.profileId,
             userName: authenticatedUser.userName,
         };
-        return json(snsUser);
+        return json(snsUser, {
+            headers: {
+                "Set-Cookie": await commitSession(session),
+            },
+        });
     } catch (error) {
         console.error(error);
+
+        // エラーが発生した場合、ログインページにリダイレクトする。
+        const cookieHeader = request.headers.get("Cookie");
+        const session = await getSession(cookieHeader);
         throw redirect("/auth/login", {
             headers: {
-                "Set-Cookie": await userAuthenticationCookie.serialize({}),
+                "Set-Cookie": await destroySession(session),
             },
         });
     }
@@ -73,30 +98,28 @@ export const action = async ({
     request,
 }: ActionFunctionArgs) => {
     try {
-        // ログインしていない場合、ログインページにリダイレクトする。
-        const cookieHeader = request.headers.get("Cookie");
-        const cookie = (await userAuthenticationCookie.parse(cookieHeader)) || {};
-        if (Object.keys(cookie).length <= 0) return redirect("/auth/login", {
-            headers: {
-                "Set-Cookie": await userAuthenticationCookie.serialize({}),
-            },
-        });
-
         // ログアウトする。
+        const cookieHeader = request.headers.get("Cookie");
+        const session = await getSession(cookieHeader);
+        const idToken = session.get("idToken") as string;
         const userAuthenticationAction = context.userAuthenticationAction;
-        await userAuthenticationAction.logout(cookie.idToken);
+        await userAuthenticationAction.logout(idToken);
 
         // IDトークンとリフレッシュトークンをCookieから削除する。
         return redirect("/auth/login", {
             headers: {
-                "Set-Cookie": await userAuthenticationCookie.serialize({}),
+                "Set-Cookie": await destroySession(session),
             },
         });
     } catch (error) {
         console.error(error);
+
+        // エラーが発生した場合、ログインページにリダイレクトする。
+        const cookieHeader = request.headers.get("Cookie");
+        const session = await getSession(cookieHeader);
         throw redirect("/auth/login", {
             headers: {
-                "Set-Cookie": await userAuthenticationCookie.serialize({}),
+                "Set-Cookie": await destroySession(session),
             },
         });
     }

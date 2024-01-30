@@ -3,6 +3,10 @@ import { Outlet } from "@remix-run/react";
 import Header from "./components/header";
 import Footer from "./components/footer";
 
+/**
+ * 認証ページのメタ情報を設定する。
+ * @returns 認証ページのメタ情報。
+ */
 export const meta: MetaFunction = () => {
     return [
         { title: "FF14 SNS" },
@@ -10,6 +14,10 @@ export const meta: MetaFunction = () => {
     ];
 }
 
+/**
+ * 認証ページ。
+ * @returns 認証ページ。
+ */
 export default function Auth() {
     return (
         <main>
