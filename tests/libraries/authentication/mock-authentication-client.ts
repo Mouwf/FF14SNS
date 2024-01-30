@@ -29,8 +29,14 @@ export default class MockAuthenticationClient implements IAuthenticationClient {
     }
 
     public async signInWithEmailPassword(mailAddress: string, password: string): Promise<SignInWithEmailPasswordResponse> {
+        // ユーザーが登録されていない場合、idTokenを無効なものにする。
+        let idToken = "idToken";
+        if (mailAddress === "notregisteredrser@example.com") {
+            idToken = "notRegisteredUserIdToken";
+        }
+
         // メールアドレスが不正な場合、エラーを投げる。
-        if (mailAddress !== "test@example.com") {
+        if (mailAddress !== "notregisteredrser@example.com" && mailAddress !== "test@example.com") {
             throw new Error("Invalid mail address.");
         }
 
@@ -42,7 +48,7 @@ export default class MockAuthenticationClient implements IAuthenticationClient {
         // メールアドレスとパスワードでサインインのレスポンスを返す。
         const response = {
             displayName: "DisplayName",
-            idToken: "idToken",
+            idToken: idToken,
             email: "test@example.com",
             refreshToken: "refreshToken",
             expiresIn: "3600",

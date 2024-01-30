@@ -24,6 +24,7 @@ export default class MockUserRepository implements IUserRepository {
     }
 
     public async findByProfileId(profileId: string): Promise<User | null> {
+        if (profileId === "invalidProfileId") throw new Error("Invalid profileId.");
         if (profileId !== "profileId") return null;
         const user = {
             id: 1,
