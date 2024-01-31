@@ -2,7 +2,7 @@ import { describe, test, expect, beforeEach } from "@jest/globals";
 import { AppLoadContext } from "@remix-run/node";
 import { action, loader } from "../../../app/routes/auth.signup/route";
 import { appLoadContext } from "../../../app/dependency-injector/get-load-context";
-import { userAuthenticationCookie } from "../../../app/cookies.server";
+import { commitSession, getSession } from "../../../app/sessions";
 
 /**
  * クッキー付きのモックリクエスト。
@@ -40,12 +40,13 @@ let requestWithInvalidPassword: Request;
 let context: AppLoadContext;
 
 beforeEach(async () => {
+    const validSession = await getSession();
+    validSession.set("idToken", "idToken");
+    validSession.set("refreshToken", "refreshToken");
+    validSession.set("userId", "profileId");
     requestWithCookie = new Request("https://example.com", {
         headers: {
-            Cookie: await userAuthenticationCookie.serialize({
-                idToken: "idToken",
-                refreshToken: "refreshToken",
-            }),
+            Cookie: await commitSession(validSession),
         },
     });
     requestWithoutCookie = new Request("https://example.com");
@@ -132,15 +133,14 @@ describe("action", () => {
         // 検証に必要な情報を取得する。
         const status = response.status;
         const location = response.headers.get("Location");
-        const cookie = await userAuthenticationCookie.parse(response.headers.get("Set-Cookie"));
+        const session = await getSession(response.headers.get("Set-Cookie"));
 
         // 結果を検証する。
         expect(status).toBe(302);
-        expect(location).toBe("/app");
-        expect(cookie).toEqual({
-            idToken: "idToken",
-            refreshToken: "refreshToken",
-        });
+        expect(location).toBe("/auth/register-user");
+        expect(session.has("idToken")).toBe(true);
+        expect(session.has("refreshToken")).toBe(true);
+        expect(session.has("userId")).toBe(false);
     });
 
     test("action should return error information for invalid email.", async () => {
@@ -156,7 +156,7 @@ describe("action", () => {
 
         // 結果を検証する。
         const expectedErrorInformation = {
-            error: "ログインに失敗しました。",
+            error: "サインアップに失敗しました。",
         };
         expect(errorInformation).toEqual(expectedErrorInformation);
     });
@@ -192,7 +192,7 @@ describe("action", () => {
 
         // 結果を検証する。
         const expectedErrorInformation = {
-            error: "ログインに失敗しました。",
+            error: "サインアップに失敗しました。",
         };
         expect(errorInformation).toEqual(expectedErrorInformation);
     });

@@ -1,6 +1,7 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
-import { userAuthenticationCookie, newlyPostedPostCookie } from "../../cookies.server";
+import { getSession } from "../../sessions";
+import { newlyPostedPostCookie } from "../../cookies.server";
 import { appLoadContext as context } from "../../dependency-injector/get-load-context";
 
 /**
@@ -39,10 +40,10 @@ export const action = async ({
     try {
         // 認証済みユーザーを取得する。
         const cookieHeader = request.headers.get("Cookie");
-        const cookieUserAuthentication = (await userAuthenticationCookie.parse(cookieHeader)) || {};
-        const idToken = cookieUserAuthentication.idToken;
+        const session = await getSession(cookieHeader);
+        const profileId = session.get("userId") as string;
         const authenticatedUserLoader = context.authenticatedUserLoader;
-        const authenticatedUser = await authenticatedUserLoader.getUserByToken(idToken);
+        const authenticatedUser = await authenticatedUserLoader.getUserByProfileId(profileId);
 
         // 認証済みユーザーが取得できない場合、エラーを返す。
         if (!authenticatedUser) return json({ error: "メッセージの投稿に失敗しました。" });

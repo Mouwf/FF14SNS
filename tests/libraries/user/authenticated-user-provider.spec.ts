@@ -82,7 +82,7 @@ describe("getUserByProfileId", () => {
 
     test("getUserByProfileId should return null if the user does not exist.", async () => {
         // テスト用のユーザーを登録する。
-        const invalidProfileId = "invalidProfileId";
+        const invalidProfileId = "notExistProfileId";
         const response = await authenticatedUserProvider.getUserByProfileId(invalidProfileId);
 
         // 結果を検証する。
