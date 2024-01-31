@@ -5,7 +5,7 @@ import PostgresUserRepository from "../../../../app/repositories/user/postgres-u
 import { AppLoadContext } from "@remix-run/node";
 import { loader, action } from "../../../../app/routes/app/route";
 import { appLoadContext, postgresClientProvider } from "../../../../app/dependency-injector/get-load-context";
-import { userAuthenticationCookie } from "../../../../app/cookies.server";
+import { commitSession, getSession } from "../../../../app/sessions";
 
 /**
  * Firebaseのクライアント。
@@ -94,12 +94,13 @@ describe("loader", () => {
         await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName));
 
         // ローダーを実行し、結果を取得する。
+        const session = await getSession();
+        session.set("idToken", responseSignUp.idToken);
+        session.set("refreshToken", responseSignUp.refreshToken);
+        session.set("userId", profileId);
         const requestWithCookie = new Request("https://example.com", {
             headers: {
-                Cookie: await userAuthenticationCookie.serialize({
-                    idToken: responseSignUp.idToken,
-                    refreshToken: responseSignUp.refreshToken,
-                }),
+                Cookie: await commitSession(session),
             },
         });
         const response = await loader({
@@ -119,34 +120,6 @@ describe("loader", () => {
         expect(resultUser.userId).toBe(expectedUser.userId);
         expect(resultUser.userName).toBe(expectedUser.userName);
     });
-
-    test("loader should redirect register user page if user is not loged in.", async () => {
-        // テスト用のユーザーを作成する。
-        const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
-
-        // ローダーを実行し、結果を取得する。
-        const requestWithCookie = new Request("https://example.com", {
-            headers: {
-                Cookie: await userAuthenticationCookie.serialize({
-                    idToken: responseSignUp.idToken,
-                    refreshToken: responseSignUp.refreshToken,
-                }),
-            },
-        });
-        const response = await loader({
-            request: requestWithCookie,
-            params: {},
-            context,
-        });
-
-        // 検証に必要な情報を取得する。
-        const status = response.status;
-        const redirect = response.headers.get("Location");
-
-        // 結果を検証する。
-        expect(status).toBe(302);
-        expect(redirect).toBe("/auth/register-user");
-    });
 });
 
 describe("action", () => {
@@ -156,19 +129,20 @@ describe("action", () => {
         return;
     }
 
-    test("action shoula logout and delete cookies.", async () => {
+    test("action shoula logout and delete cookies and redirect to login page.", async () => {
         // テスト用のユーザーを作成する。
         const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
-        const requestWithCookie = new Request("https://example.com", {
-            headers: {
-                Cookie: await userAuthenticationCookie.serialize({
-                    idToken: responseSignUp.idToken,
-                    refreshToken: responseSignUp.refreshToken,
-                }),
-            },
-        });
 
         // アクションを実行し、結果を取得する。
+        const session = await getSession();
+        session.set("idToken", responseSignUp.idToken);
+        session.set("refreshToken", responseSignUp.refreshToken);
+        session.set("userId", profileId);
+        const requestWithCookie = new Request("https://example.com", {
+            headers: {
+                Cookie: await commitSession(session),
+            },
+        });
         const response = await action({
             request: requestWithCookie,
             params: {},
@@ -178,12 +152,14 @@ describe("action", () => {
         // 検証に必要な情報を取得する。
         const status = response.status;
         const redirect = response.headers.get("Location");
-        const cookie = await userAuthenticationCookie.parse(response.headers.get("Set-Cookie"));
+        const resultSession = await getSession(response.headers.get("Set-Cookie"));
 
         // 結果を検証する。
         expect(status).toBe(302);
         expect(redirect).toBe("/auth/login");
-        expect(cookie).toStrictEqual({});
+        expect(resultSession.has("idToken")).toBe(false);
+        expect(resultSession.has("refreshToken")).toBe(false);
+        expect(resultSession.has("userId")).toBe(false);
     });
 
     // test("action should redirect to login page if an error occurs.", async () => {
