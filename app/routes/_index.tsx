@@ -1,7 +1,7 @@
 import { LoaderFunctionArgs, MetaFunction, json, redirect } from "@remix-run/node";
 import { Link, useLoaderData } from "@remix-run/react";
 import { useState } from "react";
-import { userAuthenticationCookie } from "../cookies.server";
+import { getSession } from "../sessions";
 
 export const meta: MetaFunction = () => {
   return [
@@ -14,8 +14,8 @@ export async function loader({
   request,
 }: LoaderFunctionArgs) {
   const cookieHeader = request.headers.get("Cookie");
-  const cookie = (await userAuthenticationCookie.parse(cookieHeader)) || {};
-  if (Object.keys(cookie).length <= 0) return redirect("/auth/login");
+  const session = await getSession(cookieHeader);
+  if (!session.has("userId")) return redirect("/auth/login");
   return redirect("/app");
 }
 
