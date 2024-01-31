@@ -21,6 +21,7 @@ jobs:
         run: npm ci
       - name: Run Unit Tests
         env:
+          SESSION_SERCRET_KEY: ${{ secrets.SESSION_SERCRET_KEY }}
           FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           TEST_FIREBASE_API_KEY: ${{ secrets.TEST_FIREBASE_API_KEY }}
