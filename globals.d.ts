@@ -5,7 +5,7 @@ declare global {
     PORT: string;
     RUN_UNIT_TESTS: string;
     RUN_INFRA_TESTS: string;
-    SESSION_SERCRET_KEY: string | undefined;
+    SESSION_SECRET_KEY: string | undefined;
     FIREBASE_API_KEY: string | undefined;
     DATABASE_URL: string | undefined;
     TEST_FIREBASE_API_KEY: string | undefined;

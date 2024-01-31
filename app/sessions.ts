@@ -1,7 +1,7 @@
 import { createCookieSessionStorage } from "@remix-run/node";
 
-if (!process.env.SESSION_SERCRET_KEY) {
-    throw new Error("SESSION_SERCRET_KEYが設定されていません。");
+if (!process.env.SESSION_SECRET_KEY) {
+    throw new Error("SESSION_SECRET_KEYが設定されていません。");
 }
 
 /**
@@ -32,7 +32,7 @@ const {
     cookie: {
         name: "__session",
         path: "/",
-        secrets: [process.env.SESSION_SERCRET_KEY],
+        secrets: [process.env.SESSION_SECRET_KEY],
         secure: true,
         httpOnly: true,
         sameSite: "lax",
