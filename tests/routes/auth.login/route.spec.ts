@@ -2,7 +2,7 @@ import { describe, test, expect, beforeEach } from "@jest/globals";
 import { AppLoadContext } from "@remix-run/node";
 import { action, loader } from "../../../app/routes/auth.login/route";
 import { appLoadContext } from "../../../app/dependency-injector/get-load-context";
-import { userAuthenticationCookie } from "../../../app/cookies.server";
+import { commitSession, getSession } from "../../../app/sessions";
 
 /**
  * クッキー付きのモックリクエスト。
@@ -20,6 +20,11 @@ let requestWithoutCookie: Request;
 let requestWithMailAddressAndPassword: Request;
 
 /**
+ * 登録されていないクッキー付きのモックリクエスト。
+ */
+let requestWithNotRegisteredUserCookie: Request;
+
+/**
  * メールアドレスが不正なモックリクエスト。
  */
 let requestWithInvalidEmail: Request;
@@ -35,12 +40,13 @@ let requestWithInvalidPassword: Request;
 let context: AppLoadContext;
 
 beforeEach(async () => {
+    const validSession = await getSession();
+    validSession.set("idToken", "idToken");
+    validSession.set("refreshToken", "refreshToken");
+    validSession.set("userId", "profileId");
     requestWithCookie = new Request("https://example.com", {
         headers: {
-            Cookie: await userAuthenticationCookie.serialize({
-                idToken: "idToken",
-                refreshToken: "refreshToken",
-            }),
+            Cookie: await commitSession(validSession),
         },
     });
     requestWithoutCookie = new Request("https://example.com");
@@ -48,6 +54,13 @@ beforeEach(async () => {
         method: "POST",
         body: new URLSearchParams({
             mailAddress: "test@example.com",
+            password: "testPassword123",
+        }),
+    });
+    requestWithNotRegisteredUserCookie = new Request("https://example.com", {
+        method: "POST",
+        body: new URLSearchParams({
+            mailAddress: "notregisteredrser@example.com",
             password: "testPassword123",
         }),
     });
@@ -116,15 +129,14 @@ describe("action", () => {
         // 検証に必要な情報を取得する。
         const status = response.status;
         const location = response.headers.get("Location");
-        const cookie = await userAuthenticationCookie.parse(response.headers.get("Set-Cookie"));
+        const session = await getSession(response.headers.get("Set-Cookie"));
 
         // 結果を検証する。
         expect(status).toBe(302);
         expect(location).toBe("/app");
-        expect(cookie).toEqual({
-            idToken: "idToken",
-            refreshToken: "refreshToken",
-        });
+        expect(session.has("idToken")).toBe(true);
+        expect(session.has("refreshToken")).toBe(true);
+        expect(session.has("userId")).toBe(true);
     });
 
     test("action should return error information for invalid email.", async () => {
@@ -161,5 +173,26 @@ describe("action", () => {
             error: "ログインに失敗しました。",
         };
         expect(errorInformation).toEqual(expectedErrorInformation);
+    });
+
+    test("action should redirect to register user page if user is not exist.", async () => {
+        // アクションを実行し、結果を取得する。
+        const response = await action({
+            request: requestWithNotRegisteredUserCookie,
+            params: {},
+            context,
+        });
+
+        // 検証に必要な情報を取得する。
+        const status = response.status;
+        const location = response.headers.get("Location");
+        const session = await getSession(response.headers.get("Set-Cookie"));
+
+        // 結果を検証する。
+        expect(status).toBe(302);
+        expect(location).toBe("/auth/register-user");
+        expect(session.has("idToken")).toBe(true);
+        expect(session.has("refreshToken")).toBe(true);
+        expect(session.has("userId")).toBe(false);
     });
 });

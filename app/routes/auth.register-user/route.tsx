@@ -1,7 +1,43 @@
-import { ActionFunctionArgs, json, redirect } from "@remix-run/node";
+import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@remix-run/node";
 import { Form } from "@remix-run/react";
-import { userAuthenticationCookie } from "../../cookies.server";
+import { commitSession, destroySession, getSession } from "../../sessions";
 import { appLoadContext as context } from "../../dependency-injector/get-load-context";
+
+/**
+ * ログインページのメタ情報を設定する。
+ * @returns ログインページのメタ情報。
+ */
+export const meta: MetaFunction = () => {
+    return [
+        { title: "FF14 SNS ユーザー登録" },
+        { name: "description", content: "FF14SNSのユーザー登録ページです。" },
+    ];
+}
+
+export const loader = async ({
+    request,
+}: LoaderFunctionArgs) => {
+    // ログインしている場合、トップページにリダイレクトする。
+    const cookieHeader = request.headers.get("Cookie");
+    const session = await getSession(cookieHeader);
+    if (session.has("userId")) {
+        return redirect("/app", {
+            headers: {
+                "Set-Cookie": await commitSession(session),
+            },
+        });
+    }
+
+    // ログインしていない場合、ログインページにリダイレクトする。
+    if (!session.has("idToken")) {
+        return redirect("/auth/login", {
+            headers: {
+                "Set-Cookie": await destroySession(session),
+            },
+        });
+    }
+    return null;
+}
 
 /**
  * SNSのユーザー登録を行うアクション。
@@ -13,22 +49,16 @@ export const action = async ({
     request,
 }: ActionFunctionArgs) => {
     try {
-        // ログインしていない場合、ログインページにリダイレクトする。
-        const cookieHeader = request.headers.get("Cookie");
-        const cookie = (await userAuthenticationCookie.parse(cookieHeader)) || {};
-        if (Object.keys(cookie).length <= 0) return redirect("/auth/login", {
-            headers: {
-                "Set-Cookie": await userAuthenticationCookie.serialize({}),
-            },
-        });
-
         // フォームデータを取得する。
         const formData = await request.formData();
         const userName = formData.get("userName") as string;
 
         // 認証プロバイダーIDを取得する。
+        const cookieHeader = request.headers.get("Cookie");
+        const session = await getSession(cookieHeader);
+        const idToken = session.get("idToken") as string;
         const authenticatedUserLoader = context.authenticatedUserLoader;
-        const authenticationProviderId = await authenticatedUserLoader.getAuthenticationProviderId(cookie.idToken);
+        const authenticationProviderId = await authenticatedUserLoader.getAuthenticationProviderId(idToken);
 
         // ユーザーを登録する。
         const isRegistered = await context.snsUserRegistrationAction.register(authenticationProviderId, userName);
@@ -36,8 +66,26 @@ export const action = async ({
         // ユーザー登録に失敗した場合、エラーを返す。
         if (!isRegistered) return json({ error: "ユーザー登録に失敗しました。" });
 
+        // 認証済みユーザーを取得する。
+        const authenticatedUser = await authenticatedUserLoader.getUserByToken(idToken);
+
+        // 認証済みユーザーが存在しない場合、エラーを返す。
+        if (!authenticatedUser) {
+            return redirect("/auth/login", {
+                headers: {
+                    "Set-Cookie": await destroySession(session),
+                },
+            });
+        }
+
         // ユーザー登録に成功した場合、トップページにリダイレクトする。
-        return redirect("/app");
+        const userId = authenticatedUser.profileId;
+        session.set("userId", userId);
+        return redirect("/app", {
+            headers: {
+                "Set-Cookie": await commitSession(session),
+            },
+        });
     } catch (error) {
         console.error(error);
         return json({ error: "ユーザー登録に失敗しました。" });
@@ -51,8 +99,10 @@ export const action = async ({
 export default function RegisterUser() {
     return (
         <Form method="post">
-            <label htmlFor="userName">FF14のユーザー名(user_name@world)</label>
-            <input type="text" name="userName" />
+            { /** userNameにメールアドレスが入らないようにしている。 */ }
+            <input type="text" style={{ display: "none" }} />
+            <label htmlFor="userName">FF14のユーザー名(UserName@world)</label>
+            <input type="text" name="userName" autoComplete="off" />
             <button type="submit">登録</button>
         </Form>
     );

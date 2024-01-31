@@ -6,6 +6,7 @@ import PostgresUserRepository from "../../../../app/repositories/user/postgres-u
 import PostgresPostContentRepository from "../../../../app/repositories/post/postgres-post-content-repository";
 import PostInteractor from "../../../../app/libraries/post/post-interactor";
 import PostsFetcher from "../../../../app/libraries/post/posts-fetcher";
+import LatestPostsLoader from "../../../../app/loaders/post/latest-posts-loader";
 
 /**
  * Postgresのユーザーリポジトリ。
@@ -28,6 +29,11 @@ let postInteractor: PostInteractor;
 let postsFetcher: PostsFetcher;
 
 /**
+ * 最新の投稿を取得するローダー。
+ */
+let latestPostsLoader: LatestPostsLoader;
+
+/**
  * プロフィールID。
  */
 const profileId = "username_world";
@@ -42,6 +48,7 @@ beforeEach(async () => {
     postgresPostContentRepository = new PostgresPostContentRepository(postgresClientProvider);
     postInteractor = new PostInteractor(postgresPostContentRepository);
     postsFetcher = new PostsFetcher(postgresPostContentRepository);
+    latestPostsLoader = new LatestPostsLoader(postsFetcher);
     await deleteRecordForTest();
 });
 
@@ -49,8 +56,8 @@ afterEach(async () => {
     await deleteRecordForTest();
 });
 
-describe("fetchLatestPosts" , () => {
-    test("fetchLatestPosts should return latest posts.", async () => {
+describe("getLatestPosts" , () => {
+    test("getLatestPosts should return latest posts.", async () => {
         // テスト用のユーザー情報を登録する。
         const authenticationProviderId = "authenticationProviderId";
         await postgresUserRepository.create(profileId, authenticationProviderId, userName);
@@ -61,13 +68,13 @@ describe("fetchLatestPosts" , () => {
         // ユーザーが存在しない場合、エラーを投げる。
         if (responseAuthenticatedUser === null) throw new Error("The user does not exist.");
 
-        // テスト用の投稿を登録する。
+        // 投稿を作成する。
         const posterId = responseAuthenticatedUser.id;
         const postContent = "postContent";
         const postId = await postInteractor.post(posterId, 1, postContent);
 
-        // 投稿を取得する。
-        const posts = await postsFetcher.fetchLatestPosts(1);
+        // 最新の投稿を取得する。
+        const posts = await latestPostsLoader.getLatestPosts();
 
         // 結果を検証する。
         expect(posts.length).toBe(1);
