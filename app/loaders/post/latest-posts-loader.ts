@@ -18,10 +18,11 @@ export default class LatestPostsLoader extends PostFetchLimit {
 
     /**
      * 最新の投稿を取得する。
+     * @param profileId プロフィールID。
      * @returns 最新の投稿。
      */
-    public async getLatestPosts(): Promise<PostContent[]> {
-        const postContents = await this.postsFetcher.fetchLatestPosts(this.postsLimit);
+    public async getLatestPosts(profileId: string): Promise<PostContent[]> {
+        const postContents = await this.postsFetcher.fetchLatestPosts(profileId, this.postsLimit);
         return postContents;
     }
 }

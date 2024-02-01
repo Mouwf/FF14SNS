@@ -16,10 +16,11 @@ export default class PostsFetcher {
 
     /**
      * 最新の投稿を指定された数取得する。
+     * @param profileId プロフィールID。
      * @param numberOfPosts 取得する投稿数。
      */
-    public async fetchLatestPosts(numberOfPosts: number): Promise<PostContent[]> {
-        const posts = await this.postContentRepository.getLatestLimited(numberOfPosts);
+    public async fetchLatestPosts(profileId: string, numberOfPosts: number): Promise<PostContent[]> {
+        const posts = await this.postContentRepository.getLatestLimited(profileId, numberOfPosts);
         return posts;
     }
 

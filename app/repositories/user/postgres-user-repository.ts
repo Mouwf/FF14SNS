@@ -1,5 +1,6 @@
 import PostgresClientProvider from "../common/postgres-client-provider";
 import User from "../../models/user/user";
+import UserSetting from "../../models/user/user-setting";
 import IUserRepository from "./i-user-repository";
 
 /**
@@ -37,7 +38,10 @@ export default class PostgresUserRepository implements IUserRepository {
             const result = await client.query(query, values);
 
             // 結果がない場合、falseを返す。
-            if (result.rowCount === 0) return false;
+            if (result.rowCount === 0) {
+                await client.query("ROLLBACK");
+                return false;
+            }
 
             // コミットする。
             await client.query("COMMIT");
@@ -50,8 +54,69 @@ export default class PostgresUserRepository implements IUserRepository {
         }
     }
 
-    public async update(user: User): Promise<boolean> {
-        throw new Error('Method not implemented.');
+    public async update(userSetting: UserSetting): Promise<boolean> {
+        const client = await this.postgresClientProvider.get();
+        try {
+            await client.query("BEGIN");
+
+            // ユーザーIDを取得する。
+            const getUserIdQuery = `
+                SELECT id FROM users
+                WHERE profile_id = $1;
+            `;
+            const getUserIdValues = [userSetting.userId];
+            const getUserResult = await client.query(getUserIdQuery, getUserIdValues);
+
+            // ユーザーが存在しない場合、エラーを投げる。
+            if (getUserResult.rowCount === 0) throw new Error("ユーザーが存在しません。");
+
+            // リリースバージョンフィルターの設定が存在するかを確認する。
+            const userId = getUserResult.rows[0].id;
+            const checkReleaseVersionFilterSettingQuery = `
+                SELECT 1 FROM release_version_filter_settings
+                WHERE user_id = $1;
+            `;
+            const checkReleaseVersionFilterSettingValues = [userId];
+            const checkReleaseVersionFilterSettingResult = await client.query(checkReleaseVersionFilterSettingQuery, checkReleaseVersionFilterSettingValues);
+
+            // リリースバージョンフィルターの設定を行う。
+            let query: string;
+            if (checkReleaseVersionFilterSettingResult.rowCount === 0) {
+                query = `
+                    INSERT INTO release_version_filter_settings (
+                        user_id,
+                        release_information_id
+                    )
+                    VALUES (
+                        $1,
+                        $2
+                    );
+                `;
+            } else {
+                query = `
+                    UPDATE release_version_filter_settings
+                    SET release_information_id = $2
+                    WHERE user_id = $1;
+                `;
+            }
+            const values = [userId, userSetting.maxVisibleReleaseId];
+            const result = await client.query(query, values);
+
+            // 結果がない場合、falseを返す。
+            if (result.rowCount === 0) {
+                await client.query("ROLLBACK");
+                return false;
+            }
+
+            // コミットする。
+            await client.query("COMMIT");
+            return true;
+        } catch (error) {
+            await client.query("ROLLBACK");
+            throw error;
+        } finally {
+            client.release();
+        }
     }
 
     public async delete(id: number): Promise<boolean> {
@@ -67,7 +132,10 @@ export default class PostgresUserRepository implements IUserRepository {
             const result = await client.query(query, values);
 
             // 結果がない場合、falseを返す。
-            if (result.rowCount === 0) return false;
+            if (result.rowCount === 0) {
+                await client.query("ROLLBACK");
+                return false;
+            }
 
             // コミットする。
             await client.query("COMMIT");
@@ -135,6 +203,41 @@ export default class PostgresUserRepository implements IUserRepository {
                 createdAt: result.rows[0].created_at,
             };
             return user;
+        } catch (error) {
+            throw error;
+        } finally {
+            client.release();
+        }
+    }
+
+    public async findUserSettingByProfileId(profileId: string): Promise<UserSetting | null> {
+        const client = await this.postgresClientProvider.get();
+        try {
+            // ユーザー設定を取得する。
+            const query = `
+                SELECT
+                    users.profile_id,
+                    users.user_name,
+                    release_version_filter_settings.release_information_id
+                FROM
+                    users
+                LEFT JOIN release_version_filter_settings ON users.id = release_version_filter_settings.user_id
+                WHERE
+                    users.profile_id = $1;
+            `;
+            const values = [profileId];
+            const result = await client.query(query, values);
+
+            // ユーザー設定が存在しない場合、nullを返す。
+            if (result.rowCount === 0) return null;
+
+            // ユーザー設定を生成する。
+            const userSetting = {
+                userId: result.rows[0].profile_id,
+                userName: result.rows[0].user_name,
+                maxVisibleReleaseId: result.rows[0].release_information_id || 1,
+            };
+            return userSetting;
         } catch (error) {
             throw error;
         } finally {

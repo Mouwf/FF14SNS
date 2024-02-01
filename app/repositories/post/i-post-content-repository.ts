@@ -27,9 +27,10 @@ export default interface IPostContentRepository {
 
     /**
      * 最新の投稿を指定された数取得する。
+     * @param profileId プロフィールID。
      * @param limit 取得する投稿数。
      */
-    getLatestLimited(limit: number): Promise<PostContent[]>;
+    getLatestLimited(profileId: string, limit: number): Promise<PostContent[]>;
 
     /**
      * 投稿者IDで指定された数の投稿を取得する。
@@ -40,8 +41,9 @@ export default interface IPostContentRepository {
 
     /**
      * 投稿ID以降の投稿を指定された数取得する。
+     * @param profileId プロフィールID。
      * @param postId 投稿ID。
      * @param limit 取得する投稿数。
      */
-    getLimitedAfterId(postId: number, limit: number): Promise<PostContent[]>;
+    getLimitedAfterId(profileId: string, postId: number, limit: number): Promise<PostContent[]>;
 }
