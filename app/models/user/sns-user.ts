@@ -11,4 +11,14 @@ export default interface SnsUser {
      * ユーザー名。
      */
     readonly userName: string;
+
+    /**
+     * 現在のリリースバージョン。
+     */
+    readonly currentReleaseVersion: string;
+
+    /**
+     * 現在のリリース名。
+     */
+    readonly currentReleaseName: string;
 }

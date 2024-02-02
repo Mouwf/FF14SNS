@@ -1,11 +1,11 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import MockUserRepository from "../../repositories/user/mock-user-repository";
-import UserRegistrar from "../../../app/libraries/user/user-registrar";
+import UserProfileManager from "../../../app/libraries/user/user-profile-manager";
 
 /**
  * ユーザーの登録を行うクラス。
  */
-let userAccountManager: UserRegistrar;
+let userAccountManager: UserProfileManager;
 
 /**
  * 認証プロバイダID。
@@ -24,7 +24,7 @@ const id = 1;
 
 beforeEach(() => {
     const mockUserRepository = new MockUserRepository();
-    userAccountManager = new UserRegistrar(mockUserRepository);
+    userAccountManager = new UserProfileManager(mockUserRepository);
 });
 
 describe("register", () => {

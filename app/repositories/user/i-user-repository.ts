@@ -15,8 +15,8 @@ export default interface IUserRepository {
     create(profileId: string, authenticationProviderId: string, userName: string): Promise<boolean>;
 
     /**
-     * ユーザー、ユーザー設定を更新する。
-     * @param userSetting ユーザー。
+     * ユーザー設定を更新する。
+     * @param userSetting ユーザー設定。
      */
     update(userSetting: UserSetting): Promise<boolean>;
 

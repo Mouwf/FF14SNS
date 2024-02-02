@@ -161,7 +161,7 @@ export default class PostgresPostContentRepository implements IPostContentReposi
             const posts = await client.query(query, values);
 
             // 最新の投稿を生成する。
-            return posts.rows.map(post => ({
+            const latestPosts = posts.rows.map(post => ({
                 id: post.post_id,
                 posterId: post.profile_id,
                 posterName: post.user_name,
@@ -171,6 +171,7 @@ export default class PostgresPostContentRepository implements IPostContentReposi
                 content: post.content,
                 createdAt: post.created_at,
             }));
+            return latestPosts;
         } catch (error) {
             throw error;
         } finally {

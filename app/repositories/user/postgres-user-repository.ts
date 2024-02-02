@@ -99,7 +99,7 @@ export default class PostgresUserRepository implements IUserRepository {
                     WHERE user_id = $1;
                 `;
             }
-            const values = [userId, userSetting.maxVisibleReleaseId];
+            const values = [userId, userSetting.currentReleaseInformationId];
             const result = await client.query(query, values);
 
             // 結果がない場合、falseを返す。
@@ -157,7 +157,20 @@ export default class PostgresUserRepository implements IUserRepository {
         try {
             // ユーザー情報を取得する。
             const query = `
-                SELECT * FROM users WHERE profile_id = $1;
+                SELECT
+                    users.id,
+                    users.profile_id,
+                    users.authentication_provider_id,
+                    users.user_name,
+                    users.created_at,
+                    release_information.release_version AS current_release_version,
+                    release_information.release_name AS current_release_name
+                FROM
+                    users
+                LEFT JOIN release_version_filter_settings ON users.id = release_version_filter_settings.user_id
+                LEFT JOIN release_information ON release_version_filter_settings.release_information_id = release_information.id
+                WHERE
+                    users.profile_id = $1;
             `;
             const values = [profileId];
             const result = await client.query(query, values);
@@ -171,6 +184,8 @@ export default class PostgresUserRepository implements IUserRepository {
                 profileId: result.rows[0].profile_id,
                 authenticationProviderId: result.rows[0].authentication_provider_id,
                 userName: result.rows[0].user_name,
+                currentReleaseVersion: result.rows[0].current_release_version || "",
+                currentReleaseName: result.rows[0].current_release_name || "",
                 createdAt: result.rows[0].created_at,
             };
             return user;
@@ -186,7 +201,20 @@ export default class PostgresUserRepository implements IUserRepository {
         try {
             // ユーザー情報を取得する。
             const query = `
-                SELECT * FROM users WHERE authentication_provider_id = $1;
+                SELECT
+                    users.id,
+                    users.profile_id,
+                    users.authentication_provider_id,
+                    users.user_name,
+                    users.created_at,
+                    release_information.release_version AS currentReleaseVersion,
+                    release_information.release_name AS currentReleaseName
+                FROM
+                    users
+                LEFT JOIN release_version_filter_settings ON users.id = release_version_filter_settings.user_id
+                LEFT JOIN release_information ON release_version_filter_settings.release_information_id = release_information.id
+                WHERE
+                    users.authentication_provider_id = $1;
             `;
             const values = [authenticationProviderId];
             const result = await client.query(query, values);
@@ -200,6 +228,8 @@ export default class PostgresUserRepository implements IUserRepository {
                 profileId: result.rows[0].profile_id,
                 authenticationProviderId: result.rows[0].authentication_provider_id,
                 userName: result.rows[0].user_name,
+                currentReleaseVersion: result.rows[0].currentReleaseVersion || "",
+                currentReleaseName: result.rows[0].currentReleaseName || "",
                 createdAt: result.rows[0].created_at,
             };
             return user;
@@ -235,7 +265,7 @@ export default class PostgresUserRepository implements IUserRepository {
             const userSetting = {
                 userId: result.rows[0].profile_id,
                 userName: result.rows[0].user_name,
-                maxVisibleReleaseId: result.rows[0].release_information_id || 1,
+                currentReleaseInformationId: result.rows[0].release_information_id || 1,
             };
             return userSetting;
         } catch (error) {

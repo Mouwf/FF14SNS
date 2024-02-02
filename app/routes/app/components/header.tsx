@@ -12,6 +12,7 @@ export default function Header() {
         <header>
             <h1><Link to="/app">FF14 Header</Link></h1>
             <p>{snsUser.userName}</p>
+            <p>{`${snsUser.currentReleaseVersion} ${snsUser.currentReleaseName}`}</p>
             <Link to="/app/setting">設定</Link>
             <Form method="post">
                 <button type="submit">ログアウト</button>

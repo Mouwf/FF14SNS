@@ -50,4 +50,40 @@ export default class MockReleaseInformationRepository implements IReleaseInforma
         ];
         return allReleaseInformation;
     }
+
+    public async getBelowUserSetting(profileId: string): Promise<ReleaseInformation[]> {
+        const allReleaseInformation = [
+            {
+                id: 1,
+                releaseVersion: "2.5",
+                releaseName: "リリース2.5",
+                createdAt: new Date(),
+            },
+            {
+                id: 2,
+                releaseVersion: "2.4",
+                releaseName: "リリース2.4",
+                createdAt: new Date(),
+            },
+            {
+                id: 3,
+                releaseVersion: "2.3",
+                releaseName: "リリース2.3",
+                createdAt: new Date(),
+            },
+            {
+                id: 4,
+                releaseVersion: "2.2",
+                releaseName: "リリース2.2",
+                createdAt: new Date(),
+            },
+            {
+                id: 5,
+                releaseVersion: "2.1",
+                releaseName: "リリース2.1",
+                createdAt: new Date(),
+            },
+        ];
+        return allReleaseInformation;
+    }
 }

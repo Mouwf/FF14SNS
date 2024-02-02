@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
 import PostgresUserRepository from "../../../../app/repositories/user/postgres-user-repository";
-import UserRegistrar from "../../../../app/libraries/user/user-registrar";
+import UserProfileManager from "../../../../app/libraries/user/user-profile-manager";
 import SnsUserRegistrationAction from "../../../../app/actions/user/sns-user-registration-action";
 import { postgresClientProvider } from "../../../../app/dependency-injector/get-load-context";
 
@@ -32,8 +32,8 @@ const id = 1;
 
 beforeEach(async () => {
     postgresUserRepository = new PostgresUserRepository(postgresClientProvider);
-    const userAccountManager = new UserRegistrar(postgresUserRepository);
-    snsUserRegistrationAction = new SnsUserRegistrationAction(userAccountManager);
+    const userProfileManager = new UserProfileManager(postgresUserRepository);
+    snsUserRegistrationAction = new SnsUserRegistrationAction(userProfileManager);
 
     // テスト用のユーザー情報が存在する場合、削除する。
     try {

@@ -1,4 +1,4 @@
-import UserRegistrar from "../../libraries/user/user-registrar";
+import UserProfileManager from "../../libraries/user/user-profile-manager";
 
 /**
  * SNSのユーザー登録を行うアクション。
@@ -6,10 +6,10 @@ import UserRegistrar from "../../libraries/user/user-registrar";
 export default class SnsUserRegistrationAction {
     /**
      * SNSのユーザー登録を行うアクションを生成する。
-     * @param userRegistrar ユーザー登録を行うクラス。
+     * @param userProfileManager ユーザー登録を行うクラス。
      */
     constructor(
-        private readonly userRegistrar: UserRegistrar,
+        private readonly userProfileManager: UserProfileManager,
     ) {
     }
 
@@ -20,7 +20,7 @@ export default class SnsUserRegistrationAction {
      * @returns 登録に成功したかどうか。
      */
     public async register(authenticationProviderId: string, userName: string): Promise<boolean> {
-        const response = await this.userRegistrar.register(authenticationProviderId, userName);
+        const response = await this.userProfileManager.register(authenticationProviderId, userName);
         return response;
     }
 
@@ -30,7 +30,7 @@ export default class SnsUserRegistrationAction {
      * @returns 削除に成功したかどうか。
      */
     public async delete(id: number): Promise<boolean> {
-        const response = await this.userRegistrar.delete(id);
+        const response = await this.userProfileManager.delete(id);
         return response;
     }
 }

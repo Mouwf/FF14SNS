@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
-import UserRegistrar from "../../../../app/libraries/user/user-registrar";
+import UserProfileManager from "../../../../app/libraries/user/user-profile-manager";
 import PostgresUserRepository from "../../../../app/repositories/user/postgres-user-repository";
 import { postgresClientProvider } from "../../../../app/dependency-injector/get-load-context";
 
@@ -12,7 +12,7 @@ let postgresUserRepository: PostgresUserRepository;
 /**
  * ユーザーの登録を行うクラス。
  */
-let userRegistrar: UserRegistrar;
+let userProfileManager: UserProfileManager;
 
 /**
  * プロフィールID。
@@ -26,7 +26,7 @@ const userName = "UserName@World";
 
 beforeEach(async () => {
     postgresUserRepository = new PostgresUserRepository(postgresClientProvider);
-    userRegistrar = new UserRegistrar(postgresUserRepository);
+    userProfileManager = new UserProfileManager(postgresUserRepository);
 
     // テスト用のユーザー情報が存在する場合、削除する。
     try {
@@ -53,7 +53,7 @@ describe("register", () => {
 
     test("register should register a new user", async () => {
         // テスト用のユーザー情報を作成する。
-        const response = await delayAsync(() => userRegistrar.register(profileId, userName));
+        const response = await delayAsync(() => userProfileManager.register(profileId, userName));
 
         // 結果を検証する。
         expect(response).toBe(true);
@@ -63,7 +63,7 @@ describe("register", () => {
         expect.assertions(1);
         try {
             // テスト用のユーザー情報を作成する。
-            await delayAsync(() => userRegistrar.register("", userName));
+            await delayAsync(() => userProfileManager.register("", userName));
         } catch (error) {
             // エラーがResponseでない場合、エラーを投げる。
             if (!(error instanceof Error)) {
@@ -79,7 +79,7 @@ describe("register", () => {
         expect.assertions(1);
         try {
             // テスト用のユーザー情報を作成する。
-            await delayAsync(() => userRegistrar.register(profileId, ""));
+            await delayAsync(() => userProfileManager.register(profileId, ""));
         } catch (error) {
             // エラーがResponseでない場合、エラーを投げる。
             if (!(error instanceof Error)) {
@@ -95,7 +95,7 @@ describe("register", () => {
         expect.assertions(1);
         try {
             // テスト用のユーザー情報を作成する。
-            await delayAsync(() => userRegistrar.register(profileId, "invalidUserName"));
+            await delayAsync(() => userProfileManager.register(profileId, "invalidUserName"));
         } catch (error) {
             // エラーがResponseでない場合、エラーを投げる。
             if (!(error instanceof Error)) {
@@ -117,7 +117,7 @@ describe("delete", () => {
 
     test("delete should delete a user", async () => {
         // テスト用のユーザー情報を作成する。
-        await delayAsync(() => userRegistrar.register(profileId, userName));
+        await delayAsync(() => userProfileManager.register(profileId, userName));
 
         // テスト用のユーザー情報を取得する。
         const responseFindByProfileId = await delayAsync(() => postgresUserRepository.findByProfileId(profileId));
@@ -127,7 +127,7 @@ describe("delete", () => {
 
         // テスト用のユーザー情報を削除する。
         const id = responseFindByProfileId.id;
-        const responseDelete = await delayAsync(() => userRegistrar.delete(id));
+        const responseDelete = await delayAsync(() => userProfileManager.delete(id));
 
         // 結果を検証する。
         expect(responseDelete).toBe(true);

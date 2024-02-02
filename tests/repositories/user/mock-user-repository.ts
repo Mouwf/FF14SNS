@@ -1,4 +1,5 @@
 import User from "../../../app/models/user/user";
+import UserSetting from "../../../app/models/user/user-setting";
 import IUserRepository from "../../../app/repositories/user/i-user-repository";
 
 /**
@@ -10,7 +11,7 @@ export default class MockUserRepository implements IUserRepository {
         return true;
     }
 
-    update(user: User): Promise<boolean> {
+    public async update(userSetting: UserSetting): Promise<boolean> {
         throw new Error("Method not implemented.");
     }
 
@@ -19,7 +20,7 @@ export default class MockUserRepository implements IUserRepository {
         return true;
     }
 
-    findById(id: string): Promise<User | null> {
+    public async findById(id: string): Promise<User | null> {
         throw new Error("Method not implemented.");
     }
 
@@ -31,6 +32,8 @@ export default class MockUserRepository implements IUserRepository {
             profileId: "profileId",
             authenticationProviderId: "authenticationProviderId",
             userName: "UserName@World",
+            currentReleaseVersion: "1.0",
+            currentReleaseName: "Hello, World!",
             createdAt: new Date(),
         };
         return user;
@@ -43,8 +46,14 @@ export default class MockUserRepository implements IUserRepository {
             profileId: "profileId",
             authenticationProviderId: "authenticationProviderId",
             userName: "UserName@World",
+            currentReleaseVersion: "1.0",
+            currentReleaseName: "Hello, World!",
             createdAt: new Date(),
         };
         return user;
+    }
+
+    public async findUserSettingByProfileId(profileId: string): Promise<UserSetting | null> {
+        throw new Error("Method not implemented.");
     }
 }

@@ -23,8 +23,11 @@ export const meta: MetaFunction = () => {
 export const loader = async ({
     request,
 }: LoaderFunctionArgs) => {
+    const cookieHeader = request.headers.get("Cookie");
+    const session = await getSession(cookieHeader);
+    const profileId = session.get("userId") as string;
     const releaseInformationLoader = context.releaseInformationLoader;
-    const allReleaseInformation = await releaseInformationLoader.getAllReleaseInformation();
+    const allReleaseInformation = await releaseInformationLoader.getReleaseInformationBelowUserSetting(profileId);
     return json(allReleaseInformation);
 }
 

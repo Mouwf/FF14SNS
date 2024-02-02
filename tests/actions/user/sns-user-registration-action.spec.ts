@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import MockUserRepository from "../../repositories/user/mock-user-repository";
-import UserRegistrar from "../../../app/libraries/user/user-registrar";
+import UserProfileManager from "../../../app/libraries/user/user-profile-manager";
 import SnsUserRegistrationAction from "../../../app/actions/user/sns-user-registration-action";
 
 /**
@@ -25,8 +25,8 @@ const id = 1;
 
 beforeEach(() => {
     const mockUserRepository = new MockUserRepository();
-    const userAccountManager = new UserRegistrar(mockUserRepository);
-    snsUserRegistrationAction = new SnsUserRegistrationAction(userAccountManager);
+    const userProfileManager = new UserProfileManager(mockUserRepository);
+    snsUserRegistrationAction = new SnsUserRegistrationAction(userProfileManager);
 });
 
 describe("register", () => {

@@ -5,15 +5,15 @@ export default interface UserSetting {
     /**
      * ユーザーID。
      */
-    userId: number;
+    readonly userId: string;
 
     /**
      * ユーザー名。
      */
-    userName: string;
+    readonly userName: string;
 
     /**
-     * タイムラインに表示できる最大リリースID。
+     * 現在のリリース情報ID。
      */
-    maxVisibleReleaseId: number;
+    readonly currentReleaseInformationId: number;
 }
