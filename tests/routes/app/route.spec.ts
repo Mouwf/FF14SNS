@@ -38,7 +38,7 @@ beforeEach(async () => {
     const validSession = await getSession();
     validSession.set("idToken", "idToken");
     validSession.set("refreshToken", "refreshToken");
-    validSession.set("userId", "profileId");
+    validSession.set("userId", "username_world1");
     requestWithCookie = new Request("https://example.com", {
         headers: {
             Cookie: await commitSession(validSession),
@@ -88,7 +88,7 @@ describe("loader", () => {
 
         // 結果を検証する。
         const expectedUser = {
-            userId: "profileId",
+            userId: "username_world1",
             userName: "UserName@World",
         };
         expect(resultUser.userId).toBe(expectedUser.userId);

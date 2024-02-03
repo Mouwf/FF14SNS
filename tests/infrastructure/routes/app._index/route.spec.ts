@@ -125,14 +125,14 @@ describe("loader" , () => {
         session.set("idToken", "idToken");
         session.set("refreshToken", "refreshToken");
         session.set("userId", profileId);
-        const sessionCookie = await commitSession(session);
+        const cookieSession = await commitSession(session);
         const cookie = {
             postId: postId,
         };
-        const postCookie = await newlyPostedPostCookie.serialize(cookie);
+        const cookieNewlyPostedPost = await newlyPostedPostCookie.serialize(cookie);
         const requestWithCookie = new Request("https://example.com", {
             headers: {
-                Cookie: `${sessionCookie}; ${postCookie}`,
+                Cookie: `${cookieSession}; ${cookieNewlyPostedPost}`,
             },
         });
         const response = await loader({

@@ -12,7 +12,9 @@ export default class MockUserRepository implements IUserRepository {
     }
 
     public async update(userSetting: UserSetting): Promise<boolean> {
-        throw new Error("Method not implemented.");
+        if (userSetting.userId === "username_world2") throw new Error("ユーザーが存在しません。");
+        if (userSetting.userId !== "username_world1") return false;
+        return true;
     }
 
     public async delete(id: number): Promise<boolean> {
@@ -26,10 +28,10 @@ export default class MockUserRepository implements IUserRepository {
 
     public async findByProfileId(profileId: string): Promise<User | null> {
         if (profileId === "invalidProfileId") throw new Error("Invalid profileId.");
-        if (profileId !== "profileId") return null;
+        if (profileId !== "username_world1") return null;
         const user = {
             id: 1,
-            profileId: "profileId",
+            profileId: "username_world1",
             authenticationProviderId: "authenticationProviderId",
             userName: "UserName@World",
             currentReleaseVersion: "1.0",
@@ -43,7 +45,7 @@ export default class MockUserRepository implements IUserRepository {
         if (authenticationProviderId !== "authenticationProviderId") return null;
         const user = {
             id: 1,
-            profileId: "profileId",
+            profileId: "username_world1",
             authenticationProviderId: "authenticationProviderId",
             userName: "UserName@World",
             currentReleaseVersion: "1.0",
@@ -54,6 +56,12 @@ export default class MockUserRepository implements IUserRepository {
     }
 
     public async findUserSettingByProfileId(profileId: string): Promise<UserSetting | null> {
-        throw new Error("Method not implemented.");
+        if (profileId !== "username_world1") return null;
+        const userSetting = {
+            userId: "username_world1",
+            userName: "UserName@World1",
+            currentReleaseInformationId: 1,
+        };
+        return userSetting;
     }
 }

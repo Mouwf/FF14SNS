@@ -50,7 +50,7 @@ beforeEach(async () => {
     const loggedInUserSession = await getSession();
     loggedInUserSession.set("idToken", "idToken");
     loggedInUserSession.set("refreshToken", "refreshToken");
-    loggedInUserSession.set("userId", "profileId");
+    loggedInUserSession.set("userId", "username_world1");
     requestWithLoggedInUserCookie = new Request("https://example.com", {
         headers: {
             Cookie: await commitSession(loggedInUserSession),

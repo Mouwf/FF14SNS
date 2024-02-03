@@ -18,6 +18,22 @@ export default class MockPostContentRepository implements IPostContentRepository
     }
 
     public async getLatestLimited(profileId: string, limit: number): Promise<PostContent[]> {
+        if (profileId !== "username_world1") {
+            const postContents: PostContent[] = Array(500).fill(null).map((_, index) => {
+                const incrementedId = index + 1;
+                return {
+                    id: incrementedId,
+                    posterId: 1,
+                    posterName: "UserName@World",
+                    releaseInformationId: 1,
+                    releaseVersion: "5.5",
+                    releaseName: "ReleaseName",
+                    content: `Content ${incrementedId}`,
+                    createdAt: new Date(),
+                };
+            });
+            return postContents;
+        }
         const postContents: PostContent[] = Array(limit).fill(null).map((_, index) => {
             const incrementedId = index + 1;
             return {
