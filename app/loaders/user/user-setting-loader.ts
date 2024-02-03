@@ -19,7 +19,7 @@ export default class UserSettingLoader {
      * @param profileId プロフィールID。
      * @returns ユーザー設定。
      */
-    public async getUserSettingByProfileId(profileId: string): Promise<UserSetting> {
+    public async fetchUserSettingByProfileId(profileId: string): Promise<UserSetting> {
         const userSetting = await this.userProfileManager.fetchUserSettingByProfileId(profileId);
         return userSetting;
     }

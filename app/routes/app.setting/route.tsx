@@ -16,7 +16,7 @@ export const meta: MetaFunction = () => {
 }
 
 /**
- * ユーザー設定を取得するローダー。
+ * ユーザー設定と全てのリリース情報を取得するローダー。
  * @param request リクエスト。
  * @param context コンテキスト。
  */
@@ -28,7 +28,7 @@ export const loader = async ({
     const session = await getSession(cookieHeader);
     const profileId = session.get("userId") as string;
     const userSettingLoader = context.userSettingLoader;
-    const userSetting = await userSettingLoader.getUserSettingByProfileId(profileId);
+    const userSetting = await userSettingLoader.fetchUserSettingByProfileId(profileId);
 
     // リリース情報を全件取得する。
     const releaseInformationLoader = context.releaseInformationLoader;
