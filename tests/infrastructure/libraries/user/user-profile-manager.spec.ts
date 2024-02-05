@@ -1,5 +1,6 @@
-import { describe, test, expect, beforeEach } from "@jest/globals";
+import { describe, test, expect, beforeEach, afterEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
+import deleteRecordForTest from "../../../infrastructure/common/delete-record-for-test";
 import UserProfileManager from "../../../../app/libraries/user/user-profile-manager";
 import PostgresUserRepository from "../../../../app/repositories/user/postgres-user-repository";
 import { postgresClientProvider } from "../../../../app/dependency-injector/get-load-context";
@@ -15,6 +16,11 @@ let postgresUserRepository: PostgresUserRepository;
 let userProfileManager: UserProfileManager;
 
 /**
+ * 認証プロバイダーID。
+ */
+const authenticationProviderId = "test_authentication_provider_id";
+
+/**
  * プロフィールID。
  */
 const profileId = "username_world";
@@ -24,36 +30,25 @@ const profileId = "username_world";
  */
 const userName = "UserName@World";
 
+/**
+ * 現在のリリース情報ID。
+ */
+const currentReleaseInformationId = 1;
+
 beforeEach(async () => {
     postgresUserRepository = new PostgresUserRepository(postgresClientProvider);
     userProfileManager = new UserProfileManager(postgresUserRepository);
+    await deleteRecordForTest();
+});
 
-    // テスト用のユーザー情報が存在する場合、削除する。
-    try {
-        // テスト用のユーザー情報を取得する。
-        const responseFindByProfileId = await delayAsync(() => postgresUserRepository.findByProfileId(profileId));
-
-        // テスト用のユーザー情報が存在しない場合、エラーを投げる。
-        if (responseFindByProfileId == null) throw new Error("The user does not exist.");
-
-        const id = responseFindByProfileId.id;
-        await delayAsync(() => postgresUserRepository.delete(id));
-        console.info("テスト用のユーザー情報を削除しました。");
-    } catch (error) {
-        console.info("テスト用のユーザー情報は存在しませんでした。");
-    }
+afterEach(async () => {
+    await deleteRecordForTest();
 });
 
 describe("register", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
-
     test("register should register a new user", async () => {
         // テスト用のユーザー情報を作成する。
-        const response = await delayAsync(() => userProfileManager.register(profileId, userName));
+        const response = await delayAsync(() => userProfileManager.register(authenticationProviderId, userName, currentReleaseInformationId));
 
         // 結果を検証する。
         expect(response).toBe(true);
@@ -63,7 +58,7 @@ describe("register", () => {
         expect.assertions(1);
         try {
             // テスト用のユーザー情報を作成する。
-            await delayAsync(() => userProfileManager.register("", userName));
+            await delayAsync(() => userProfileManager.register("", userName, currentReleaseInformationId));
         } catch (error) {
             // エラーがResponseでない場合、エラーを投げる。
             if (!(error instanceof Error)) {
@@ -79,7 +74,7 @@ describe("register", () => {
         expect.assertions(1);
         try {
             // テスト用のユーザー情報を作成する。
-            await delayAsync(() => userProfileManager.register(profileId, ""));
+            await delayAsync(() => userProfileManager.register(authenticationProviderId, "", currentReleaseInformationId));
         } catch (error) {
             // エラーがResponseでない場合、エラーを投げる。
             if (!(error instanceof Error)) {
@@ -95,7 +90,7 @@ describe("register", () => {
         expect.assertions(1);
         try {
             // テスト用のユーザー情報を作成する。
-            await delayAsync(() => userProfileManager.register(profileId, "invalidUserName"));
+            await delayAsync(() => userProfileManager.register(authenticationProviderId, "invalidUserName", currentReleaseInformationId));
         } catch (error) {
             // エラーがResponseでない場合、エラーを投げる。
             if (!(error instanceof Error)) {
@@ -108,16 +103,35 @@ describe("register", () => {
     });
 });
 
-describe("delete", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
+describe("editUserSetting", () => {
+    test("editUserSetting should edit user setting", async () => {
+        // テスト用のユーザー情報を作成する。
+        await delayAsync(() => userProfileManager.register(authenticationProviderId, userName, currentReleaseInformationId));
 
+        // 認証済みユーザーを取得する。
+        const responseAuthenticatedUser = await delayAsync(() => postgresUserRepository.findByProfileId(profileId));
+
+        // ユーザーが存在しない場合、エラーを投げる。
+        if (responseAuthenticatedUser === null) throw new Error("The user does not exist.");
+
+        // ユーザー設定を取得する。
+        const responseFindUserSettingByProfileId = await delayAsync(() => postgresUserRepository.findUserSettingByProfileId(profileId));
+
+        // ユーザー設定が存在しない場合、エラーを投げる。
+        if (responseFindUserSettingByProfileId === null) throw new Error("The user setting does not exist.");
+
+        // ユーザー設定を更新する。
+        const response = await delayAsync(() => userProfileManager.editUserSetting(responseFindUserSettingByProfileId));
+
+        // 結果を検証する。
+        expect(response).toBe(true);
+    });
+});
+
+describe("delete", () => {
     test("delete should delete a user", async () => {
         // テスト用のユーザー情報を作成する。
-        await delayAsync(() => userProfileManager.register(profileId, userName));
+        await delayAsync(() => userProfileManager.register(authenticationProviderId, userName, currentReleaseInformationId));
 
         // テスト用のユーザー情報を取得する。
         const responseFindByProfileId = await delayAsync(() => postgresUserRepository.findByProfileId(profileId));
@@ -131,5 +145,20 @@ describe("delete", () => {
 
         // 結果を検証する。
         expect(responseDelete).toBe(true);
+    });
+});
+
+describe("fetchUserSettingByProfileId", () => {
+    test("fetchUserSettingByProfileId should fetch user setting by profile id", async () => {
+        // テスト用のユーザー情報を作成する。
+        await delayAsync(() => userProfileManager.register(authenticationProviderId, userName, currentReleaseInformationId));
+
+        // ユーザー設定を取得する。
+        const response = await delayAsync(() => userProfileManager.fetchUserSettingByProfileId(profileId));
+
+        // 結果を検証する。
+        expect(response.userId).toBe(profileId);
+        expect(response.userName).toBe(userName);
+        expect(response.currentReleaseInformationId).toBe(currentReleaseInformationId);
     });
 });

@@ -4,9 +4,8 @@ import deleteRecordForTest from "../../../infrastructure/common/delete-record-fo
 import PostgresUserRepository from "../../../../app/repositories/user/postgres-user-repository";
 import { AppLoadContext } from "@netlify/remix-runtime";
 import { appLoadContext, postgresClientProvider } from "../../../../app/dependency-injector/get-load-context";
-import { loader, action } from "../../../../app/routes/app.post-message/route";
+import { loader, action } from "../../../../app/routes/app.setting/route";
 import { commitSession, getSession } from "../../../../app/sessions";
-import { newlyPostedPostCookie } from "../../../../app/cookies.server";
 
 /**
  * Postgresのユーザーリポジトリ。
@@ -17,6 +16,11 @@ let postgresUserRepository: PostgresUserRepository;
  * プロフィールID。
  */
 const profileId = "username_world";
+
+/**
+ * 認証プロバイダーID。
+ */
+const authenticationProviderId = "test_authentication_provider_id";
 
 /**
  * ユーザー名。
@@ -50,8 +54,8 @@ beforeEach(async () => {
         },
         method: "POST",
         body: new URLSearchParams({
-            releaseInformationId: "1",
-            content: "アクション経由の投稿テスト！",
+            userName: userName,
+            currentReleaseInformationId: currentReleaseInformationId.toString(),
         }),
     });
     context = appLoadContext;
@@ -63,53 +67,51 @@ afterEach(async () => {
 });
 
 describe("loader", () => {
-    test("loader should return release information.", async () => {
+    test("loader should return user setting and all release information.", async () => {
         // テスト用のユーザー情報を登録する。
-        const authenticationProviderId = "authenticationProviderId";
-        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId));
+        await postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId);
 
         // ローダーを実行し、結果を取得する。
         const response = await loader({
             request: request,
             params: {},
-            context,
+            context: context,
         });
 
         // 検証に必要な情報を取得する。
-        const resultAllReleaseInformation = await response.json();
+        const settingLoaderData = await response.json();
+        const userSetting = settingLoaderData.userSetting;
+        const allReleaseInformation = settingLoaderData.allReleaseInformation;
 
         // 結果を検証する。
-        expect(resultAllReleaseInformation.length).toBe(currentReleaseInformationId);
-        resultAllReleaseInformation.map((releaseInformation) => {
-            expect(releaseInformation.id).toBeDefined();
-            expect(releaseInformation.releaseVersion).toBeDefined();
-            expect(releaseInformation.releaseName).toBeDefined();
-            expect(new Date(releaseInformation.createdAt)).toBeInstanceOf(Date);
-        });
+        expect(userSetting.userId).toBeDefined();
+        expect(userSetting.userName).toBe(userName);
+        expect(userSetting.currentReleaseInformationId).toBe(currentReleaseInformationId);
+        expect(allReleaseInformation.length).toBeGreaterThan(0);
     });
 });
 
 describe("action", () => {
-    test("action should redirect to app page and return posted postId in the cookies.", async () => {
+    test("action should return success message.", async () => {
         // テスト用のユーザー情報を登録する。
-        const authenticationProviderId = "authenticationProviderId";
-        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId));
+        await postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId);
 
         // アクションを実行し、結果を取得する。
         const response = await action({
             request: request,
             params: {},
-            context,
+            context: context,
         });
 
         // 検証に必要な情報を取得する。
-        const status = response.status;
-        const location = response.headers.get("Location");
-        const cookie = await newlyPostedPostCookie.parse(response.headers.get("Set-Cookie"));
+        const responseJson = await response.json();
+
+        // 結果が存在しない場合、エラーを投げる。
+        if (!('success' in responseJson) || !responseJson.success) {
+            throw new Error("Response is undefined.");
+        }
 
         // 結果を検証する。
-        expect(status).toBe(302);
-        expect(location).toBe("/app");
-        expect(cookie.postId).toBeDefined();
+        expect(responseJson.success).toBe(true);
     });
 });

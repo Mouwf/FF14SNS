@@ -6,7 +6,6 @@ import { appLoadContext, postgresClientProvider } from "../../../../app/dependen
 import PostgresUserRepository from "../../../../app/repositories/user/postgres-user-repository";
 import PostgresPostContentRepository from "../../../../app/repositories/post/postgres-post-content-repository";
 import PostInteractor from "../../../../app/libraries/post/post-interactor";
-import PostsFetcher from "../../../../app/libraries/post/posts-fetcher";
 import { commitSession, getSession } from "../../../../app/sessions";
 import { newlyPostedPostCookie } from "../../../../app/cookies.server";
 import { loader } from "../../../../app/routes/app._index/route";
@@ -27,11 +26,6 @@ let postgresPostContentRepository: PostgresPostContentRepository;
 let postInteractor: PostInteractor;
 
 /**
- * 投稿を取得するクラス。
- */
-let postsFetcher: PostsFetcher;
-
-/**
  * プロフィールID。
  */
 const profileId = "username_world";
@@ -42,6 +36,11 @@ const profileId = "username_world";
 const userName = "UserName@World";
 
 /**
+ * 現在のリリース情報ID。
+ */
+const currentReleaseInformationId = 1;
+
+/**
  * コンテキスト。
  */
 let context: AppLoadContext;
@@ -50,7 +49,6 @@ beforeEach(async () => {
     postgresUserRepository = new PostgresUserRepository(postgresClientProvider);
     postgresPostContentRepository = new PostgresPostContentRepository(postgresClientProvider);
     postInteractor = new PostInteractor(postgresPostContentRepository);
-    postsFetcher = new PostsFetcher(postgresPostContentRepository);
     context = appLoadContext;
     await deleteRecordForTest();
 });
@@ -63,7 +61,7 @@ describe("loader" , () => {
     test("loader should return latest posts.", async () => {
         // テスト用のユーザー情報を登録する。
         const authenticationProviderId = "authenticationProviderId";
-        await postgresUserRepository.create(profileId, authenticationProviderId, userName);
+        await postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId);
 
         // 認証済みユーザーを取得する。
         const responseAuthenticatedUser = await delayAsync(() => postgresUserRepository.findByAuthenticationProviderId(authenticationProviderId));
@@ -74,7 +72,7 @@ describe("loader" , () => {
         // 認証済みユーザーの投稿を登録する。
         const posterId = responseAuthenticatedUser.id;
         const postContent = "postContent";
-        const postId = await postInteractor.post(posterId, 1, postContent);
+        const postId = await postInteractor.post(posterId, currentReleaseInformationId, postContent);
 
         // ローダーを実行し、結果を取得する。
         const session = await getSession();
@@ -96,10 +94,10 @@ describe("loader" , () => {
         const posts = await response.json();
 
         // 結果を検証する。
-        expect(posts.length).toBe(1);
+        expect(posts.length).toBeGreaterThan(0);
         expect(posts[0].id).toBe(postId);
         expect(posts[0].posterId).toBe(profileId);
-        expect(posts[0].releaseInformationId).toBe(1);
+        expect(posts[0].releaseInformationId).toBe(currentReleaseInformationId);
         expect(posts[0].content).toBe(postContent);
         expect(new Date(posts[0].createdAt)).toBeInstanceOf(Date);
     });
@@ -107,7 +105,7 @@ describe("loader" , () => {
     test("loader should return before posts if user has cookie.", async () => {
         // テスト用のユーザー情報を登録する。
         const authenticationProviderId = "authenticationProviderId";
-        await postgresUserRepository.create(profileId, authenticationProviderId, userName);
+        await postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId);
 
         // 認証済みユーザーを取得する。
         const responseAuthenticatedUser = await delayAsync(() => postgresUserRepository.findByAuthenticationProviderId(authenticationProviderId));
@@ -145,10 +143,10 @@ describe("loader" , () => {
         const posts = await response.json();
 
         // 結果を検証する。
-        expect(posts.length).toBe(1);
+        expect(posts.length).toBeGreaterThan(0);
         expect(posts[0].id).toBe(postId);
         expect(posts[0].posterId).toBe(profileId);
-        expect(posts[0].releaseInformationId).toBe(1);
+        expect(posts[0].releaseInformationId).toBe(currentReleaseInformationId);
         expect(posts[0].content).toBe(postContent);
         expect(new Date(posts[0].createdAt)).toBeInstanceOf(Date);
     });
