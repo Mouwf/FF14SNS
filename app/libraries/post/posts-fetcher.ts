@@ -15,7 +15,7 @@ export default class PostsFetcher {
     }
 
     /**
-     * 最新の投稿を指定された数取得する。
+     * ユーザーが設定したリリースバージョン以下の最新の投稿を指定された数取得する。
      * @param profileId プロフィールID。
      * @param numberOfPosts 取得する投稿数。
      */
@@ -25,7 +25,7 @@ export default class PostsFetcher {
     }
 
     /**
-     * 指定された投稿ID以前の投稿を指定された数取得する。
+     * ユーザーが設定したリリースバージョン以下の指定された投稿ID以前の投稿を指定された数取得する。
      * @param postId 投稿ID。
      * @param numberOfPosts 取得する投稿数。
      */
