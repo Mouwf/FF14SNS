@@ -29,4 +29,14 @@ export default class ReleaseInformationGetter {
         const response = await this.releaseInformationRepository.getAll();
         return response;
     }
+
+    /**
+     * ユーザーが設定したリリースバージョン以下のリリース情報を取得する。
+     * @param profileId プロフィールID。
+     * @returns ユーザーが設定したリリースバージョン以下のリリース情報。
+     */
+    public async getReleaseInformationBelowUserSetting(profileId: string): Promise<ReleaseInformation[]> {
+        const response = await this.releaseInformationRepository.getBelowUserSetting(profileId);
+        return response;
+    }
 }

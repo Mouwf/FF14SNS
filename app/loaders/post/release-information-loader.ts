@@ -32,4 +32,14 @@ export default class ReleaseInformationLoader {
         const allReleaseInformation = await this.releaseInformationGetter.getAllReleaseInformation();
         return allReleaseInformation;
     }
+
+    /**
+     * ユーザーが設定したリリースバージョン以下のリリース情報を取得する。
+     * @param profileId プロフィールID。
+     * @returns ユーザーが設定したリリースバージョン以下のリリース情報。
+     */
+    public async getReleaseInformationBelowUserSetting(profileId: string): Promise<ReleaseInformation[]> {
+        const releaseInformationBelowUserSetting = await this.releaseInformationGetter.getReleaseInformationBelowUserSetting(profileId);
+        return releaseInformationBelowUserSetting;
+    }
 }

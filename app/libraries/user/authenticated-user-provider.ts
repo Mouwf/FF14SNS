@@ -37,6 +37,8 @@ export default class AuthenticatedUserProvider {
             profileId: repositoryResponse.profileId,
             authenticationProviderId: repositoryResponse.authenticationProviderId,
             userName: repositoryResponse.userName,
+            currentReleaseVersion: repositoryResponse.currentReleaseVersion,
+            currentReleaseName: repositoryResponse.currentReleaseName,
             createdAt: new Date(Number(repositoryResponse.createdAt)),
         };
         return authenticatedUser;
@@ -59,6 +61,8 @@ export default class AuthenticatedUserProvider {
             profileId: repositoryResponse.profileId,
             authenticationProviderId: repositoryResponse.authenticationProviderId,
             userName: repositoryResponse.userName,
+            currentReleaseVersion: repositoryResponse.currentReleaseVersion,
+            currentReleaseName: repositoryResponse.currentReleaseName,
             createdAt: new Date(Number(repositoryResponse.createdAt)),
         };
         return authenticatedUser;

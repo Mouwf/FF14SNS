@@ -24,6 +24,11 @@ const profileId = "username_world";
 const userName = "UserName@World";
 
 /**
+ * 現在のリリース情報ID。
+ */
+const currentReleaseInformationId = 4;
+
+/**
  * モックリクエスト。
  */
 let request: Request;
@@ -35,7 +40,20 @@ let context: AppLoadContext;
 
 beforeEach(async () => {
     postgresUserRepository = new PostgresUserRepository(postgresClientProvider);
-    request = new Request("https://example.com");
+    const session = await getSession();
+    session.set("idToken", "idToken");
+    session.set("refreshToken", "refreshToken");
+    session.set("userId", profileId);
+    request = new Request("https://example.com", {
+        headers: {
+            Cookie: await commitSession(session),
+        },
+        method: "POST",
+        body: new URLSearchParams({
+            releaseInformationId: "1",
+            content: "アクション経由の投稿テスト！",
+        }),
+    });
     context = appLoadContext;
     await deleteRecordForTest();
 });
@@ -45,13 +63,11 @@ afterEach(async () => {
 });
 
 describe("loader", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
-
     test("loader should return release information.", async () => {
+        // テスト用のユーザー情報を登録する。
+        const authenticationProviderId = "authenticationProviderId";
+        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId));
+
         // ローダーを実行し、結果を取得する。
         const response = await loader({
             request: request,
@@ -63,6 +79,7 @@ describe("loader", () => {
         const resultAllReleaseInformation = await response.json();
 
         // 結果を検証する。
+        expect(resultAllReleaseInformation.length).toBe(currentReleaseInformationId);
         resultAllReleaseInformation.map((releaseInformation) => {
             expect(releaseInformation.id).toBeDefined();
             expect(releaseInformation.releaseVersion).toBeDefined();
@@ -73,34 +90,14 @@ describe("loader", () => {
 });
 
 describe("action", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
-
     test("action should redirect to app page and return posted postId in the cookies.", async () => {
         // テスト用のユーザー情報を登録する。
         const authenticationProviderId = "authenticationProviderId";
-        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName));
+        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId));
 
         // アクションを実行し、結果を取得する。
-        const session = await getSession();
-        session.set("idToken", "idToken");
-        session.set("refreshToken", "refreshToken");
-        session.set("userId", profileId);
-        const requestWithBody = new Request("https://example.com", {
-            headers: {
-                Cookie: await commitSession(session),
-            },
-            method: "POST",
-            body: new URLSearchParams({
-                releaseInformationId: "1",
-                content: "アクション経由の投稿テスト！",
-            }),
-        });
         const response = await action({
-            request: requestWithBody,
+            request: request,
             params: {},
             context,
         });

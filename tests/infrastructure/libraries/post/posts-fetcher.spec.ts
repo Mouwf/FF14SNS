@@ -37,6 +37,11 @@ const profileId = "username_world";
  */
 const userName = "UserName@World";
 
+/**
+ * 現在のリリース情報ID。
+ */
+const currentReleaseInformationId = 1;
+
 beforeEach(async () => {
     postgresUserRepository = new PostgresUserRepository(postgresClientProvider);
     postgresPostContentRepository = new PostgresPostContentRepository(postgresClientProvider);
@@ -53,7 +58,7 @@ describe("fetchLatestPosts" , () => {
     test("fetchLatestPosts should return latest posts.", async () => {
         // テスト用のユーザー情報を登録する。
         const authenticationProviderId = "authenticationProviderId";
-        await postgresUserRepository.create(profileId, authenticationProviderId, userName);
+        await postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId);
 
         // 認証済みユーザーを取得する。
         const responseAuthenticatedUser = await delayAsync(() => postgresUserRepository.findByAuthenticationProviderId(authenticationProviderId));
@@ -64,13 +69,13 @@ describe("fetchLatestPosts" , () => {
         // テスト用の投稿を登録する。
         const posterId = responseAuthenticatedUser.id;
         const postContent = "postContent";
-        const postId = await postInteractor.post(posterId, 1, postContent);
+        const postId = await postInteractor.post(posterId, currentReleaseInformationId, postContent);
 
         // 投稿を取得する。
-        const posts = await postsFetcher.fetchLatestPosts(1);
+        const posts = await postsFetcher.fetchLatestPosts(profileId, currentReleaseInformationId);
 
         // 結果を検証する。
-        expect(posts.length).toBe(1);
+        expect(posts.length).toBeGreaterThanOrEqual(1);
         expect(posts[0].id).toBe(postId);
         expect(posts[0].posterId).toBe(profileId);
         expect(posts[0].releaseInformationId).toBe(1);

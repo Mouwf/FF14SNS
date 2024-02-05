@@ -68,6 +68,8 @@ export const loader = async ({
         const snsUser: SnsUser = {
             userId: authenticatedUser.profileId,
             userName: authenticatedUser.userName,
+            currentReleaseVersion: authenticatedUser.currentReleaseVersion,
+            currentReleaseName: authenticatedUser.currentReleaseName,
         };
         return json(snsUser, {
             headers: {

@@ -39,6 +39,11 @@ const profileId = "username_world";
 const userName = "UserName@World";
 
 /**
+ * 現在のリリース情報ID。
+ */
+const currentReleaseInformationId = 1;
+
+/**
  * コンテキスト。
  */
 let context: AppLoadContext;
@@ -55,19 +60,13 @@ afterEach(async () => {
 });
 
 describe("action", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
-
     test("action should redirect app page.", async () => {
         // テスト用のユーザーを作成する。
         const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
 
         // テスト用のユーザー情報を登録する。
         const authenticationProviderId = responseSignUp.localId;
-        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName));
+        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId));
 
         // アクションを実行し、結果を取得する。
         const requestWithMailAddressAndPassword = new Request("https://example.com", {

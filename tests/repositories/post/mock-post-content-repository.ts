@@ -17,7 +17,23 @@ export default class MockPostContentRepository implements IPostContentRepository
         throw new Error("Method not implemented.");
     }
 
-    public async getLatestLimited(limit: number): Promise<PostContent[]> {
+    public async getLatestLimited(profileId: string, limit: number): Promise<PostContent[]> {
+        if (profileId !== "username_world1") {
+            const postContents: PostContent[] = Array(500).fill(null).map((_, index) => {
+                const incrementedId = index + 1;
+                return {
+                    id: incrementedId,
+                    posterId: 1,
+                    posterName: "UserName@World",
+                    releaseInformationId: 1,
+                    releaseVersion: "5.5",
+                    releaseName: "ReleaseName",
+                    content: `Content ${incrementedId}`,
+                    createdAt: new Date(),
+                };
+            });
+            return postContents;
+        }
         const postContents: PostContent[] = Array(limit).fill(null).map((_, index) => {
             const incrementedId = index + 1;
             return {
@@ -39,7 +55,7 @@ export default class MockPostContentRepository implements IPostContentRepository
         throw new Error("Method not implemented.");
     }
 
-    public async getLimitedAfterId(postId: number, limit: number): Promise<PostContent[]> {
+    public async getLimitedAfterId(profileId: string, postId: number, limit: number): Promise<PostContent[]> {
         throw new Error("Method not implemented.");
     }
 }

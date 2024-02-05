@@ -45,12 +45,13 @@ beforeEach(async () => {
         method: "POST",
         body: new URLSearchParams({
             userName: "UserName@World",
+            currentReleaseInformationId: "1",
         }),
     });
     const loggedInUserSession = await getSession();
     loggedInUserSession.set("idToken", "idToken");
     loggedInUserSession.set("refreshToken", "refreshToken");
-    loggedInUserSession.set("userId", "profileId");
+    loggedInUserSession.set("userId", "username_world1");
     requestWithLoggedInUserCookie = new Request("https://example.com", {
         headers: {
             Cookie: await commitSession(loggedInUserSession),
@@ -58,6 +59,7 @@ beforeEach(async () => {
         method: "POST",
         body: new URLSearchParams({
             userName: "UserName@World",
+            currentReleaseInformationId: "1",
         }),
     });
     requestWithError = new Request("https://example.com", {
@@ -67,6 +69,7 @@ beforeEach(async () => {
         method: "POST",
         body: new URLSearchParams({
             userName: "errorUserName@World",
+            currentReleaseInformationId: "1",
         }),
     });
     requestWithInvalidUserName = new Request("https://example.com", {
@@ -76,6 +79,7 @@ beforeEach(async () => {
         method: "POST",
         body: new URLSearchParams({
             userName: "invalidUserName",
+            currentReleaseInformationId: "1",
         }),
     });
     requestWithoutCookie = new Request("https://example.com");
@@ -83,6 +87,21 @@ beforeEach(async () => {
 });
 
 describe("loader", () => {
+    test("loader should return all release information.", async () => {
+        // ローダーを実行し、結果を取得する。
+        const response = await loader({
+            request: requestWithCookie,
+            params: {},
+            context,
+        });
+
+        // 検証に必要な情報を取得する。
+        const resultAllInformation = await response.json();
+
+        // 結果を検証する。
+        expect(resultAllInformation).toBeDefined();
+    });
+
     test("loader should redirect app page if user is logged in.", async () => {
         // ローダーを実行し、結果を取得する。
         const response = await loader({
@@ -125,18 +144,6 @@ describe("loader", () => {
         // 結果を検証する。
         expect(status).toBe(302);
         expect(location).toBe("/auth/login");
-    });
-
-    test("loader should return null if user is not registered.", async () => {
-        // ローダーを実行し、結果を取得する。
-        const response = await loader({
-            request: requestWithCookie,
-            params: {},
-            context,
-        });
-
-        // 結果を検証する。
-        expect(response).toBeNull();
     });
 });
 

@@ -1,5 +1,6 @@
-import { describe, test, expect, beforeEach } from "@jest/globals";
+import { describe, test, expect, beforeEach, afterEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
+import deleteRecordForTest from "../../../infrastructure/common/delete-record-for-test";
 import AuthenticatedUserProvider from "../../../../app/libraries/user/authenticated-user-provider";
 import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
 import PostgresUserRepository from "../../../../app/repositories/user/postgres-user-repository";
@@ -40,54 +41,30 @@ const profileId = "username_world";
  */
 const userName = "UserName@World";
 
+/**
+ * 現在のリリース情報ID。
+ */
+const currentReleaseInformationId = 1;
+
 beforeEach(async () => {
     firebaseClient = new FirebaseClient();
     postgresUserRepository = new PostgresUserRepository(postgresClientProvider);
     authenticatedUserProvider = new AuthenticatedUserProvider(firebaseClient, postgresUserRepository);
+    await deleteRecordForTest();
+});
 
-    // テスト用のユーザーが存在する場合、削除する。
-    try {
-        // テスト用のユーザーをログインする。
-        const responseSignIn = await delayAsync(() => firebaseClient.signInWithEmailPassword(mailAddress, password));
-
-        // テスト用のユーザーを削除する。
-        const idToken = responseSignIn.idToken;
-        await delayAsync(() => firebaseClient.deleteUser(idToken));
-        console.info("テスト用のユーザーを削除しました。");
-    } catch (error) {
-        console.info("テスト用のユーザーは存在しませんでした。");
-    }
-
-    // テスト用のユーザー情報が存在する場合、削除する。
-    try {
-        // テスト用のユーザー情報を取得する。
-        const responseFindByProfileId = await delayAsync(() => postgresUserRepository.findByProfileId(profileId));
-
-        // テスト用のユーザー情報が存在しない場合、エラーを投げる。
-        if (responseFindByProfileId == null) throw new Error("The user does not exist.");
-
-        const id = responseFindByProfileId.id;
-        await delayAsync(() => postgresUserRepository.delete(id));
-        console.info("テスト用のユーザー情報を削除しました。");
-    } catch (error) {
-        console.info("テスト用のユーザー情報は存在しませんでした。");
-    }
+afterEach(async () => {
+    await deleteRecordForTest();
 });
 
 describe("getUserByToken", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
-
     test("getUserByToken should return an AuthenticatedUser.", async () => {
         // テスト用のユーザーを登録する。
         const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
 
         // テスト用のユーザー情報を登録する。
         const authenticationProviderId = responseSignUp.localId;
-        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName));
+        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId));
 
         // テスト用のユーザー情報を取得する。
         const idToken = responseSignUp.idToken;
@@ -101,6 +78,8 @@ describe("getUserByToken", () => {
         expect(responseUser.profileId).toBe(profileId);
         expect(responseUser.authenticationProviderId).toBe(authenticationProviderId);
         expect(responseUser.userName).toBe(userName);
+        expect(responseUser.currentReleaseVersion).toBeDefined();
+        expect(responseUser.currentReleaseName).toBeDefined();
         expect(new Date(responseUser.createdAt)).toBeInstanceOf(Date);
     });
 
@@ -118,19 +97,13 @@ describe("getUserByToken", () => {
 });
 
 describe("getUserByProfileId", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
-
     test("getUserByProfileId should return an AuthenticatedUser.", async () => {
         // テスト用のユーザーを登録する。
         const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
 
         // テスト用のユーザー情報を登録する。
         const authenticationProviderId = responseSignUp.localId;
-        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName));
+        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId));
 
         // テスト用のユーザー情報を取得する。
         const responseUser = await delayAsync(() => authenticatedUserProvider.getUserByProfileId(profileId));
@@ -143,6 +116,8 @@ describe("getUserByProfileId", () => {
         expect(responseUser.profileId).toBe(profileId);
         expect(responseUser.authenticationProviderId).toBe(authenticationProviderId);
         expect(responseUser.userName).toBe(userName);
+        expect(responseUser.currentReleaseVersion).toBeDefined();
+        expect(responseUser.currentReleaseName).toBeDefined();
         expect(new Date(responseUser.createdAt)).toBeInstanceOf(Date);
     });
 
@@ -156,12 +131,6 @@ describe("getUserByProfileId", () => {
 });
 
 describe("getAuthenticationProviderId", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
-
     test("getAuthenticationProviderId should return an authentication provider ID.", async () => {
         // テスト用のユーザーを登録する。
         const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));

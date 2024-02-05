@@ -6,9 +6,14 @@ import { commitSession, getSession } from "../../../app/sessions";
 import { newlyPostedPostCookie } from "../../../app/cookies.server";
 
 /**
- * モックリクエスト。
+ * リリース情報が少ないボディ付きのモックリクエスト。
  */
-let request: Request;
+let requestForReleaseInformationSession1: Request;
+
+/**
+ * リリース情報が多いボディ付きのモックリクエスト。
+ */
+let requestForReleaseInformationSession2: Request;
 
 /**
  * ボディ付きのモックリクエスト。
@@ -31,11 +36,38 @@ let requestWithNotRegisteredUserCookie: Request;
 let context: AppLoadContext;
 
 beforeEach(async () => {
-    request = new Request("https://example.com");
+    const getReleaseInformationSession1 = await getSession();
+    getReleaseInformationSession1.set("idToken", "idToken");
+    getReleaseInformationSession1.set("refreshToken", "refreshToken");
+    getReleaseInformationSession1.set("userId", "username_world1");
+    requestForReleaseInformationSession1 = new Request("https://example.com", {
+        headers: {
+            Cookie: await commitSession(getReleaseInformationSession1),
+        },
+    });
+    const getReleaseInformationSession2 = await getSession();
+    getReleaseInformationSession2.set("idToken", "idToken");
+    getReleaseInformationSession2.set("refreshToken", "refreshToken");
+    getReleaseInformationSession2.set("userId", "username_world2");
+    requestForReleaseInformationSession2 = new Request("https://example.com", {
+        headers: {
+            Cookie: await commitSession(getReleaseInformationSession2),
+        },
+    });
+    requestWithCookieAndBody = new Request("https://example.com", {
+        headers: {
+            Cookie: await commitSession(getReleaseInformationSession1),
+        },
+        method: "POST",
+        body: new URLSearchParams({
+            releaseInformationId: "5",
+            content: "アクション経由の投稿テスト！",
+        }),
+    });
     const validSession = await getSession();
     validSession.set("idToken", "idToken");
     validSession.set("refreshToken", "refreshToken");
-    validSession.set("userId", "profileId");
+    validSession.set("userId", "username_world1");
     requestWithCookieAndBody = new Request("https://example.com", {
         headers: {
             Cookie: await commitSession(validSession),
@@ -76,7 +108,7 @@ describe("loader", () => {
     test("loader should return release information.", async () => {
         // ローダーを実行し、結果を取得する。
         const response = await loader({
-            request: request,
+            request: requestForReleaseInformationSession1,
             params: {},
             context,
         });
@@ -85,6 +117,28 @@ describe("loader", () => {
         const resultAllReleaseInformation = await response.json();
 
         // 結果を検証する。
+        expect(resultAllReleaseInformation.length).toBe(3);
+        resultAllReleaseInformation.map((releaseInformation) => {
+            expect(releaseInformation.id).toBeDefined();
+            expect(releaseInformation.releaseVersion).toBeDefined();
+            expect(releaseInformation.releaseName).toBeDefined();
+            expect(new Date(releaseInformation.createdAt)).toBeInstanceOf(Date);
+        });
+    });
+
+    test("loader should return release information.", async () => {
+        // ローダーを実行し、結果を取得する。
+        const response = await loader({
+            request: requestForReleaseInformationSession2,
+            params: {},
+            context,
+        });
+
+        // 検証に必要な情報を取得する。
+        const resultAllReleaseInformation = await response.json();
+
+        // 結果を検証する。
+        expect(resultAllReleaseInformation.length).toBe(5);
         resultAllReleaseInformation.map((releaseInformation) => {
             expect(releaseInformation.id).toBeDefined();
             expect(releaseInformation.releaseVersion).toBeDefined();

@@ -84,7 +84,10 @@ export default class PostgresPostContentRepository implements IPostContentReposi
             const resultDeleteForReleaseInformationAssociation = await client.query(query, values);
 
             // 投稿結果がない場合、falseを返す。
-            if (resultDeleteForReleaseInformationAssociation.rowCount === 0) return false;
+            if (resultDeleteForReleaseInformationAssociation.rowCount === 0) {
+                await client.query("ROLLBACK");
+                return false;
+            }
 
             // 投稿テーブルからレコードを削除する。
             query = `
@@ -94,7 +97,10 @@ export default class PostgresPostContentRepository implements IPostContentReposi
             const resultForPosts = await client.query(query, values);
 
             // 投稿結果がない場合、falseを返す。
-            if (resultForPosts.rowCount === 0) return false;
+            if (resultForPosts.rowCount === 0) {
+                await client.query("ROLLBACK");
+                return false;
+            }
 
             // コミットする。
             await client.query("COMMIT");
@@ -111,42 +117,61 @@ export default class PostgresPostContentRepository implements IPostContentReposi
         throw new Error("Method not implemented.");
     }
 
-    public async getLatestLimited(limit: number): Promise<PostContent[]> {
+    public async getLatestLimited(profileId: string, limit: number): Promise<PostContent[]> {
         const client = await this.postgresClientProvider.get();
         try {
-            // 最新の投稿を取得する。
+            // リリースバージョンフィルター設定を取得する。
+            const releaseVersionFilterSettingQuery = `
+                SELECT release_information.release_version
+                FROM release_version_filter_settings
+                JOIN users ON release_version_filter_settings.user_id = users.id
+                JOIN release_information ON release_version_filter_settings.release_information_id = release_information.id
+                WHERE users.profile_id = $1;
+            `;
+            const releaseVersionFilterSettingValues = [profileId];
+            const releaseVersionFilterSetting = await client.query(releaseVersionFilterSettingQuery, releaseVersionFilterSettingValues);
+
+            // リリースバージョンフィルター設定が存在しない場合、空の配列を返す。
+            if (releaseVersionFilterSetting.rowCount === 0) return [];
+
+            // 設定されたリリースバージョン以下の最新の投稿を取得する。
+            const configuredReleaseVersion = releaseVersionFilterSetting.rows[0].release_version;
             const query = `
                 SELECT
-                    posts.id as post_id,
-                    users.profile_id as profile_id,
-                    users.user_name as user_name,
-                    release_information.id as release_id,
-                    release_information.release_version as release_version,
-                    release_information.release_name as release_name,
+                    posts.id,
+                    users.profile_id,
+                    users.user_name,
+                    release_information.id AS release_information_id,
+                    release_information.release_version,
+                    release_information.release_name,
                     posts.content,
-                    posts.created_at as created_at
+                    posts.created_at
                 FROM
                     posts
                 JOIN users ON posts.user_id = users.id
                 LEFT JOIN post_release_information_association ON posts.id = post_release_information_association.post_id
                 LEFT JOIN release_information ON post_release_information_association.release_information_id = release_information.id
-                ORDER BY posts.created_at DESC
-                LIMIT $1;
+                WHERE
+                    string_to_array(release_information.release_version, '.')::integer[] <= string_to_array($1, '.')::integer[]
+                ORDER BY
+                    posts.created_at DESC
+                LIMIT $2;
             `;
-            const values = [limit];
+            const values = [configuredReleaseVersion, limit];
             const posts = await client.query(query, values);
 
             // 最新の投稿を生成する。
-            return posts.rows.map(post => ({
-                id: post.post_id,
+            const latestPosts = posts.rows.map(post => ({
+                id: post.id,
                 posterId: post.profile_id,
                 posterName: post.user_name,
-                releaseInformationId: post.release_id,
+                releaseInformationId: post.release_information_id,
                 releaseVersion: post.release_version,
                 releaseName: post.release_name,
                 content: post.content,
                 createdAt: post.created_at,
             }));
+            return latestPosts;
         } catch (error) {
             throw error;
         } finally {
@@ -158,7 +183,7 @@ export default class PostgresPostContentRepository implements IPostContentReposi
         throw new Error("Method not implemented.");
     }
 
-    public async getLimitedAfterId(postId: number, limit: number): Promise<PostContent[]> {
+    public async getLimitedAfterId(profileId: string, postId: number, limit: number): Promise<PostContent[]> {
         throw new Error("Method not implemented.");
     }
 }

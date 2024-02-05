@@ -15,9 +15,10 @@ beforeEach(() => {
 });
 
 describe("getLatestPosts", () => {
-    test("getLatestPosts should return 1000 PostContent objects with correct values.", async () => {
+    test("getLatestPosts should return 1000 posts.", async () => {
         // 最新の投稿を取得する。
-        const response = await latestPostsLoader.getLatestPosts();
+        const profileId = "username_world1";
+        const response = await latestPostsLoader.getLatestPosts(profileId);
 
         // 結果を検証する。
         expect(response.length).toBe(1000);
