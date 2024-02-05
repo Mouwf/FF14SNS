@@ -162,7 +162,7 @@ export default class PostgresPostContentRepository implements IPostContentReposi
 
             // 最新の投稿を生成する。
             const latestPosts = posts.rows.map(post => ({
-                id: post.post_id,
+                id: post.id,
                 posterId: post.profile_id,
                 posterName: post.user_name,
                 releaseInformationId: post.release_information_id,
