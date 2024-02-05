@@ -15,9 +15,9 @@ export default class UserSettingAction {
     }
 
     /**
-     * プロフィールIDからユーザー設定を取得する。
-     * @param profileId プロフィールID。
-     * @returns ユーザー設定。
+     * ユーザー設定を更新する。
+     * @param userSetting ユーザー設定。
+     * @returns 更新に成功したかどうか。
      */
     public async editUserSetting(userSetting: UserSetting): Promise<boolean> {
         const response = await this.userProfileManager.editUserSetting(userSetting);

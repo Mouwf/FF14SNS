@@ -1,5 +1,5 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import { Form, useLoaderData } from "@remix-run/react";
 import { commitSession, destroySession, getSession } from "../../sessions";
 import { appLoadContext as context } from "../../dependency-injector/get-load-context";
 
@@ -36,7 +36,11 @@ export const loader = async ({
             },
         });
     }
-    return null;
+
+    // リリース情報を全件取得する。
+    const releaseInformationLoader = context.releaseInformationLoader;
+    const allReleaseInformation = await releaseInformationLoader.getAllReleaseInformation();
+    return json(allReleaseInformation);
 }
 
 /**
@@ -52,6 +56,7 @@ export const action = async ({
         // フォームデータを取得する。
         const formData = await request.formData();
         const userName = formData.get("userName") as string;
+        const currentReleaseInformationId = Number(formData.get("currentReleaseInformationId"));
 
         // 認証プロバイダーIDを取得する。
         const cookieHeader = request.headers.get("Cookie");
@@ -61,7 +66,7 @@ export const action = async ({
         const authenticationProviderId = await authenticatedUserLoader.getAuthenticationProviderId(idToken);
 
         // ユーザーを登録する。
-        const isRegistered = await context.snsUserRegistrationAction.register(authenticationProviderId, userName);
+        const isRegistered = await context.snsUserRegistrationAction.register(authenticationProviderId, userName, currentReleaseInformationId);
 
         // ユーザー登録に失敗した場合、エラーを返す。
         if (!isRegistered) return json({ error: "ユーザー登録に失敗しました。" });
@@ -97,12 +102,23 @@ export const action = async ({
  * @returns ユーザー登録ページ。
  */
 export default function RegisterUser() {
+    const allReleaseInformation = useLoaderData<typeof loader>();
+    const getReleaseVersionOptions = () => {
+        return <select name="currentReleaseInformationId">
+            {allReleaseInformation.map((releaseInformation) => {
+                return <option key={releaseInformation.id} value={releaseInformation.id}>{`${releaseInformation.releaseVersion} ${releaseInformation.releaseName}`}</option>;
+            })}
+        </select>;
+    }
+
     return (
         <Form method="post">
             { /** userNameにメールアドレスが入らないようにしている。 */ }
             <input type="text" style={{ display: "none" }} />
             <label htmlFor="userName">FF14のユーザー名(UserName@world)</label>
             <input type="text" name="userName" autoComplete="off" />
+            <label htmlFor="currentReleaseInformationId">現在のパッチ</label>
+            {getReleaseVersionOptions()}
             <button type="submit">登録</button>
         </Form>
     );

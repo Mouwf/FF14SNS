@@ -20,22 +20,23 @@ export default class UserProfileManager {
      * ユーザーを登録する。
      * @param authenticationProviderId 認証プロバイダID。
      * @param userName ユーザー名。
+     * @param currentReleaseInformationId 現在のリリース情報ID。
      * @returns 登録に成功したかどうか。
      */
-    public async register(authenticationProviderId: string, userName: string): Promise<boolean> {
+    public async register(authenticationProviderId: string, userName: string, currentReleaseInformationId: number): Promise<boolean> {
         // ユーザー登録バリデーションを行う。
         UserRegistrationValidator.validate(authenticationProviderId, userName);
 
         // ユーザーを登録する。
         const profileId = ProfileIdCreator.create(userName);
-        const response = await this.userRepository.create(profileId, authenticationProviderId, userName);
+        const response = await this.userRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId);
         return response;
     }
 
     /**
      * ユーザー設定を更新する。
-     * @param userSetting 
-     * @returns 
+     * @param userSetting ユーザー設定。
+     * @returns 更新に成功したかどうか。
      */
     public async editUserSetting(userSetting: UserSetting): Promise<boolean> {
         const response = await this.userRepository.update(userSetting);

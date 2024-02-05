@@ -10,9 +10,10 @@ export default interface IUserRepository {
      * @param profileId プロフィールID。
      * @param authenticationProviderId 認証プロバイダID。
      * @param userName ユーザー名。
+     * @param currentReleaseInformationId 現在のリリース情報ID。
      * @returns 登録に成功したかどうか。
      */
-    create(profileId: string, authenticationProviderId: string, userName: string): Promise<boolean>;
+    create(profileId: string, authenticationProviderId: string, userName: string, currentReleaseInformationId: number): Promise<boolean>;
 
     /**
      * ユーザー設定を更新する。

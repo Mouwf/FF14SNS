@@ -16,13 +16,13 @@ export default class PostgresUserRepository implements IUserRepository {
     ) {
     }
 
-    public async create(profileId: string, authenticationProviderId: string, userName: string): Promise<boolean> {
+    public async create(profileId: string, authenticationProviderId: string, userName: string, currentReleaseInformationId: number): Promise<boolean> {
         const client = await this.postgresClientProvider.get();
         try {
             await client.query("BEGIN");
 
             // ユーザーを作成する。
-            const query = `
+            const userInsertQuery = `
                 INSERT INTO users (
                     profile_id,
                     authentication_provider_id,
@@ -32,13 +32,35 @@ export default class PostgresUserRepository implements IUserRepository {
                     $1,
                     $2,
                     $3
-                );
+                )
+                RETURNING id;
             `;
-            const values = [profileId, authenticationProviderId, userName];
-            const result = await client.query(query, values);
+            const userInsertValues = [profileId, authenticationProviderId, userName];
+            const userInsertResult = await client.query(userInsertQuery, userInsertValues);
 
             // 結果がない場合、falseを返す。
-            if (result.rowCount === 0) {
+            if (userInsertResult.rowCount === 0) {
+                await client.query("ROLLBACK");
+                return false;
+            }
+
+            // リリースバージョンフィルターの設定を行う。
+            const userId = userInsertResult.rows[0].id;
+            const releaseVersionFilterSettingInsertQuery = `
+                INSERT INTO release_version_filter_settings (
+                    user_id,
+                    release_information_id
+                )
+                VALUES (
+                    $1,
+                    $2
+                );
+            `;
+            const releaseVersionFilterSettingInsertValues = [userId, currentReleaseInformationId];
+            const releaseVersionFilterSettingInsertResult = await client.query(releaseVersionFilterSettingInsertQuery, releaseVersionFilterSettingInsertValues);
+
+            // 結果がない場合、falseを返す。
+            if (releaseVersionFilterSettingInsertResult.rowCount === 0) {
                 await client.query("ROLLBACK");
                 return false;
             }
