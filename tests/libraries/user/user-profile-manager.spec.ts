@@ -22,6 +22,11 @@ const userName = "UserName@World";
  */
 const id = 1;
 
+/**
+ * 現在のリリース情報ID。
+ */
+const currentReleaseInformationId = 1;
+
 beforeEach(() => {
     const mockUserRepository = new MockUserRepository();
     userAccountManager = new UserProfileManager(mockUserRepository);
@@ -30,7 +35,7 @@ beforeEach(() => {
 describe("register", () => {
     test("register should register a user and return true.", async () => {
         // ユーザーを登録する。
-        const response = await userAccountManager.register(authenticationProviderId, userName);
+        const response = await userAccountManager.register(authenticationProviderId, userName, currentReleaseInformationId);
 
         // 結果を検証する。
         expect(response).toBe(true);
@@ -41,7 +46,7 @@ describe("register", () => {
         try {
             // ユーザーを登録する。
             const invalidAuthenticationProviderId = "";
-            await userAccountManager.register(invalidAuthenticationProviderId, userName)
+            await userAccountManager.register(invalidAuthenticationProviderId, userName, currentReleaseInformationId);
         } catch (error) {
             // エラーがErrorでない場合、エラーを投げる。
             if (!(error instanceof Error)) {
@@ -58,7 +63,7 @@ describe("register", () => {
         try {
             // ユーザーを登録する。
             const invalidUserName = "invalidUserName";
-            await userAccountManager.register(authenticationProviderId, invalidUserName)
+            await userAccountManager.register(authenticationProviderId, invalidUserName, currentReleaseInformationId);
         } catch (error) {
             // エラーがErrorでない場合、エラーを投げる。
             if (!(error instanceof Error)) {

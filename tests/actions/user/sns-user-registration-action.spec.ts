@@ -23,6 +23,11 @@ const userName = "UserName@World";
  */
 const id = 1;
 
+/**
+ * 現在のリリース情報ID。
+ */
+const currentReleaseInformationId = 1;
+
 beforeEach(() => {
     const mockUserRepository = new MockUserRepository();
     const userProfileManager = new UserProfileManager(mockUserRepository);
@@ -32,7 +37,7 @@ beforeEach(() => {
 describe("register", () => {
     test("register should register a user and return true.", async () => {
         // ユーザーを登録する。
-        const response = await snsUserRegistrationAction.register(authenticationProviderId, userName);
+        const response = await snsUserRegistrationAction.register(authenticationProviderId, userName, currentReleaseInformationId);
 
         // 結果を検証する。
         expect(response).toBe(true);
