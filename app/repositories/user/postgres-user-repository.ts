@@ -146,15 +146,28 @@ export default class PostgresUserRepository implements IUserRepository {
         try {
             await client.query("BEGIN");
 
-            // ユーザーを削除する。
-            const query = `
-                DELETE FROM users WHERE id = $1;
+            // リリースバージョンフィルターの設定を削除する。
+            const deleteSettingsQuery = `
+                DELETE FROM release_version_filter_settings WHERE user_id = $1;
             `;
-            const values = [id];
-            const result = await client.query(query, values);
+            const deleteSettingsValues = [id];
+            const deleteSettingsResult = await client.query(deleteSettingsQuery, deleteSettingsValues);
 
             // 結果がない場合、falseを返す。
-            if (result.rowCount === 0) {
+            if (deleteSettingsResult.rowCount === 0) {
+                await client.query("ROLLBACK");
+                return false;
+            }
+
+            // ユーザーを削除する。
+            const deleteUserQuery = `
+                DELETE FROM users WHERE id = $1;
+            `;
+            const deleteUserValues = [id];
+            const deleteUserResult = await client.query(deleteUserQuery, deleteUserValues);
+
+            // 結果がない場合、falseを返す。
+            if (deleteUserResult.rowCount === 0) {
                 await client.query("ROLLBACK");
                 return false;
             }
