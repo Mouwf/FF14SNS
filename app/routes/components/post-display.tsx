@@ -34,7 +34,7 @@ export default function PostDisplay({
 
     const getReaction = () => {
         return (
-            <div className={styles["post-emotions"]}>
+            <div className={styles["post-reaction"]}>
                 {reactionTypes.map((reactionType, index) => {
                     const reactionName = reactionNames[index];
 
