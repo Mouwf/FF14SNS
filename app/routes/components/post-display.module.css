@@ -30,11 +30,11 @@
     margin-top: 4px;
 }
 
-.post-reactions {
+.post-interaction-area {
     display: flex;
 }
 
-.post-interaction-area {
+.post-engagement-area {
     display: flex;
     margin-top: 12px;
     margin-left: -9px;

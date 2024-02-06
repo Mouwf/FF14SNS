@@ -69,8 +69,8 @@ export default function PostDisplay({
                 <div className={styles["post-message-area"]}>
                     <p>{postContent.content}</p>
                 </div>
-                <div className={styles["post-interaction-area"]}>
-                    <div className={styles["post-reactions"]}>
+                <div className={styles["post-engagement-area"]}>
+                    <div className={styles["post-interaction-area"]}>
                         <div className={styles["post-reply"]}>
                             <Link to="app/reply">
                                 <div className={styles["post-reply-x-position"]}>
