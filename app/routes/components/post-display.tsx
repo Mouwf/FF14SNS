@@ -55,8 +55,8 @@ export default function PostDisplay({
                 <img src="/images/dummy-profile.png" alt="プロフィール ダミー" />
             </div>
             <div className={styles["post-contents-area"]}>
-                <div className={styles["post-basic-information"]}>
-                    <div className={styles["post-about"]}>
+                <div className={styles["post-information-container"]}>
+                    <div className={styles["post-information"]}>
                         <p className={styles["post-user-name"]}>{postContent.posterName}</p>
                         <div>
                             <span className={styles["post-release-version"]}>{`${postContent.releaseVersion} ${postContent.releaseName}`}</span>
