@@ -66,7 +66,7 @@ export default function PostDisplay({
                         {getPostTime()}
                     </div>
                 </div>
-                <div className={styles["post-main-contents-area"]}>
+                <div className={styles["post-message-area"]}>
                     <p>{postContent.content}</p>
                 </div>
                 <div className={styles["post-reactions-area"]}>
