@@ -2,7 +2,6 @@
     display: grid;
 }
 
-
 @media (max-width: 599px) {
     .top-layout {
         grid-template-columns: 1fr;
