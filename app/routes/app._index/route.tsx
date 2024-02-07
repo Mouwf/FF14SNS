@@ -8,6 +8,7 @@ import PostContent from "../../models/post/post-content";
 import InfiniteScroll from "../components/infinite-scroll";
 import { useState } from "react";
 import { appLoadContext as context } from "../../dependency-injector/get-load-context";
+import styles from "./route.module.css";
 
 /**
  * 最新の投稿を取得するローダー。
@@ -55,7 +56,7 @@ export default function TopIndex() {
     const [latestPostContents, setLatestPostContents] = useState<PostContent[]>(initialLatestPostContents);
 
     return (
-        <div>
+        <div className={styles["main-contents"]}>
             <InfiniteScroll
                 fetcher={fetcher}
                 targetAddress="/app/latest-posts"

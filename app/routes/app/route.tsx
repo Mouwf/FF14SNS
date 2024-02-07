@@ -6,6 +6,7 @@ import Header from "./components/header";
 import Footer from "./components/footer";
 import SnsUser from "../../models/user/sns-user";
 import { appLoadContext as context } from "../../dependency-injector/get-load-context";
+import styles from "./route.module.css";
 
 /**
  * トップページのメタ情報を設定する。
@@ -137,8 +138,10 @@ export default function Top() {
     return (
         <main>
             <SnsUserProvider snsUser={snsUser}>
-                <Header />
-                <Outlet />
+                <div className={styles["top-layout"]}>
+                    <Header />
+                    <Outlet />
+                </div>
                 <Footer />
             </SnsUserProvider>
         </main>
