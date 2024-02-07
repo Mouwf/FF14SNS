@@ -34,14 +34,9 @@ let postInteractor: PostInteractor;
 let postMessageAction: PostMessageAction;
 
 /**
- * テスト用のメールアドレス。
+ * 認証プロバイダID。
  */
-const mailAddress = "test@example.com";
-
-/**
- * テスト用のパスワード。
- */
-const password = "testPassword123";
+const authenticationProviderId = "authenticationProviderId";
 
 /**
  * プロフィールID。
@@ -52,6 +47,11 @@ const profileId = "username_world";
  * ユーザー名。
  */
 const userName = "UserName@World";
+
+/**
+ * 現在のリリース情報ID。
+ */
+const currentReleaseInformationId = 1;
 
 beforeEach(async () => {
     firebaseClient = new FirebaseClient();
@@ -68,12 +68,7 @@ afterEach(async () => {
 
 describe("post", () => {
     test("post should post a message and return a post id.", async () => {
-        // テスト用のユーザーを登録する。
-        const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
-
-        // テスト用のユーザー情報を登録する。
-        const authenticationProviderId = responseSignUp.localId;
-        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName));
+        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId));
 
         // 認証済みユーザーを取得する。
         const responseAuthenticatedUser = await delayAsync(() => postgresUserRepository.findByAuthenticationProviderId(authenticationProviderId));
@@ -83,7 +78,7 @@ describe("post", () => {
 
         // メッセージを投稿する。
         const posterId = responseAuthenticatedUser.id;
-        const postId = await postMessageAction.post(posterId, 1, "Content");
+        const postId = await postMessageAction.post(posterId, currentReleaseInformationId, "Content");
 
         // 結果を検証する。
         expect(postId).toBeDefined();

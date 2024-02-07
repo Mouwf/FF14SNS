@@ -16,7 +16,7 @@ const idToken = "idToken";
 /**
  * プロフィールID。
  */
-const profileId = "profileId";
+const profileId = "username_world1";
 
 beforeEach(() => {
     const mockAuthenticationClient = new MockAuthenticationClient();
@@ -35,7 +35,7 @@ describe("getUserByToken", () => {
         // 結果を検証する。
         const expectedUser = {
             id: 1,
-            profileId: "profileId",
+            profileId: "username_world1",
             authenticationProviderId: "authenticationProviderId",
             userName: "UserName@World",
             createdAt: new Date(),
@@ -68,7 +68,7 @@ describe("getUserByProfileId", () => {
         // 結果を検証する。
         const expectedUser = {
             id: 1,
-            profileId: "profileId",
+            profileId: "username_world1",
             authenticationProviderId: "authenticationProviderId",
             userName: "UserName@World",
             createdAt: new Date(),
@@ -82,7 +82,7 @@ describe("getUserByProfileId", () => {
 
     test("getUserByProfileId should return null if the user does not exist.", async () => {
         // テスト用のユーザーを登録する。
-        const invalidProfileId = "invalidProfileId";
+        const invalidProfileId = "notExistProfileId";
         const response = await authenticatedUserProvider.getUserByProfileId(invalidProfileId);
 
         // 結果を検証する。

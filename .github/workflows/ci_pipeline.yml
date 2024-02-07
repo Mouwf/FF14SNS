@@ -20,6 +20,7 @@ jobs:
         run: npm ci
       - name: Run Jest unit tests
         env:
+          SESSION_SECRET_KEY: ${{ secrets.SESSION_SECRET_KEY }}
           FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           TEST_FIREBASE_API_KEY: ${{ secrets.TEST_FIREBASE_API_KEY }}
@@ -27,6 +28,7 @@ jobs:
         run: npm run test
       - name: Run Jest infrastructure tests
         env:
+          SESSION_SECRET_KEY: ${{ secrets.SESSION_SECRET_KEY }}
           FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           TEST_FIREBASE_API_KEY: ${{ secrets.TEST_FIREBASE_API_KEY }}
@@ -50,6 +52,7 @@ jobs:
   #       run: npm ci
   #     - name: Run Jest unit tests
   #       env:
+  #         SESSION_SECRET_KEY: ${{ secrets.SESSION_SECRET_KEY }}
   #         FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
   #         DATABASE_URL: ${{ secrets.DATABASE_URL }}
   #         TEST_FIREBASE_API_KEY: ${{ secrets.TEST_FIREBASE_API_KEY }}
@@ -57,6 +60,7 @@ jobs:
   #       run: npm run test
   #     - name: Run Jest infrastructure tests
   #       env:
+  #         SESSION_SECRET_KEY: ${{ secrets.SESSION_SECRET_KEY }}
   #         FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
   #         DATABASE_URL: ${{ secrets.DATABASE_URL }}
   #         TEST_FIREBASE_API_KEY: ${{ secrets.TEST_FIREBASE_API_KEY }}

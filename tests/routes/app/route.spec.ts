@@ -2,7 +2,7 @@ import { describe, test, expect, beforeEach } from "@jest/globals";
 import { AppLoadContext } from "@remix-run/node";
 import { loader, action } from "../../../app/routes/app/route";
 import { appLoadContext } from "../../../app/dependency-injector/get-load-context";
-import { userAuthenticationCookie } from "../../../app/cookies.server";
+import { commitSession, getSession } from "../../../app/sessions";
 
 /**
  * クッキーなしのモックリクエスト。
@@ -10,14 +10,19 @@ import { userAuthenticationCookie } from "../../../app/cookies.server";
 let requestWithoutCookie: Request;
 
 /**
- * クッキー付きのモックリクエスト。
- */
-let requestWithCookie: Request;
-
-/**
  * 登録されていないクッキー付きのモックリクエスト。
  */
 let requestWithNotRegisteredUserCookie: Request;
+
+/**
+ * 存在しないユーザーのクッキー付きのモックリクエスト。
+ */
+let requestWithNotExistUserCookie: Request;
+
+/**
+ * クッキー付きのモックリクエスト。
+ */
+let requestWithCookie: Request;
 
 /**
  * クッキーが不正なモックリクエスト。
@@ -30,29 +35,40 @@ let requestWithInvalidCookie: Request;
 let context: AppLoadContext;
 
 beforeEach(async () => {
-    requestWithoutCookie = new Request("https://example.com");
+    const validSession = await getSession();
+    validSession.set("idToken", "idToken");
+    validSession.set("refreshToken", "refreshToken");
+    validSession.set("userId", "username_world1");
     requestWithCookie = new Request("https://example.com", {
         headers: {
-            Cookie: await userAuthenticationCookie.serialize({
-                idToken: "idToken",
-                refreshToken: "refreshToken",
-            }),
+            Cookie: await commitSession(validSession),
         },
     });
+    const notRegisteredUserSession = await getSession();
+    notRegisteredUserSession.set("idToken", "notRegisteredUserIdToken");
+    notRegisteredUserSession.set("refreshToken", "refreshToken");
     requestWithNotRegisteredUserCookie = new Request("https://example.com", {
         headers: {
-            Cookie: await userAuthenticationCookie.serialize({
-                idToken: "notRegisteredUserIdToken",
-                refreshToken: "refreshToken",
-            }),
+            Cookie: await commitSession(notRegisteredUserSession),
         },
     });
+    requestWithoutCookie = new Request("https://example.com");
+    const notExistUserSession = await getSession();
+    notExistUserSession.set("idToken", "idToken");
+    notExistUserSession.set("refreshToken", "refreshToken");
+    notExistUserSession.set("userId", "notExistProfileId");
+    requestWithNotExistUserCookie = new Request("https://example.com", {
+        headers: {
+            Cookie: await commitSession(notExistUserSession),
+        },
+    });
+    const invalidSession = await getSession();
+    invalidSession.set("userId", "invalidProfileId");
+    invalidSession.set("idToken", "idToken");
+    invalidSession.set("refreshToken", "invalidRefreshToken");
     requestWithInvalidCookie = new Request("https://example.com", {
         headers: {
-            Cookie: await userAuthenticationCookie.serialize({
-                idToken: "invalidIdToken",
-                refreshToken: "invalidRefreshToken",
-            }),
+            Cookie: await commitSession(invalidSession),
         },
     });
     context = appLoadContext;
@@ -72,30 +88,11 @@ describe("loader", () => {
 
         // 結果を検証する。
         const expectedUser = {
-            userId: "profileId",
+            userId: "username_world1",
             userName: "UserName@World",
         };
         expect(resultUser.userId).toBe(expectedUser.userId);
         expect(resultUser.userName).toBe(expectedUser.userName);
-    });
-
-    test("loader should redirect login page if user is not authenticated.", async () => {
-        // ローダーを実行し、結果を取得する。
-        const response = await loader({
-            request: requestWithoutCookie,
-            params: {},
-            context,
-        });
-
-        // 検証に必要な情報を取得する。
-        const status = response.status;
-        const redirect = response.headers.get("Location");
-        const cookie = await userAuthenticationCookie.parse(response.headers.get("Set-Cookie"));
-
-        // 結果を検証する。
-        expect(status).toBe(302);
-        expect(redirect).toBe("/auth/login");
-        expect(cookie).toStrictEqual({});
     });
 
     test("loader should redirect to user registration page if user is not registered.", async () => {
@@ -109,10 +106,55 @@ describe("loader", () => {
         // 検証に必要な情報を取得する。
         const status = response.status;
         const redirect = response.headers.get("Location");
+        const session = await getSession(response.headers.get("Set-Cookie"));
 
         // 結果を検証する。
         expect(status).toBe(302);
         expect(redirect).toBe("/auth/register-user");
+        expect(session.has("idToken")).toBe(true);
+        expect(session.has("refreshToken")).toBe(true);
+    });
+
+    test("loader should redirect to login page if user is not authenticated.", async () => {
+        // ローダーを実行し、結果を取得する。
+        const response = await loader({
+            request: requestWithoutCookie,
+            params: {},
+            context,
+        });
+
+        // 検証に必要な情報を取得する。
+        const status = response.status;
+        const redirect = response.headers.get("Location");
+        const session = await getSession(response.headers.get("Set-Cookie"));
+
+        // 結果を検証する。
+        expect(status).toBe(302);
+        expect(redirect).toBe("/auth/login");
+        expect(session.has("idToken")).toBe(false);
+        expect(session.has("refreshToken")).toBe(false);
+        expect(session.has("userId")).toBe(false);
+    });
+
+    test("loader should redirect to login page if user is not exist.", async () => {
+        // ローダーを実行し、結果を取得する。
+        const response = await loader({
+            request: requestWithNotExistUserCookie,
+            params: {},
+            context,
+        });
+
+        // 検証に必要な情報を取得する。
+        const status = response.status;
+        const redirect = response.headers.get("Location");
+        const session = await getSession(response.headers.get("Set-Cookie"));
+
+        // 結果を検証する。
+        expect(status).toBe(302);
+        expect(redirect).toBe("/auth/register-user");
+        expect(session.has("idToken")).toBe(true);
+        expect(session.has("refreshToken")).toBe(true);
+        expect(session.has("userId")).toBe(false);
     });
 
     test("loader should redirect to login page if an error occurs.", async () => {
@@ -133,12 +175,12 @@ describe("loader", () => {
             // 検証に必要な情報を取得する。
             const status = error.status;
             const redirect = error.headers.get("Location");
-            const cookie = await userAuthenticationCookie.parse(error.headers.get("Set-Cookie"));
+            const session = await getSession(error.headers.get("Set-Cookie"));
 
             // 結果を検証する。
             expect(status).toBe(302);
             expect(redirect).toBe("/auth/login");
-            expect(cookie).toStrictEqual({});
+            expect(session.get("userId")).toBeUndefined();
         }
     });
 });
@@ -155,31 +197,14 @@ describe("action", () => {
         // 検証に必要な情報を取得する。
         const status = response.status;
         const redirect = response.headers.get("Location");
-        const cookie = await userAuthenticationCookie.parse(response.headers.get("Set-Cookie"));
+        const session = await getSession(response.headers.get("Set-Cookie"));
 
         // 結果を検証する。
         expect(status).toBe(302);
         expect(redirect).toBe("/auth/login");
-        expect(cookie).toStrictEqual({});
-    });
-
-    test("action should redirect login page if user is not authenticated.", async () => {
-        // アクションを実行し、結果を取得する。
-        const response = await action({
-            request: requestWithoutCookie,
-            params: {},
-            context,
-        });
-
-        // 検証に必要な情報を取得する。
-        const status = response.status;
-        const redirect = response.headers.get("Location");
-        const cookie = await userAuthenticationCookie.parse(response.headers.get("Set-Cookie"));
-
-        // 結果を検証する。
-        expect(status).toBe(302);
-        expect(redirect).toBe("/auth/login");
-        expect(cookie).toStrictEqual({});
+        expect(session.has("idToken")).toBe(false);
+        expect(session.has("refreshToken")).toBe(false);
+        expect(session.has("userId")).toBe(false);
     });
 
     // TODO: リフレッシュトークンを無効にしてログアウトする処理を追加した後にコメントアウトを外す。
@@ -201,7 +226,7 @@ describe("action", () => {
     //         // 検証に必要な情報を取得する。
     //         const status = error.status;
     //         const redirect = error.headers.get("Location");
-    //         const cookie = await userAuthenticationCookie.parse(error.headers.get("Set-Cookie"));
+    //         const cookie = await getSession(error.headers.get("Set-Cookie"));
 
     //         // 結果を検証する。
     //         expect(status).toBe(302);

@@ -40,12 +40,64 @@ describe("getAllReleaseInformation", () => {
         // 結果を検証する。
         expect(response.length).toBe(5);
         expect(response[0].id).toBe(1);
-        expect(response[0].releaseVersion).toBe("2.5");
-        expect(response[0].releaseName).toBe("リリース2.5");
+        expect(response[0].releaseVersion).toBe("2.1");
+        expect(response[0].releaseName).toBe("リリース2.1");
         expect(response[0].createdAt).toBeInstanceOf(Date);
         expect(response[1].id).toBe(2);
-        expect(response[1].releaseVersion).toBe("2.4");
-        expect(response[1].releaseName).toBe("リリース2.4");
+        expect(response[1].releaseVersion).toBe("2.2");
+        expect(response[1].releaseName).toBe("リリース2.2");
         expect(response[1].createdAt).toBeInstanceOf(Date);
+    });
+});
+
+describe("getReleaseInformationBelowUserSetting", () => {
+    test("getReleaseInformationBelowUserSetting should return 3 release informations when profile id is username_world1.", async () => {
+        // リリース情報を取得する。
+        const profileId = "username_world1";
+        const response = await releaseInformationGetter.getReleaseInformationBelowUserSetting(profileId);
+
+        // 結果を検証する。
+        expect(response.length).toBe(3);
+        expect(response[0].id).toBe(1);
+        expect(response[0].releaseVersion).toBe("2.1");
+        expect(response[0].releaseName).toBe("リリース2.1");
+        expect(response[0].createdAt).toBeInstanceOf(Date);
+        expect(response[1].id).toBe(2);
+        expect(response[1].releaseVersion).toBe("2.2");
+        expect(response[1].releaseName).toBe("リリース2.2");
+        expect(response[1].createdAt).toBeInstanceOf(Date);
+        expect(response[2].id).toBe(3);
+        expect(response[2].releaseVersion).toBe("2.3");
+        expect(response[2].releaseName).toBe("リリース2.3");
+        expect(response[2].createdAt).toBeInstanceOf(Date);
+    });
+
+    test("getReleaseInformationBelowUserSetting should return 5 release informations when profile id is username_world2.", async () => {
+        // リリース情報を取得する。
+        const profileId = "username_world2";
+        const response = await releaseInformationGetter.getReleaseInformationBelowUserSetting(profileId);
+
+        // 結果を検証する。
+        expect(response.length).toBe(5);
+        expect(response[0].id).toBe(1);
+        expect(response[0].releaseVersion).toBe("2.1");
+        expect(response[0].releaseName).toBe("リリース2.1");
+        expect(response[0].createdAt).toBeInstanceOf(Date);
+        expect(response[1].id).toBe(2);
+        expect(response[1].releaseVersion).toBe("2.2");
+        expect(response[1].releaseName).toBe("リリース2.2");
+        expect(response[1].createdAt).toBeInstanceOf(Date);
+        expect(response[2].id).toBe(3);
+        expect(response[2].releaseVersion).toBe("2.3");
+        expect(response[2].releaseName).toBe("リリース2.3");
+        expect(response[2].createdAt).toBeInstanceOf(Date);
+        expect(response[3].id).toBe(4);
+        expect(response[3].releaseVersion).toBe("2.4");
+        expect(response[3].releaseName).toBe("リリース2.4");
+        expect(response[3].createdAt).toBeInstanceOf(Date);
+        expect(response[4].id).toBe(5);
+        expect(response[4].releaseVersion).toBe("2.5");
+        expect(response[4].releaseName).toBe("リリース2.5");
+        expect(response[4].createdAt).toBeInstanceOf(Date);
     });
 });

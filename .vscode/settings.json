@@ -3,5 +3,7 @@
   "deno.unstable": true,
   "deno.importMap": ".netlify/edge-functions-import-map.json",
   "deno.internalDebug": false,
-  "jest.autoRun": "off"
+  "jest.autoRun": {
+    "watch": false,
+  }
 }
