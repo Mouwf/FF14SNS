@@ -1,7 +1,7 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@remix-run/node";
 import { Form, useLoaderData } from "@remix-run/react";
-import { userAuthenticationCookie, newlyPostedPostCookie } from "../../cookies.server";
-import useSnsUser from "../../contexts/user/use-sns-user";
+import { getSession } from "../../sessions";
+import { newlyPostedPostCookie } from "../../cookies.server";
 import { appLoadContext as context } from "../../dependency-injector/get-load-context";
 
 /**
@@ -23,8 +23,11 @@ export const meta: MetaFunction = () => {
 export const loader = async ({
     request,
 }: LoaderFunctionArgs) => {
+    const cookieHeader = request.headers.get("Cookie");
+    const session = await getSession(cookieHeader);
+    const profileId = session.get("userId") as string;
     const releaseInformationLoader = context.releaseInformationLoader;
-    const allReleaseInformation = await releaseInformationLoader.getAllReleaseInformation();
+    const allReleaseInformation = await releaseInformationLoader.getReleaseInformationBelowUserSetting(profileId);
     return json(allReleaseInformation);
 }
 
@@ -39,18 +42,20 @@ export const action = async ({
 }: ActionFunctionArgs) => {
     try {
         // 認証済みユーザーを取得する。
-        const formData = await request.formData();
-        const profileId = formData.get("userId") as string;
+        const cookieHeader = request.headers.get("Cookie");
+        const session = await getSession(cookieHeader);
+        const profileId = session.get("userId") as string;
         const authenticatedUserLoader = context.authenticatedUserLoader;
         const authenticatedUser = await authenticatedUserLoader.getUserByProfileId(profileId);
 
-        // 認証済みユーザーが存在しない場合、エラーを返す。
-        if (!authenticatedUser) return json({ error: "ユーザーが存在しません。" });
+        // 認証済みユーザーが取得できない場合、エラーを返す。
+        if (!authenticatedUser) return json({ error: "メッセージの投稿に失敗しました。" });
 
         // ユーザーIDを取得する。
         const userId = authenticatedUser.id;
 
         // フォームデータを取得する。
+        const formData = await request.formData();
         const releaseInformationId = Number(formData.get("releaseInformationId"));
         const content = formData.get("content") as string;
 
@@ -78,8 +83,6 @@ export const action = async ({
  * @returns メッセージ投稿ページ。
  */
 export default function PostMessage() {
-    const snsUser = useSnsUser();
-
     const allReleaseInformation = useLoaderData<typeof loader>();
     const getReleaseVersionOptions = () => {
         return <select name="releaseInformationId">
@@ -91,7 +94,6 @@ export default function PostMessage() {
 
     return (
         <Form method="post">
-            <input type="hidden" name="userId" value={snsUser.userId} />
             <div>
                 {getReleaseVersionOptions()}
             </div>

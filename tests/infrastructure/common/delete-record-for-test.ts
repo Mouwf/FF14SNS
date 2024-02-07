@@ -27,7 +27,7 @@ export default async function deleteRecordForTest() {
     // テスト用の投稿が存在する場合、削除する。
     try {
         // 複数のテスト用の投稿を取得する。
-        const responseGetLatestLimited = await delayAsync(() => postgresPostContentRepository.getLatestLimited(100));
+        const responseGetLatestLimited = await delayAsync(() => postgresPostContentRepository.getLatestLimited(profileId, 100));
 
         // テスト用の投稿が存在しない場合、エラーを投げる。
         if (responseGetLatestLimited.length === 0) throw new Error("The post does not exist.");

@@ -1,11 +1,12 @@
-import { describe, test, expect, beforeEach } from "@jest/globals";
+import { describe, test, expect, beforeEach, afterEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
+import deleteRecordForTest from "../../../infrastructure/common/delete-record-for-test";
 import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
 import PostgresUserRepository from "../../../../app/repositories/user/postgres-user-repository";
 import { AppLoadContext } from "@remix-run/node";
 import { loader, action } from "../../../../app/routes/app/route";
 import { appLoadContext, postgresClientProvider } from "../../../../app/dependency-injector/get-load-context";
-import { userAuthenticationCookie } from "../../../../app/cookies.server";
+import { commitSession, getSession } from "../../../../app/sessions";
 
 /**
  * Firebaseのクライアント。
@@ -38,6 +39,11 @@ const profileId = "username_world";
 const userName = "UserName@World";
 
 /**
+ * 現在のリリース情報ID。
+ */
+const currentReleaseInformationId = 1;
+
+/**
  * コンテキスト。
  */
 let context: AppLoadContext;
@@ -45,61 +51,31 @@ let context: AppLoadContext;
 beforeEach(async () => {
     firebaseClient = new FirebaseClient();
     postgresUserRepository = new PostgresUserRepository(postgresClientProvider);
-
-    // テスト用のユーザーが存在する場合、削除する。
-    try {
-        // テスト用のユーザーをログインする。
-        const responseSignIn = await delayAsync(() => firebaseClient.signInWithEmailPassword(mailAddress, password));
-
-        // テスト用のユーザーを削除する。
-        const idToken = responseSignIn.idToken;
-        await delayAsync(() => firebaseClient.deleteUser(idToken));
-        console.info("テスト用のユーザーを削除しました。");
-    } catch (error) {
-        console.info("テスト用のユーザーは存在しませんでした。");
-    }
-
-    // テスト用のユーザー情報が存在する場合、削除する。
-    try {
-        // テスト用のユーザー情報を取得する。
-        const responseFindByProfileId = await delayAsync(() => postgresUserRepository.findByProfileId(profileId));
-
-        // テスト用のユーザー情報が存在しない場合、エラーを投げる。
-        if (responseFindByProfileId == null) throw new Error("The user does not exist.");
-
-        const id = responseFindByProfileId.id;
-        await delayAsync(() => postgresUserRepository.delete(id));
-        console.info("テスト用のユーザー情報を削除しました。");
-    } catch (error) {
-        console.info("テスト用のユーザー情報は存在しませんでした。");
-    }
-
-    // コンテキストを設定する。
     context = appLoadContext;
+    await deleteRecordForTest();
+});
+
+afterEach(async () => {
+    await deleteRecordForTest();
 });
 
 describe("loader", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
-
     test("loader should return SNS user.", async () => {
         // テスト用のユーザーを作成する。
         const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
 
         // テスト用のユーザー情報を登録する。
         const authenticationProviderId = responseSignUp.localId;
-        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName));
+        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId));
 
         // ローダーを実行し、結果を取得する。
+        const session = await getSession();
+        session.set("idToken", responseSignUp.idToken);
+        session.set("refreshToken", responseSignUp.refreshToken);
+        session.set("userId", profileId);
         const requestWithCookie = new Request("https://example.com", {
             headers: {
-                Cookie: await userAuthenticationCookie.serialize({
-                    idToken: responseSignUp.idToken,
-                    refreshToken: responseSignUp.refreshToken,
-                }),
+                Cookie: await commitSession(session),
             },
         });
         const response = await loader({
@@ -118,57 +94,26 @@ describe("loader", () => {
         };
         expect(resultUser.userId).toBe(expectedUser.userId);
         expect(resultUser.userName).toBe(expectedUser.userName);
-    });
-
-    test("loader should redirect register user page if user is not loged in.", async () => {
-        // テスト用のユーザーを作成する。
-        const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
-
-        // ローダーを実行し、結果を取得する。
-        const requestWithCookie = new Request("https://example.com", {
-            headers: {
-                Cookie: await userAuthenticationCookie.serialize({
-                    idToken: responseSignUp.idToken,
-                    refreshToken: responseSignUp.refreshToken,
-                }),
-            },
-        });
-        const response = await loader({
-            request: requestWithCookie,
-            params: {},
-            context,
-        });
-
-        // 検証に必要な情報を取得する。
-        const status = response.status;
-        const redirect = response.headers.get("Location");
-
-        // 結果を検証する。
-        expect(status).toBe(302);
-        expect(redirect).toBe("/auth/register-user");
+        expect(resultUser.currentReleaseVersion).toBeDefined();
+        expect(resultUser.currentReleaseName).toBeDefined();
     });
 });
 
 describe("action", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
-
-    test("action shoula logout and delete cookies.", async () => {
+    test("action shoula logout and delete cookies and redirect to login page.", async () => {
         // テスト用のユーザーを作成する。
         const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
-        const requestWithCookie = new Request("https://example.com", {
-            headers: {
-                Cookie: await userAuthenticationCookie.serialize({
-                    idToken: responseSignUp.idToken,
-                    refreshToken: responseSignUp.refreshToken,
-                }),
-            },
-        });
 
         // アクションを実行し、結果を取得する。
+        const session = await getSession();
+        session.set("idToken", responseSignUp.idToken);
+        session.set("refreshToken", responseSignUp.refreshToken);
+        session.set("userId", profileId);
+        const requestWithCookie = new Request("https://example.com", {
+            headers: {
+                Cookie: await commitSession(session),
+            },
+        });
         const response = await action({
             request: requestWithCookie,
             params: {},
@@ -178,12 +123,14 @@ describe("action", () => {
         // 検証に必要な情報を取得する。
         const status = response.status;
         const redirect = response.headers.get("Location");
-        const cookie = await userAuthenticationCookie.parse(response.headers.get("Set-Cookie"));
+        const resultSession = await getSession(response.headers.get("Set-Cookie"));
 
         // 結果を検証する。
         expect(status).toBe(302);
         expect(redirect).toBe("/auth/login");
-        expect(cookie).toStrictEqual({});
+        expect(resultSession.has("idToken")).toBe(false);
+        expect(resultSession.has("refreshToken")).toBe(false);
+        expect(resultSession.has("userId")).toBe(false);
     });
 
     // test("action should redirect to login page if an error occurs.", async () => {
@@ -205,7 +152,7 @@ describe("action", () => {
     //         // 検証に必要な情報を取得する。
     //         const status = error.status;
     //         const redirect = error.headers.get("Location");
-    //         const cookie = await userAuthenticationCookie.parse(error.headers.get("Set-Cookie"));
+    //         const cookie = await getSession(error.headers.get("Set-Cookie"));
 
     //         // 結果を検証する。
     //         expect(status).toBe(302);

@@ -2,6 +2,7 @@ import { describe, test, expect, beforeEach } from "@jest/globals";
 import { AppLoadContext } from "@remix-run/node";
 import { appLoadContext } from "../../../app/dependency-injector/get-load-context";
 import { loader } from "../../../app/routes/app.latest-posts.$id/route";
+import { commitSession, getSession } from "../../../app/sessions";
 
 /**
  * モックリクエスト。
@@ -14,7 +15,15 @@ let request: Request;
 let context: AppLoadContext;
 
 beforeEach(async () => {
-    request = new Request("https://example.com");
+    const session = await getSession();
+    session.set("idToken", "idToken");
+    session.set("refreshToken", "refreshToken");
+    session.set("userId", "username_world1");
+    request = new Request("https://example.com", {
+        headers: {
+            Cookie: await commitSession(session),
+        },
+    });
     context = appLoadContext;
 });
 

@@ -1,6 +1,6 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import MockUserRepository from "../../repositories/user/mock-user-repository";
-import UserRegistrar from "../../../app/libraries/user/user-registrar";
+import UserProfileManager from "../../../app/libraries/user/user-profile-manager";
 import SnsUserRegistrationAction from "../../../app/actions/user/sns-user-registration-action";
 
 /**
@@ -23,16 +23,21 @@ const userName = "UserName@World";
  */
 const id = 1;
 
+/**
+ * 現在のリリース情報ID。
+ */
+const currentReleaseInformationId = 1;
+
 beforeEach(() => {
     const mockUserRepository = new MockUserRepository();
-    const userAccountManager = new UserRegistrar(mockUserRepository);
-    snsUserRegistrationAction = new SnsUserRegistrationAction(userAccountManager);
+    const userProfileManager = new UserProfileManager(mockUserRepository);
+    snsUserRegistrationAction = new SnsUserRegistrationAction(userProfileManager);
 });
 
 describe("register", () => {
     test("register should register a user and return true.", async () => {
         // ユーザーを登録する。
-        const response = await snsUserRegistrationAction.register(authenticationProviderId, userName);
+        const response = await snsUserRegistrationAction.register(authenticationProviderId, userName, currentReleaseInformationId);
 
         // 結果を検証する。
         expect(response).toBe(true);

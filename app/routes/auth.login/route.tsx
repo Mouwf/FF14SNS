@@ -1,8 +1,12 @@
 import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@remix-run/node";
 import { Form } from "@remix-run/react";
-import { userAuthenticationCookie } from "../../cookies.server";
+import { commitSession, getSession } from "../../sessions";
 import { appLoadContext as context } from "../../dependency-injector/get-load-context";
 
+/**
+ * ログインページのメタ情報を設定する。
+ * @returns ログインページのメタ情報。
+ */
 export const meta: MetaFunction = () => {
     return [
         { title: "FF14 SNS ログイン" },
@@ -10,16 +14,35 @@ export const meta: MetaFunction = () => {
     ];
 }
 
+/**
+ * ログインページのローダー。
+ * @param request リクエスト。
+ * @param context コンテキスト。
+ * @returns ログインしている場合、トップページにリダイレクトする。
+ */
 export const loader = async ({
     request,
 }: LoaderFunctionArgs) => {
     // ログインしている場合、トップページにリダイレクトする。
     const cookieHeader = request.headers.get("Cookie");
-    const cookie = (await userAuthenticationCookie.parse(cookieHeader)) || {};
-    if (Object.keys(cookie).length > 0) return redirect("/app");
+    const session = await getSession(cookieHeader);
+    if (session.has("userId")) {
+        return redirect("/app", {
+            headers: {
+                "Set-Cookie": await commitSession(session),
+            },
+        });
+    }
     return null;
 }
 
+/**
+ * ログインページのアクション。
+ * @param request リクエスト。
+ * @param context コンテキスト。
+ * @returns トップページにリダイレクトする。
+ * 認証済みユーザーが存在しない場合、ユーザー登録ページにリダイレクトする。
+ */
 export const action = async ({
     request,
 }: ActionFunctionArgs) => {
@@ -33,13 +56,34 @@ export const action = async ({
         const userAuthenticationAction = context.userAuthenticationAction;
         const response = await userAuthenticationAction.login(mailAddress, password);
 
-        // IDトークンとリフレッシュトークンをCookieに保存する。
-        const cookie: any = {};
-        cookie.idToken = response.idToken;
-        cookie.refreshToken = response.refreshToken;
+        // IDトークンとリフレッシュトークンをセッションに保存する。
+        const idToken = response.idToken;
+        const refreshToken = response.refreshToken;
+        const cookieHeader = request.headers.get("Cookie");
+        const session = await getSession(cookieHeader);
+        session.set("idToken", idToken);
+        session.set("refreshToken", refreshToken);
+
+        // 認証済みユーザーを取得する。
+        const authenticatedUserLoader = context.authenticatedUserLoader;
+        const authenticatedUser = await authenticatedUserLoader.getUserByToken(idToken);
+
+        // 認証済みユーザーが存在しない場合、ユーザー登録ページにリダイレクトする。
+        if (!authenticatedUser) {
+            return redirect("/auth/register-user", {
+                headers: {
+                    "Set-Cookie": await commitSession(session),
+                },
+            });
+        }
+
+        // ユーザーIDをセッションに保存する。
+        session.set("userId", authenticatedUser.profileId);
+
+        // トップページにリダイレクトする。
         return redirect("/app", {
             headers: {
-                "Set-Cookie": await userAuthenticationCookie.serialize(cookie),
+                "Set-Cookie": await commitSession(session),
             },
         });
     } catch (error) {
@@ -48,6 +92,10 @@ export const action = async ({
     }
 }
 
+/**
+ * ログインページ。
+ * @returns ログインページ。
+ */
 export default function Login() {
     return (
         <Form method="post">

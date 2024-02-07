@@ -1,5 +1,5 @@
 import PostFetchLimit from "../../libraries/post/post-fetch-limit";
-import IPostsFetcher from "../../libraries/post/i-posts-fetcher";
+import PostsFetcher from "../../libraries/post/posts-fetcher";
 import PostContent from "../../models/post/post-content";
 
 /**
@@ -11,17 +11,18 @@ export default class LatestPostsLoader extends PostFetchLimit {
      * @param postsFetcher 投稿を取得するクラス。
      */
     constructor(
-        private readonly postsFetcher: IPostsFetcher,
+        private readonly postsFetcher: PostsFetcher,
     ) {
         super();
     }
 
     /**
      * 最新の投稿を取得する。
+     * @param profileId プロフィールID。
      * @returns 最新の投稿。
      */
-    public async getLatestPosts(): Promise<PostContent[]> {
-        const postContents = await this.postsFetcher.fetchLatestPosts(this.postsLimit);
+    public async getLatestPosts(profileId: string): Promise<PostContent[]> {
+        const postContents = await this.postsFetcher.fetchLatestPosts(profileId, this.postsLimit);
         return postContents;
     }
 }

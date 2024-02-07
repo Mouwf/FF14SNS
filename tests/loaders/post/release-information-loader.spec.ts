@@ -42,12 +42,31 @@ describe("getAllReleaseInformation", () => {
         // 結果を検証する。
         expect(response.length).toBe(5);
         expect(response[0].id).toBe(1);
-        expect(response[0].releaseVersion).toBe("2.5");
-        expect(response[0].releaseName).toBe("リリース2.5");
+        expect(response[0].releaseVersion).toBe("2.1");
+        expect(response[0].releaseName).toBe("リリース2.1");
         expect(response[0].createdAt).toBeInstanceOf(Date);
         expect(response[1].id).toBe(2);
-        expect(response[1].releaseVersion).toBe("2.4");
-        expect(response[1].releaseName).toBe("リリース2.4");
+        expect(response[1].releaseVersion).toBe("2.2");
+        expect(response[1].releaseName).toBe("リリース2.2");
+        expect(response[1].createdAt).toBeInstanceOf(Date);
+    });
+});
+
+describe("getReleaseInformationBelowUserSetting", () => {
+    test("getReleaseInformationBelowUserSetting should return release informations.", async () => {
+        // リリース情報を取得する。
+        const profileId = "username_world1";
+        const response = await releaseInformationLoader.getReleaseInformationBelowUserSetting(profileId);
+
+        // 結果を検証する。
+        expect(response.length).toBe(3);
+        expect(response[0].id).toBe(1);
+        expect(response[0].releaseVersion).toBe("2.1");
+        expect(response[0].releaseName).toBe("リリース2.1");
+        expect(response[0].createdAt).toBeInstanceOf(Date);
+        expect(response[1].id).toBe(2);
+        expect(response[1].releaseVersion).toBe("2.2");
+        expect(response[1].releaseName).toBe("リリース2.2");
         expect(response[1].createdAt).toBeInstanceOf(Date);
     });
 });

@@ -1,6 +1,6 @@
 import { Link, useFetcher } from "@remix-run/react";
-import useSnsUser from "../../contexts/user/use-sns-user";
 import PostContent from "../../models/post/post-content";
+import styles from "./post-display.module.css";
 
 /**
  * 投稿表示。
@@ -28,13 +28,13 @@ export default function PostDisplay({
         });
 
         return (
-            <time>{formattedDate}</time>
+            <time className={styles["post-date"]}>{formattedDate}</time>
         );
     }
 
     const getReaction = () => {
         return (
-            <div>
+            <div className={styles["post-reaction"]}>
                 {reactionTypes.map((reactionType, index) => {
                     const reactionName = reactionNames[index];
 
@@ -50,21 +50,42 @@ export default function PostDisplay({
     }
 
     return (
-        <div>
-            <div>
-                <p>{postContent.posterName}</p>
-                <span>{`${postContent.releaseVersion} ${postContent.releaseName}`}</span>
-                {getPostTime()}
+        <div className={styles["post"]}>
+            <div className={styles["post-user-img-area"]}>
+                <img src="/images/dummy-profile.png" alt="プロフィール ダミー" />
             </div>
-            <div>
-                <p>{postContent.content}</p>
-            </div>
-            <div>
-                <div>
-                    <Link to="app/reply">リプライ</Link>
-                    <button>リポスト</button>
+            <div className={styles["post-contents-area"]}>
+                <div className={styles["post-information-container"]}>
+                    <div className={styles["post-information"]}>
+                        <p className={styles["post-user-name"]}>{postContent.posterName}</p>
+                        <div>
+                            <span className={styles["post-release-version"]}>{`${postContent.releaseVersion} ${postContent.releaseName}`}</span>
+                        </div>
+                    </div>
+                    <div>
+                        {getPostTime()}
+                    </div>
                 </div>
-                {getReaction()}
+                <div className={styles["post-message-area"]}>
+                    <p>{postContent.content}</p>
+                </div>
+                <div className={styles["post-engagement-area"]}>
+                    <div className={styles["post-interaction-area"]}>
+                        <div className={styles["post-reply"]}>
+                            <Link to="app/reply">
+                                <div className={styles["post-reply-x-position"]}>
+                                    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M15.3 0H1.7C0.765 0 0 0.765 0 1.7V11.9C0 12.835 0.765 13.6 1.7 13.6H13.6L17 17V1.7C17 0.765 16.235 0 15.3 0ZM15.3 12.92L14.28 11.9H1.7V1.7H15.3V12.92Z" fill="#737373"/>
+                                    </svg>
+                                </div>
+                            </Link>
+                        </div>
+                        <div>
+                            <button>リポスト</button>
+                        </div>
+                    </div>
+                    {getReaction()}
+                </div>
             </div>
         </div>
     );
