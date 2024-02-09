@@ -44,7 +44,7 @@ export default class PostgresUserRepository implements IUserRepository {
                 return false;
             }
 
-            // リリースバージョンフィルターの設定を行う。
+            // リリースバージョンフィルターの設定を作成する。
             const userId = userInsertResult.rows[0].id;
             const releaseVersionFilterSettingInsertQuery = `
                 INSERT INTO release_version_filter_settings (
