@@ -1,8 +1,10 @@
+import systemMessages from "../../messages/system-messages";
 import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json } from "@remix-run/node";
 import { getSession } from "../../sessions";
 import { appLoadContext as context } from "../../dependency-injector/get-load-context";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { ChangeEvent, useState } from "react";
+import ErrorDisplay from "../components/error-display";
 
 /**
  * 設定ページのメタ情報を設定する。
@@ -23,21 +25,28 @@ export const meta: MetaFunction = () => {
 export const loader = async ({
     request,
 }: LoaderFunctionArgs) => {
-    // ユーザー設定を取得する。
-    const cookieHeader = request.headers.get("Cookie");
-    const session = await getSession(cookieHeader);
-    const profileId = session.get("userId") as string;
-    const userSettingLoader = context.userSettingLoader;
-    const userSetting = await userSettingLoader.fetchUserSettingByProfileId(profileId);
+    try {
+        // ユーザー設定を取得する。
+        const cookieHeader = request.headers.get("Cookie");
+        const session = await getSession(cookieHeader);
+        const profileId = session.get("userId") as string;
+        const userSettingLoader = context.userSettingLoader;
+        const userSetting = await userSettingLoader.fetchUserSettingByProfileId(profileId);
 
-    // リリース情報を全件取得する。
-    const releaseInformationLoader = context.releaseInformationLoader;
-    const allReleaseInformation = await releaseInformationLoader.getAllReleaseInformation();
+        // リリース情報を全件取得する。
+        const releaseInformationLoader = context.releaseInformationLoader;
+        const allReleaseInformation = await releaseInformationLoader.getAllReleaseInformation();
 
-    return json({
-        userSetting,
-        allReleaseInformation,
-    });
+        // ユーザー設定と全てのリリース情報を返す。
+        return json({
+            userSetting,
+            allReleaseInformation,
+        });
+    } catch (error) {
+        console.error(error);
+        if (error instanceof TypeError || error instanceof Error) return json({ errorMessage: error.message });
+        return json({ errorMessage: systemMessages.error.unknownError });
+    }
 }
 
 /**
@@ -68,11 +77,12 @@ export const action = async ({
         const userSettingAction = context.userSettingAction;
         await userSettingAction.editUserSetting(userSetting);
 
-        // 成功を返す。
-        return json({ success: true });
+        // 成功メッセージを返す。
+        return json({ successMessage: systemMessages.success.userSettingSaved });
     } catch (error) {
         console.error(error);
-        return json({ error: "設定の更新に失敗しました。" });
+        if (error instanceof TypeError || error instanceof Error) return json({ errorMessage: error.message });
+        return json({ errorMessage: systemMessages.error.unknownError });
     }
 }
 
@@ -80,11 +90,27 @@ export const action = async ({
  * 設定ページ。
  */
 export default function Setting() {
-    const settingLoaderData = useLoaderData<typeof loader>();
-    const userSetting = settingLoaderData.userSetting;
+    // エラーメッセージを取得する。
+    const loaderData = useLoaderData<typeof loader>();
+    const loaderErrorMessage = "errorMessage" in loaderData ? loaderData.errorMessage : "";
+    const actionData = useActionData<typeof action>();
+    const actionSuccessMessage = actionData && "successMessage" in actionData ? actionData.successMessage : "";
+    const actionErrorMessage = actionData && "errorMessage" in actionData ? actionData.errorMessage : "";
 
+    // ローダーでエラーが発生した場合、エラーメッセージを表示するコンポーネントを表示する。
+    if ("errorMessage" in loaderData) {
+        return (
+            <ErrorDisplay errorMessage={loaderErrorMessage} />
+        );
+    }
+
+    // ユーザー設定を取得する。
+    const settingLoaderData = "errorMessage" in loaderData ? { userSetting: {}, allReleaseInformation: [] } : loaderData;
+    const userSetting = loaderData.userSetting;
+
+    // リリース情報を全件表示する。
     const [currentReleaseInformationId, setCurrentReleaseInformationId] = useState(userSetting.currentReleaseInformationId);
-    const allReleaseInformation = settingLoaderData.allReleaseInformation;
+    const allReleaseInformation = loaderData.allReleaseInformation;
     const handleCurrentReleaseInformationIdChange = (event: ChangeEvent<HTMLSelectElement>) => {
         setCurrentReleaseInformationId(Number(event.target.value));
     }

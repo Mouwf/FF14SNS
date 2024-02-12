@@ -1,3 +1,4 @@
+import systemMessages from "../../messages/system-messages";
 import IUserRepository from "../../repositories/user/i-user-repository";
 import UserRegistrationValidator from "./user-registration-validator";
 import ProfileIdCreator from "./profile-id-creator";
@@ -21,36 +22,51 @@ export default class UserProfileManager {
      * @param authenticationProviderId 認証プロバイダID。
      * @param userName ユーザー名。
      * @param currentReleaseInformationId 現在のリリース情報ID。
-     * @returns 登録に成功したかどうか。
      */
-    public async register(authenticationProviderId: string, userName: string, currentReleaseInformationId: number): Promise<boolean> {
-        // ユーザー登録バリデーションを行う。
-        UserRegistrationValidator.validate(authenticationProviderId, userName);
+    public async register(authenticationProviderId: string, userName: string, currentReleaseInformationId: number): Promise<void> {
+        try {
+            // ユーザー登録のバリデーションを行う。
+            UserRegistrationValidator.validate(authenticationProviderId, userName);
 
-        // ユーザーを登録する。
-        const profileId = ProfileIdCreator.create(userName);
-        const response = await this.userRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId);
-        return response;
+            // ユーザーを登録する。
+            const profileId = ProfileIdCreator.create(userName);
+            const response = await this.userRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId);
+            if (!response) throw new Error(systemMessages.error.userRegistrationFailed);
+        } catch (error) {
+            console.error(error);
+            if (error instanceof TypeError) throw new Error(systemMessages.error.networkError);
+            throw new Error(systemMessages.error.userRegistrationFailed);
+        }
     }
 
     /**
      * ユーザー設定を更新する。
      * @param userSetting ユーザー設定。
-     * @returns 更新に成功したかどうか。
      */
-    public async editUserSetting(userSetting: UserSetting): Promise<boolean> {
-        const response = await this.userRepository.update(userSetting);
-        return response;
+    public async editUserSetting(userSetting: UserSetting): Promise<void> {
+        try {
+            const response = await this.userRepository.update(userSetting);
+            if (!response) throw new Error(systemMessages.error.userSettingEditFailed);
+        } catch (error) {
+            console.error(error);
+            if (error instanceof TypeError) throw new Error(systemMessages.error.networkError);
+            throw new Error(systemMessages.error.userSettingEditFailed);
+        }
     }
 
     /**
      * ユーザーを削除する。
      * @param id ユーザーID。
-     * @returns 削除に成功したかどうか。
      */
-    public async delete(id: number): Promise<boolean> {
-        const response = await this.userRepository.delete(id);
-        return response;
+    public async delete(id: number): Promise<void> {
+        try {
+            const response = await this.userRepository.delete(id);
+            if (!response) throw new Error(systemMessages.error.userDeletionFailed);
+        } catch (error) {
+            console.error(error);
+            if (error instanceof TypeError) throw new Error(systemMessages.error.networkError);
+            throw new Error(systemMessages.error.userDeletionFailed);
+        }
     }
 
     /**
@@ -59,8 +75,14 @@ export default class UserProfileManager {
      * @returns ユーザー設定。
      */
     public async fetchUserSettingByProfileId(profileId: string): Promise<UserSetting> {
-        const response = await this.userRepository.findUserSettingByProfileId(profileId);
-        if (response == null) throw new Error("ユーザー設定が存在しません。");
-        return response;
+        try {
+            const response = await this.userRepository.findUserSettingByProfileId(profileId);
+            if (response == null) throw new Error(systemMessages.error.userSettingRetrievalFailed);
+            return response;
+        } catch (error) {
+            console.error(error);
+            if (error instanceof TypeError) throw new Error(systemMessages.error.networkError);
+            throw new Error(systemMessages.error.userSettingRetrievalFailed);
+        }
     }
 }

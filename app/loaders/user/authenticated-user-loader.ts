@@ -30,7 +30,7 @@ export default class AuthenticatedUserLoader {
      * @param profileId プロフィールID。
      * @returns 認証済みユーザー。
      */
-    public async getUserByProfileId(profileId: string): Promise<AuthenticatedUser | null> {
+    public async getUserByProfileId(profileId: string): Promise<AuthenticatedUser> {
         const authenticatedUser = await this.authenticatedUserProvider.getUserByProfileId(profileId);
         return authenticatedUser;
     }

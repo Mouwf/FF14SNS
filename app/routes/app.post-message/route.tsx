@@ -1,5 +1,6 @@
+import systemMessages from "../../messages/system-messages";
 import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { getSession } from "../../sessions";
 import { newlyPostedPostCookie } from "../../cookies.server";
 import { appLoadContext as context } from "../../dependency-injector/get-load-context";
@@ -23,12 +24,18 @@ export const meta: MetaFunction = () => {
 export const loader = async ({
     request,
 }: LoaderFunctionArgs) => {
-    const cookieHeader = request.headers.get("Cookie");
-    const session = await getSession(cookieHeader);
-    const profileId = session.get("userId") as string;
-    const releaseInformationLoader = context.releaseInformationLoader;
-    const allReleaseInformation = await releaseInformationLoader.getReleaseInformationBelowUserSetting(profileId);
-    return json(allReleaseInformation);
+    try {
+        const cookieHeader = request.headers.get("Cookie");
+        const session = await getSession(cookieHeader);
+        const profileId = session.get("userId") as string;
+        const releaseInformationLoader = context.releaseInformationLoader;
+        const allReleaseInformation = await releaseInformationLoader.getReleaseInformationBelowUserSetting(profileId);
+        return json(allReleaseInformation);
+    } catch (error) {
+        console.error(error);
+        if (error instanceof TypeError || error instanceof Error) return json({ errorMessage: error.message });
+        return json({ errorMessage: systemMessages.error.unknownError });
+    }
 }
 
 /**
@@ -47,9 +54,6 @@ export const action = async ({
         const profileId = session.get("userId") as string;
         const authenticatedUserLoader = context.authenticatedUserLoader;
         const authenticatedUser = await authenticatedUserLoader.getUserByProfileId(profileId);
-
-        // 認証済みユーザーが取得できない場合、エラーを返す。
-        if (!authenticatedUser) return json({ error: "メッセージの投稿に失敗しました。" });
 
         // ユーザーIDを取得する。
         const userId = authenticatedUser.id;
@@ -74,7 +78,8 @@ export const action = async ({
         });
     } catch (error) {
         console.error(error);
-        return json({ error: "メッセージの投稿に失敗しました。" });
+        if (error instanceof TypeError || error instanceof Error) return json({ errorMessage: error.message });
+        return json({ errorMessage: systemMessages.error.unknownError });
     }
 }
 
@@ -83,7 +88,14 @@ export const action = async ({
  * @returns メッセージ投稿ページ。
  */
 export default function PostMessage() {
-    const allReleaseInformation = useLoaderData<typeof loader>();
+    // エラーメッセージを取得する。
+    const loaderData = useLoaderData<typeof loader>();
+    const loaderErrorMessage = "errorMessage" in loaderData ? loaderData.errorMessage : "";
+    const actionData = useActionData<typeof action>();
+    const actionErrorMessage = actionData ? actionData.errorMessage : "";
+
+    // リリース情報を取得する。
+    const allReleaseInformation = "errorMessage" in loaderData ? [] : loaderData;
     const getReleaseVersionOptions = () => {
         return <select name="releaseInformationId">
             {allReleaseInformation.map((releaseInformation) => {

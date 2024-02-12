@@ -1,5 +1,6 @@
+import systemMessages from "../../messages/system-messages";
 import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { commitSession, getSession } from "../../sessions";
 import { appLoadContext as context } from "../../dependency-injector/get-load-context";
 
@@ -23,17 +24,23 @@ export const meta: MetaFunction = () => {
 export const loader = async ({
     request,
 }: LoaderFunctionArgs) => {
-    // ログインしている場合、トップページにリダイレクトする。
-    const cookieHeader = request.headers.get("Cookie");
-    const session = await getSession(cookieHeader);
-    if (session.has("userId")) {
-        return redirect("/app", {
-            headers: {
-                "Set-Cookie": await commitSession(session),
-            },
-        });
+    try {
+        // ログインしている場合、トップページにリダイレクトする。
+        const cookieHeader = request.headers.get("Cookie");
+        const session = await getSession(cookieHeader);
+        if (session.has("userId")) {
+            return redirect("/app", {
+                headers: {
+                    "Set-Cookie": await commitSession(session),
+                },
+            });
+        }
+        return null;
+    } catch (error) {
+        console.error(error);
+        if (error instanceof TypeError || error instanceof Error) return json({ errorMessage: error.message });
+        return json({ errorMessage: systemMessages.error.unknownError });
     }
-    return null;
 }
 
 /**
@@ -52,12 +59,9 @@ export const action = async ({
         const password = formData.get("password") as string;
         const confirmPassword = formData.get("confirmPassword") as string;
 
-        // パスワードとパスワード再確認が一致しない場合、エラーを返す。
-        if (password !== confirmPassword) return json({ error: "パスワードが一致しません。" });
-
         // ユーザーを登録する。
         const userRegistrationAction = context.userRegistrationAction;
-        const response = await userRegistrationAction.register(mailAddress, password);
+        const response = await userRegistrationAction.register(mailAddress, password, confirmPassword);
 
         // IDトークンとリフレッシュトークンをセッションに保存する。
         const idToken = response.idToken;
@@ -75,7 +79,8 @@ export const action = async ({
         });
     } catch (error) {
         console.error(error);
-        return json({ error: "サインアップに失敗しました。" });
+        if (error instanceof TypeError || error instanceof Error) return json({ errorMessage: error.message });
+        return json({ errorMessage: systemMessages.error.unknownError });
     }
 }
 
@@ -84,6 +89,12 @@ export const action = async ({
  * @returns サインアップページ。
  */
 export default function Signup() {
+    // エラーメッセージを取得する。
+    const loaderData = useLoaderData<typeof loader>();
+    const loaderErrorMessage = loaderData && "errorMessage" in loaderData ? loaderData.errorMessage : "";
+    const actionData = useActionData<typeof action>();
+    const actionErrorMessage = actionData ? actionData.errorMessage : "";
+
     return (
         <Form method="post">
             <label>

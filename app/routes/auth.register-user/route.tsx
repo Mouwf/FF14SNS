@@ -1,5 +1,6 @@
+import systemMessages from "../../messages/system-messages";
 import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@remix-run/node";
-import { Form, useLoaderData } from "@remix-run/react";
+import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { commitSession, destroySession, getSession } from "../../sessions";
 import { appLoadContext as context } from "../../dependency-injector/get-load-context";
 
@@ -17,30 +18,36 @@ export const meta: MetaFunction = () => {
 export const loader = async ({
     request,
 }: LoaderFunctionArgs) => {
-    // ログインしている場合、トップページにリダイレクトする。
-    const cookieHeader = request.headers.get("Cookie");
-    const session = await getSession(cookieHeader);
-    if (session.has("userId")) {
-        return redirect("/app", {
-            headers: {
-                "Set-Cookie": await commitSession(session),
-            },
-        });
-    }
+    try {
+        // ログインしている場合、トップページにリダイレクトする。
+        const cookieHeader = request.headers.get("Cookie");
+        const session = await getSession(cookieHeader);
+        if (session.has("userId")) {
+            return redirect("/app", {
+                headers: {
+                    "Set-Cookie": await commitSession(session),
+                },
+            });
+        }
 
-    // ログインしていない場合、ログインページにリダイレクトする。
-    if (!session.has("idToken")) {
-        return redirect("/auth/login", {
-            headers: {
-                "Set-Cookie": await destroySession(session),
-            },
-        });
-    }
+        // ログインしていない場合、ログインページにリダイレクトする。
+        if (!session.has("idToken")) {
+            return redirect("/auth/login", {
+                headers: {
+                    "Set-Cookie": await destroySession(session),
+                },
+            });
+        }
 
-    // リリース情報を全件取得する。
-    const releaseInformationLoader = context.releaseInformationLoader;
-    const allReleaseInformation = await releaseInformationLoader.getAllReleaseInformation();
-    return json(allReleaseInformation);
+        // リリース情報を全件取得する。
+        const releaseInformationLoader = context.releaseInformationLoader;
+        const allReleaseInformation = await releaseInformationLoader.getAllReleaseInformation();
+        return json(allReleaseInformation);
+    } catch (error) {
+        console.error(error);
+        if (error instanceof TypeError || error instanceof Error) return json({ errorMessage: error.message });
+        return json({ errorMessage: systemMessages.error.unknownError });
+    }
 }
 
 /**
@@ -66,10 +73,7 @@ export const action = async ({
         const authenticationProviderId = await authenticatedUserLoader.getAuthenticationProviderId(idToken);
 
         // ユーザーを登録する。
-        const isRegistered = await context.snsUserRegistrationAction.register(authenticationProviderId, userName, currentReleaseInformationId);
-
-        // ユーザー登録に失敗した場合、エラーを返す。
-        if (!isRegistered) return json({ error: "ユーザー登録に失敗しました。" });
+        await context.snsUserRegistrationAction.register(authenticationProviderId, userName, currentReleaseInformationId);
 
         // 認証済みユーザーを取得する。
         const authenticatedUser = await authenticatedUserLoader.getUserByToken(idToken);
@@ -93,7 +97,8 @@ export const action = async ({
         });
     } catch (error) {
         console.error(error);
-        return json({ error: "ユーザー登録に失敗しました。" });
+        if (error instanceof TypeError || error instanceof Error) return json({ errorMessage: error.message });
+        return json({ errorMessage: systemMessages.error.unknownError });
     }
 }
 
@@ -102,7 +107,14 @@ export const action = async ({
  * @returns ユーザー登録ページ。
  */
 export default function RegisterUser() {
-    const allReleaseInformation = useLoaderData<typeof loader>();
+    // エラーメッセージを取得する。
+    const loaderData = useLoaderData<typeof loader>();
+    const loaderErrorMessage = "errorMessage" in loaderData ? loaderData.errorMessage : "";
+    const actionData = useActionData<typeof action>();
+    const actionErrorMessage = actionData ? actionData.errorMessage : "";
+
+    // リリース情報を全件表示する。
+    const allReleaseInformation = "errorMessage" in loaderData ? [] : loaderData;
     const getReleaseVersionOptions = () => {
         return <select name="currentReleaseInformationId">
             {allReleaseInformation.map((releaseInformation) => {

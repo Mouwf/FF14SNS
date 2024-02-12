@@ -1,3 +1,4 @@
+import systemMessages from "../../messages/system-messages";
 import PostgresClientProvider from "../common/postgres-client-provider";
 import User from "../../models/user/user";
 import UserSetting from "../../models/user/user-setting";
@@ -40,6 +41,7 @@ export default class PostgresUserRepository implements IUserRepository {
 
             // 結果がない場合、falseを返す。
             if (userInsertResult.rowCount === 0) {
+                console.error(systemMessages.error.userRegistrationFailed);
                 await client.query("ROLLBACK");
                 return false;
             }
@@ -61,6 +63,7 @@ export default class PostgresUserRepository implements IUserRepository {
 
             // 結果がない場合、falseを返す。
             if (releaseVersionFilterSettingInsertResult.rowCount === 0) {
+                console.error(systemMessages.error.userSettingRegistrationFailed);
                 await client.query("ROLLBACK");
                 return false;
             }
@@ -69,6 +72,7 @@ export default class PostgresUserRepository implements IUserRepository {
             await client.query("COMMIT");
             return true;
         } catch (error) {
+            console.error(error);
             await client.query("ROLLBACK");
             throw error;
         } finally {
@@ -90,7 +94,7 @@ export default class PostgresUserRepository implements IUserRepository {
             const getUserResult = await client.query(getUserIdQuery, getUserIdValues);
 
             // ユーザーが存在しない場合、エラーを投げる。
-            if (getUserResult.rowCount === 0) throw new Error("ユーザーが存在しません。");
+            if (getUserResult.rowCount === 0) throw new Error(systemMessages.error.userNotExists);
 
             // リリースバージョンフィルターの設定が存在するかを確認する。
             const userId = getUserResult.rows[0].id;
@@ -126,6 +130,7 @@ export default class PostgresUserRepository implements IUserRepository {
 
             // 結果がない場合、falseを返す。
             if (result.rowCount === 0) {
+                console.error(systemMessages.error.userSettingEditFailed);
                 await client.query("ROLLBACK");
                 return false;
             }
@@ -134,6 +139,7 @@ export default class PostgresUserRepository implements IUserRepository {
             await client.query("COMMIT");
             return true;
         } catch (error) {
+            console.error(error);
             await client.query("ROLLBACK");
             throw error;
         } finally {
@@ -155,6 +161,7 @@ export default class PostgresUserRepository implements IUserRepository {
 
             // 結果がない場合、falseを返す。
             if (deleteSettingsResult.rowCount === 0) {
+                console.error(systemMessages.error.userSettingDeletionFailed);
                 await client.query("ROLLBACK");
                 return false;
             }
@@ -168,6 +175,7 @@ export default class PostgresUserRepository implements IUserRepository {
 
             // 結果がない場合、falseを返す。
             if (deleteUserResult.rowCount === 0) {
+                console.error(systemMessages.error.userDeletionFailed);
                 await client.query("ROLLBACK");
                 return false;
             }
@@ -176,6 +184,7 @@ export default class PostgresUserRepository implements IUserRepository {
             await client.query("COMMIT");
             return true;
         } catch (error) {
+            console.error(error);
             await client.query("ROLLBACK");
             throw error;
         } finally {
@@ -225,6 +234,7 @@ export default class PostgresUserRepository implements IUserRepository {
             };
             return user;
         } catch (error) {
+            console.error(error);
             throw error;
         } finally {
             client.release();
@@ -269,6 +279,7 @@ export default class PostgresUserRepository implements IUserRepository {
             };
             return user;
         } catch (error) {
+            console.error(error);
             throw error;
         } finally {
             client.release();
@@ -304,6 +315,7 @@ export default class PostgresUserRepository implements IUserRepository {
             };
             return userSetting;
         } catch (error) {
+            console.error(error);
             throw error;
         } finally {
             client.release();
