@@ -1,15 +1,24 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import MockReleaseInformationRepository from "../../repositories/post/mock-release-information-repository";
 import ReleaseInformationGetter from "../../../app/libraries/post/release-information-getter";
+import systemMessages from "../../../app/messages/system-messages";
 
 /**
  * リリース情報を取得するクラス。
  */
 let releaseInformationGetter: ReleaseInformationGetter;
 
+/**
+ * エラーを強制するリリース情報を取得するクラス。
+ */
+let forceErrorReleaseInformationGetter: ReleaseInformationGetter;
+
 beforeEach(() => {
     const mockReleaseInformationRepository = new MockReleaseInformationRepository();
     releaseInformationGetter = new ReleaseInformationGetter(mockReleaseInformationRepository);
+    const forceErrorMockReleaseInformationRepository = new MockReleaseInformationRepository();
+    forceErrorMockReleaseInformationRepository.isForceError = true;
+    forceErrorReleaseInformationGetter = new ReleaseInformationGetter(forceErrorMockReleaseInformationRepository);
 });
 
 describe("getReleaseInformation", () => {
@@ -30,6 +39,23 @@ describe("getReleaseInformation", () => {
         expect(response.releaseName).toBe(expectedReleaseInformation.releaseName);
         expect(response.createdAt).toBeInstanceOf(Date);
     });
+
+    test("getReleaseInformation should throw an exception invalid release information id.", async () => {
+        expect.assertions(1);
+        try {
+            // 無効なリリース情報IDでリリース情報を取得し、エラーを発生させる。
+            const invalidReleaseInformationId = 2;
+            await releaseInformationGetter.getReleaseInformation(invalidReleaseInformationId);
+        } catch (error) {
+            // エラーがErrorでない場合、エラーを投げる。
+            if (!(error instanceof Error)) {
+                throw error;
+            }
+
+            // エラーを検証する。
+            expect(error.message).toBe(systemMessages.error.releaseInformationRetrievalFailed);
+        }
+    });
 });
 
 describe("getAllReleaseInformation", () => {
@@ -47,6 +73,22 @@ describe("getAllReleaseInformation", () => {
         expect(response[1].releaseVersion).toBe("2.2");
         expect(response[1].releaseName).toBe("リリース2.2");
         expect(response[1].createdAt).toBeInstanceOf(Date);
+    });
+
+    test("getAllReleaseInformation should throw an exception.", async () => {
+        expect.assertions(1);
+        try {
+            // リリース情報を取得し、エラーを発生させる。
+            await forceErrorReleaseInformationGetter.getAllReleaseInformation();
+        } catch (error) {
+            // エラーがErrorでない場合、エラーを投げる。
+            if (!(error instanceof Error)) {
+                throw error;
+            }
+
+            // エラーを検証する。
+            expect(error.message).toBe(systemMessages.error.releaseInformationRetrievalFailed);
+        }
     });
 });
 
@@ -99,5 +141,21 @@ describe("getReleaseInformationBelowUserSetting", () => {
         expect(response[4].releaseVersion).toBe("2.5");
         expect(response[4].releaseName).toBe("リリース2.5");
         expect(response[4].createdAt).toBeInstanceOf(Date);
+    });
+
+    test("getReleaseInformationBelowUserSetting should throw an exception.", async () => {
+        expect.assertions(1);
+        try {
+            // リリース情報を取得し、エラーを発生させる。
+            await forceErrorReleaseInformationGetter.getReleaseInformationBelowUserSetting("username_world1");
+        } catch (error) {
+            // エラーがErrorでない場合、エラーを投げる。
+            if (!(error instanceof Error)) {
+                throw error;
+            }
+
+            // エラーを検証する。
+            expect(error.message).toBe(systemMessages.error.releaseInformationRetrievalFailed);
+        }
     });
 });

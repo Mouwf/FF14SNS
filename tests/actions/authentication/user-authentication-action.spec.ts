@@ -44,12 +44,9 @@ describe("login", () => {
 });
 
 describe("logout", () => {
-    test("logout should logout and return true.", async () => {
-        // ログアウトする。
+    test("logout should logout.", async () => {
+        // ログアウトし、結果を検証する。
         const idToken = "idToken";
-        const response = await userAuthenticationAction.logout(idToken);
-
-        // 結果を検証する。
-        expect(response).toBe(true);
+        await expect(userAuthenticationAction.logout(idToken)).resolves.toBeUndefined();
     });
 });

@@ -5,7 +5,27 @@ import IReleaseInformationRepository from "../../../app/repositories/post/i-rele
  * モックのリリース情報リポジトリ。
  */
 export default class MockReleaseInformationRepository implements IReleaseInformationRepository {
+    /**
+     * エラーを強制するかどうか。
+     */
+    private _isForceError: boolean = false;
+
+    /**
+     * エラーを強制するかどうか。
+     */
+    get isForceError(): boolean {
+        return this._isForceError;
+    }
+
+    /**
+     * エラーを強制するかどうか。
+     */
+    set isForceError(value: boolean) {
+        this._isForceError = value;
+    }
+
     public async get(releaseInformationId: number): Promise<ReleaseInformation> {
+        if (releaseInformationId !== 1) throw new Error("Invalid release information id.");
         const releaseInformation = {
             id: 1,
             releaseVersion: "2.5",
@@ -16,6 +36,7 @@ export default class MockReleaseInformationRepository implements IReleaseInforma
     }
 
     public async getAll(): Promise<ReleaseInformation[]> {
+        if (this.isForceError) throw new Error("Error occurred.");
         const allReleaseInformation = [
             {
                 id: 1,
@@ -52,6 +73,7 @@ export default class MockReleaseInformationRepository implements IReleaseInforma
     }
 
     public async getBelowUserSetting(profileId: string): Promise<ReleaseInformation[]> {
+        if (this.isForceError) throw new Error("Error occurred.");
         if (profileId === "username_world1") {
             const allReleaseInformation = [
                 {
