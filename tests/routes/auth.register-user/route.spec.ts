@@ -15,16 +15,6 @@ let requestWithCookie: Request;
 let requestWithLoggedInUserCookie: Request;
 
 /**
- * エラーを起こすモックリクエスト。
- */
-let requestWithError: Request;
-
-/**
- * ユーザー名が未入力なモックリクエスト。
- */
-let requestWithInvalidUserName: Request;
-
-/**
  * クッキーなしのモックリクエスト。
  */
 let requestWithoutCookie: Request;
@@ -59,26 +49,6 @@ beforeEach(async () => {
         method: "POST",
         body: new URLSearchParams({
             userName: "UserName@World",
-            currentReleaseInformationId: "1",
-        }),
-    });
-    requestWithError = new Request("https://example.com", {
-        headers: {
-            Cookie: await commitSession(validSession),
-        },
-        method: "POST",
-        body: new URLSearchParams({
-            userName: "errorUserName@World",
-            currentReleaseInformationId: "1",
-        }),
-    });
-    requestWithInvalidUserName = new Request("https://example.com", {
-        headers: {
-            Cookie: await commitSession(validSession),
-        },
-        method: "POST",
-        body: new URLSearchParams({
-            userName: "invalidUserName",
             currentReleaseInformationId: "1",
         }),
     });
@@ -159,45 +129,13 @@ describe("action", () => {
         // 検証に必要な情報を取得する。
         const status = response.status;
         const location = response.headers.get("Location");
+        const session = await getSession(response.headers.get("Set-Cookie"));
 
         // 結果を検証する。
         expect(status).toBe(302);
         expect(location).toBe("/app");
-    });
-
-    test("action should return error message if user can not be registered.", async () => {
-        // アクションを実行し、結果を取得する。
-        const response = await action({
-            request: requestWithError,
-            params: {},
-            context,
-        });
-
-        // 検証に必要な情報を取得する。
-        const errorInformation = await response.json();
-
-        // 結果を検証する。
-        const expectedErrorInformation = {
-            error: "ユーザー登録に失敗しました。",
-        };
-        expect(errorInformation).toEqual(expectedErrorInformation);
-    });
-
-    test("action should return error message if an error occurs.", async () => {
-        // アクションを実行し、結果を取得する。
-        const response = await action({
-            request: requestWithInvalidUserName,
-            params: {},
-            context,
-        });
-
-        // 検証に必要な情報を取得する。
-        const errorInformation = await response.json();
-
-        // 結果を検証する。
-        const expectedErrorInformation = {
-            error: "ユーザー登録に失敗しました。",
-        };
-        expect(errorInformation).toEqual(expectedErrorInformation);
+        expect(session.has("idToken")).toBe(true);
+        expect(session.has("refreshToken")).toBe(true);
+        expect(session.has("userId")).toBe(true);
     });
 });

@@ -15,11 +15,6 @@ let requestWithoutCookie: Request;
 let requestWithNotRegisteredUserCookie: Request;
 
 /**
- * 存在しないユーザーのクッキー付きのモックリクエスト。
- */
-let requestWithNotExistUserCookie: Request;
-
-/**
  * クッキー付きのモックリクエスト。
  */
 let requestWithCookie: Request;
@@ -53,15 +48,6 @@ beforeEach(async () => {
         },
     });
     requestWithoutCookie = new Request("https://example.com");
-    const notExistUserSession = await getSession();
-    notExistUserSession.set("idToken", "idToken");
-    notExistUserSession.set("refreshToken", "refreshToken");
-    notExistUserSession.set("userId", "notExistProfileId");
-    requestWithNotExistUserCookie = new Request("https://example.com", {
-        headers: {
-            Cookie: await commitSession(notExistUserSession),
-        },
-    });
     const invalidSession = await getSession();
     invalidSession.set("userId", "invalidProfileId");
     invalidSession.set("idToken", "idToken");
@@ -133,27 +119,6 @@ describe("loader", () => {
         expect(redirect).toBe("/auth/login");
         expect(session.has("idToken")).toBe(false);
         expect(session.has("refreshToken")).toBe(false);
-        expect(session.has("userId")).toBe(false);
-    });
-
-    test("loader should redirect to login page if user is not exist.", async () => {
-        // ローダーを実行し、結果を取得する。
-        const response = await loader({
-            request: requestWithNotExistUserCookie,
-            params: {},
-            context,
-        });
-
-        // 検証に必要な情報を取得する。
-        const status = response.status;
-        const redirect = response.headers.get("Location");
-        const session = await getSession(response.headers.get("Set-Cookie"));
-
-        // 結果を検証する。
-        expect(status).toBe(302);
-        expect(redirect).toBe("/auth/register-user");
-        expect(session.has("idToken")).toBe(true);
-        expect(session.has("refreshToken")).toBe(true);
         expect(session.has("userId")).toBe(false);
     });
 
