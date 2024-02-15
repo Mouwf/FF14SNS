@@ -78,7 +78,7 @@ export const action = async ({
         // 認証済みユーザーを取得する。
         const authenticatedUser = await authenticatedUserLoader.getUserByToken(idToken);
 
-        // 認証済みユーザーが存在しない場合、エラーを返す。
+        // 認証済みユーザーが存在しない場合、ログインページにリダイレクトする。
         if (!authenticatedUser) {
             return redirect("/auth/login", {
                 headers: {
