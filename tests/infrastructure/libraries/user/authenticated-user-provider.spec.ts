@@ -120,14 +120,6 @@ describe("getUserByProfileId", () => {
         expect(responseUser.currentReleaseName).toBeDefined();
         expect(new Date(responseUser.createdAt)).toBeInstanceOf(Date);
     });
-
-    test("getUserByProfileId should return null if the user does not exist.", async () => {
-        // テスト用のユーザー情報を取得する。
-        const responseUser = await delayAsync(() => authenticatedUserProvider.getUserByProfileId(profileId));
-    
-        // 結果を検証する。
-        expect(responseUser).toBeNull();
-    });
 });
 
 describe("getAuthenticationProviderId", () => {

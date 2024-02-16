@@ -6,6 +6,7 @@ import { AppLoadContext } from "@netlify/remix-runtime";
 import { appLoadContext, postgresClientProvider } from "../../../../app/dependency-injector/get-load-context";
 import { loader, action } from "../../../../app/routes/app.setting/route";
 import { commitSession, getSession } from "../../../../app/sessions";
+import systemMessages from "../../../../app/messages/system-messages";
 
 /**
  * Postgresのユーザーリポジトリ。
@@ -78,8 +79,15 @@ describe("loader", () => {
             context: context,
         });
 
-        // 検証に必要な情報を取得する。
+        // 検証に必要な情報を取得する準備をする。
         const settingLoaderData = await response.json();
+
+        // エラーが発生していた場合、エラーを投げる。
+        if ('errorMessage' in settingLoaderData) {
+            throw new Error(settingLoaderData.errorMessage);
+        }
+
+        // 検証に必要な情報を取得する。
         const userSetting = settingLoaderData.userSetting;
         const allReleaseInformation = settingLoaderData.allReleaseInformation;
 
@@ -107,11 +115,11 @@ describe("action", () => {
         const responseJson = await response.json();
 
         // 結果が存在しない場合、エラーを投げる。
-        if (!('success' in responseJson) || !responseJson.success) {
+        if (!('successMessage' in responseJson) || !responseJson.successMessage) {
             throw new Error("Response is undefined.");
         }
 
         // 結果を検証する。
-        expect(responseJson.success).toBe(true);
+        expect(responseJson.successMessage).toBe(systemMessages.success.userSettingSaved);
     });
 });

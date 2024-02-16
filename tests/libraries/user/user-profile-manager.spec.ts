@@ -6,7 +6,7 @@ import systemMessages from "../../../app/messages/system-messages";
 /**
  * ユーザーの登録を行うクラス。
  */
-let userAccountManager: UserProfileManager;
+let userProfileManager: UserProfileManager;
 
 /**
  * 認証プロバイダID。
@@ -30,13 +30,13 @@ const currentReleaseInformationId = 1;
 
 beforeEach(() => {
     const mockUserRepository = new MockUserRepository();
-    userAccountManager = new UserProfileManager(mockUserRepository);
+    userProfileManager = new UserProfileManager(mockUserRepository);
 });
 
 describe("register", () => {
     test("register should register a user.", async () => {
         // ユーザーを登録し、結果を検証する。
-        await expect(userAccountManager.register(authenticationProviderId, userName, currentReleaseInformationId)).resolves.toBeUndefined();
+        await expect(userProfileManager.register(authenticationProviderId, userName, currentReleaseInformationId)).resolves.toBeUndefined();
     });
 
     test("register should throw an error when authentication provider id is empty.", async () => {
@@ -44,7 +44,7 @@ describe("register", () => {
         try {
             // ユーザーを登録する。
             const invalidAuthenticationProviderId = "";
-            await userAccountManager.register(invalidAuthenticationProviderId, userName, currentReleaseInformationId);
+            await userProfileManager.register(invalidAuthenticationProviderId, userName, currentReleaseInformationId);
         } catch (error) {
             // エラーがErrorでない場合、エラーを投げる。
             if (!(error instanceof Error)) {
@@ -61,7 +61,7 @@ describe("register", () => {
         try {
             // ユーザーを登録する。
             const invalidUserName = "invalidUserName";
-            await userAccountManager.register(authenticationProviderId, invalidUserName, currentReleaseInformationId);
+            await userProfileManager.register(authenticationProviderId, invalidUserName, currentReleaseInformationId);
         } catch (error) {
             // エラーがErrorでない場合、エラーを投げる。
             if (!(error instanceof Error)) {
@@ -82,7 +82,7 @@ describe("editUserSetting", () => {
             userName: "UserName@World1",
             currentReleaseInformationId: 1,
         };
-        await expect(userAccountManager.editUserSetting(userSetting)).resolves.toBeUndefined();
+        await expect(userProfileManager.editUserSetting(userSetting)).resolves.toBeUndefined();
     });
 
     test("editUserSetting should throw an error when user id is not exist.", async () => {
@@ -94,7 +94,7 @@ describe("editUserSetting", () => {
                 userName: "UserName@World2",
             currentReleaseInformationId: 3,
             };
-            await userAccountManager.editUserSetting(userSetting);
+            await userProfileManager.editUserSetting(userSetting);
         } catch (error) {
             // エラーがErrorでない場合、エラーを投げる。
             if (!(error instanceof Error)) {
@@ -115,7 +115,7 @@ describe("editUserSetting", () => {
                 userName: "InvalidUserName@World",
                 currentReleaseInformationId: 1,
             };
-            await userAccountManager.editUserSetting(userSetting);
+            await userProfileManager.editUserSetting(userSetting);
         } catch (error) {
             // エラーがErrorでない場合、エラーを投げる。
             if (!(error instanceof Error)) {
@@ -131,7 +131,7 @@ describe("editUserSetting", () => {
 describe("delete", () => {
     test("delete should delete a user.", async () => {
         // ユーザーを削除し、結果を検証する。
-        await expect(userAccountManager.delete(id)).resolves.toBeUndefined();
+        await expect(userProfileManager.delete(id)).resolves.toBeUndefined();
     });
 
     test("delete should throw an error when id is not exist.", async () => {
@@ -139,7 +139,7 @@ describe("delete", () => {
         try {
             // ユーザーを削除する。
             const invalidId = 2;
-            await userAccountManager.delete(invalidId);
+            await userProfileManager.delete(invalidId);
         } catch (error) {
             // エラーがErrorでない場合、エラーを投げる。
             if (!(error instanceof Error)) {
@@ -156,7 +156,7 @@ describe("fetchUserSettingByProfileId", () => {
     test("fetchUserSettingByProfileId should fetch a user setting.", async () => {
         // ユーザー設定を取得する。
         const profileId = "username_world1";
-        const response = await userAccountManager.fetchUserSettingByProfileId(profileId);
+        const response = await userProfileManager.fetchUserSettingByProfileId(profileId);
 
         // 結果を検証する。
         expect(response.userId).toBe("username_world1");
@@ -169,7 +169,7 @@ describe("fetchUserSettingByProfileId", () => {
         try {
             // ユーザー設定を取得する。
             const invalidProfileId = "invalidProfileId";
-            await userAccountManager.fetchUserSettingByProfileId(invalidProfileId);
+            await userProfileManager.fetchUserSettingByProfileId(invalidProfileId);
         } catch (error) {
             // エラーがErrorでない場合、エラーを投げる。
             if (!(error instanceof Error)) {
