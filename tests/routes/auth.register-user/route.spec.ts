@@ -68,8 +68,13 @@ describe("loader", () => {
         // 検証に必要な情報を取得する。
         const resultAllInformation = await response.json();
 
+        // 配列でない場合、エラーを投げる。
+        if (!Array.isArray(resultAllInformation)) {
+            throw new Error(resultAllInformation.errorMessage);
+        }
+
         // 結果を検証する。
-        expect(resultAllInformation).toBeDefined();
+        expect(resultAllInformation.length).toBeGreaterThan(0);
     });
 
     test("loader should redirect app page if user is logged in.", async () => {
