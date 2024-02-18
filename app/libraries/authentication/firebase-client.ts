@@ -1,3 +1,4 @@
+import systemMessages from "../../messages/system-messages";
 import IAuthenticationClient from "./i-authentication-client";
 import HttpClient from "../http/http-client";
 import SignUpResponse from "../../models/authentication/signup-response";
@@ -24,22 +25,17 @@ export default class FirebaseClient implements IAuthenticationClient {
     constructor() {
         if (process.env.RUN_INFRA_TESTS) {
             if (!process.env.TEST_FIREBASE_API_KEY) {
-                throw new Error("TEST_FIREBASE_API_KEYが設定されていません。");
+                throw new Error(systemMessages.error.authenticationProviderTestEnvironmentVariableError);
             }
             process.env.FIREBASE_API_KEY = process.env.TEST_FIREBASE_API_KEY;
         }
         if (!process.env.FIREBASE_API_KEY) {
-            throw new Error("FIREBASE_API_KEYが設定されていません。");
+            throw new Error(systemMessages.error.authenticationProviderEnvironmentVariableError);
         }
         this.firebaseApiKey = process.env.FIREBASE_API_KEY;
     }
 
     public async signUp(mailAddress: string, password: string): Promise<SignUpResponse> {
-        // パスワードの長さが8文字未満、英数字が含まれていない場合、エラーを投げる。
-        if (password.length < 8 || !password.match(/^(?=.*?[a-z])(?=.*?\d)[a-z\d]{8,100}$/i)) {
-            throw new Error("パスワードは8文字以上の英数字で設定してください。");
-        }
-
         // メールアドレスとパスワードでサインアップする。
         const endpoint = "v1/accounts:signUp";
         const queries = {

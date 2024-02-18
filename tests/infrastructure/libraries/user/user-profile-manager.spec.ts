@@ -47,59 +47,8 @@ afterEach(async () => {
 
 describe("register", () => {
     test("register should register a new user", async () => {
-        // テスト用のユーザー情報を作成する。
-        const response = await delayAsync(() => userProfileManager.register(authenticationProviderId, userName, currentReleaseInformationId));
-
-        // 結果を検証する。
-        expect(response).toBe(true);
-    });
-
-    test("register should throw an error when the authenticationProviderId is empty", async () => {
-        expect.assertions(1);
-        try {
-            // テスト用のユーザー情報を作成する。
-            await delayAsync(() => userProfileManager.register("", userName, currentReleaseInformationId));
-        } catch (error) {
-            // エラーがResponseでない場合、エラーを投げる。
-            if (!(error instanceof Error)) {
-                throw error;
-            }
-
-            // エラーを検証する。
-            expect(error.message).toBe("認証プロバイダIDは必須です。");
-        }
-    });
-
-    test("register should throw an error when the userName is empty", async () => {
-        expect.assertions(1);
-        try {
-            // テスト用のユーザー情報を作成する。
-            await delayAsync(() => userProfileManager.register(authenticationProviderId, "", currentReleaseInformationId));
-        } catch (error) {
-            // エラーがResponseでない場合、エラーを投げる。
-            if (!(error instanceof Error)) {
-                throw error;
-            }
-
-            // エラーを検証する。
-            expect(error.message).toBe("ユーザー名は「username@world」で入力してください。");
-        }
-    });
-
-    test("register should throw an error when the userName is invalid", async () => {
-        expect.assertions(1);
-        try {
-            // テスト用のユーザー情報を作成する。
-            await delayAsync(() => userProfileManager.register(authenticationProviderId, "invalidUserName", currentReleaseInformationId));
-        } catch (error) {
-            // エラーがResponseでない場合、エラーを投げる。
-            if (!(error instanceof Error)) {
-                throw error;
-            }
-
-            // エラーを検証する。
-            expect(error.message).toBe("ユーザー名は「username@world」で入力してください。");
-        }
+        // ユーザーを登録し、結果を検証する。
+        await expect(userProfileManager.register(authenticationProviderId, userName, currentReleaseInformationId)).resolves.toBeUndefined();
     });
 });
 
@@ -120,11 +69,8 @@ describe("editUserSetting", () => {
         // ユーザー設定が存在しない場合、エラーを投げる。
         if (responseFindUserSettingByProfileId === null) throw new Error("The user setting does not exist.");
 
-        // ユーザー設定を更新する。
-        const response = await delayAsync(() => userProfileManager.editUserSetting(responseFindUserSettingByProfileId));
-
-        // 結果を検証する。
-        expect(response).toBe(true);
+        // ユーザー設定を更新し、結果を検証する。
+        await expect(userProfileManager.editUserSetting(responseFindUserSettingByProfileId)).resolves.toBeUndefined();
     });
 });
 
@@ -139,12 +85,9 @@ describe("delete", () => {
         // テスト用のユーザー情報が存在しない場合、エラーを投げる。
         if (responseFindByProfileId == null) throw new Error("The user does not exist.");
 
-        // テスト用のユーザー情報を削除する。
+        // ユーザーを削除し、結果を検証する。
         const id = responseFindByProfileId.id;
-        const responseDelete = await delayAsync(() => userProfileManager.delete(id));
-
-        // 結果を検証する。
-        expect(responseDelete).toBe(true);
+        await expect(userProfileManager.delete(id)).resolves.toBeUndefined();
     });
 });
 

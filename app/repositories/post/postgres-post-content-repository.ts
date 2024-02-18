@@ -1,3 +1,4 @@
+import systemMessages from "../../messages/system-messages";
 import PostgresClientProvider from "../common/postgres-client-provider";
 import PostContent from "../../models/post/post-content";
 import IPostContentRepository from "./i-post-content-repository";
@@ -36,7 +37,7 @@ export default class PostgresPostContentRepository implements IPostContentReposi
             const postInsertResult = await client.query(postInsertQuery, postInsertValues);
 
             // 結果がない場合、エラーを投げる。
-            if (postInsertResult.rowCount === 0) throw new Error("投稿に失敗しました。");
+            if (postInsertResult.rowCount === 0) throw new Error(systemMessages.error.postFailed);
 
             // 投稿IDを取得する。
             const postId = postInsertResult.rows[0].id;
@@ -56,7 +57,7 @@ export default class PostgresPostContentRepository implements IPostContentReposi
             const releaseInformationAssociationResult = await client.query(releaseInformationAssociationInsertQuery, releaseInformationAssociationInsertValues);
 
             // 結果がない場合、エラーを投げる。
-            if (releaseInformationAssociationResult.rowCount === 0) throw new Error("投稿に失敗しました。");
+            if (releaseInformationAssociationResult.rowCount === 0) throw new Error(systemMessages.error.postFailed);
 
             // コミットする。
             await client.query("COMMIT");
@@ -64,6 +65,7 @@ export default class PostgresPostContentRepository implements IPostContentReposi
             // 投稿IDを返す。
             return postId;
         } catch (error) {
+            console.error(error);
             await client.query("ROLLBACK");
             throw error;
         } finally {
@@ -85,6 +87,7 @@ export default class PostgresPostContentRepository implements IPostContentReposi
 
             // 投稿結果がない場合、falseを返す。
             if (resultDeleteForReleaseInformationAssociation.rowCount === 0) {
+                console.error(systemMessages.error.postDeletionFailed);
                 await client.query("ROLLBACK");
                 return false;
             }
@@ -98,6 +101,7 @@ export default class PostgresPostContentRepository implements IPostContentReposi
 
             // 投稿結果がない場合、falseを返す。
             if (resultForPosts.rowCount === 0) {
+                console.error(systemMessages.error.postDeletionFailed);
                 await client.query("ROLLBACK");
                 return false;
             }
@@ -106,6 +110,7 @@ export default class PostgresPostContentRepository implements IPostContentReposi
             await client.query("COMMIT");
             return true;
         } catch (error) {
+            console.error(error);
             await client.query("ROLLBACK");
             throw error;
         } finally {
@@ -173,6 +178,7 @@ export default class PostgresPostContentRepository implements IPostContentReposi
             }));
             return latestPosts;
         } catch (error) {
+            console.error(error);
             throw error;
         } finally {
             client.release();

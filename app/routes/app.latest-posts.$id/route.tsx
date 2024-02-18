@@ -1,3 +1,4 @@
+import systemMessages from "../../messages/system-messages";
 import { LoaderFunctionArgs, json } from "@remix-run/node";
 import PostContent from "../../models/post/post-content";
 import { appLoadContext as context } from "../../dependency-injector/get-load-context";
@@ -15,10 +16,16 @@ export const loader = async ({
     request,
     params,
 }: LoaderFunctionArgs) => {
-    if (params.id === undefined || !params.id) return json([]);
-    const cookieHeader = request.headers.get("Cookie");
-    const session = await getSession(cookieHeader);
-    const profileId = session.get("userId") as string;
-    const postContents: PostContent[] = await context.latestPostsLoader.getLatestPosts(profileId);
-    return json(postContents);
+    try {
+        if (params.id === undefined || !params.id) return json([]);
+        const cookieHeader = request.headers.get("Cookie");
+        const session = await getSession(cookieHeader);
+        const profileId = session.get("userId") as string;
+        const postContents: PostContent[] = await context.latestPostsLoader.getLatestPosts(profileId);
+        return json(postContents);
+    } catch (error) {
+        console.error(error);
+        if (error instanceof TypeError || error instanceof Error) return json({ errorMessage: error.message });
+        return json({ errorMessage: systemMessages.error.unknownError });
+    }
 }

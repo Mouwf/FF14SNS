@@ -64,10 +64,7 @@ describe("editUserSetting", () => {
         // ユーザー設定が存在しない場合、エラーを投げる。
         if (responseFindUserSettingByProfileId === null) throw new Error("The user setting does not exist.");
 
-        // ユーザー設定を更新する。
-        const response = await delayAsync(() => userSettingAction.editUserSetting(responseFindUserSettingByProfileId));
-
-        // 結果を検証する。
-        expect(response).toBe(true);
+        // ユーザー設定を更新し、結果を検証する。
+        await expect(userSettingAction.editUserSetting(responseFindUserSettingByProfileId)).resolves.toBeUndefined();
     });
 });

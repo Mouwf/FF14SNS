@@ -41,6 +41,11 @@ describe("loader", () => {
         // 検証に必要な情報を取得する。
         const resultPostContents = await response.json();
 
+        // 配列でない場合、エラーを投げる。
+        if (!Array.isArray(resultPostContents)) {
+            throw new Error(resultPostContents.errorMessage);
+        }
+
         // 結果を検証する。
         expect(resultPostContents.length).toBe(1000);
     });
@@ -55,6 +60,11 @@ describe("loader", () => {
 
         // 検証に必要な情報を取得する。
         const resultPostContents = await response.json();
+
+        // 配列でない場合、エラーを投げる。
+        if (!Array.isArray(resultPostContents)) {
+            throw new Error(resultPostContents.errorMessage);
+        }
 
         // 結果を検証する。
         expect(resultPostContents.length).toBe(0);
@@ -72,6 +82,11 @@ describe("loader", () => {
 
         // 検証に必要な情報を取得する。
         const resultPostContents = await response.json();
+
+        // 配列でない場合、エラーを投げる。
+        if (!Array.isArray(resultPostContents)) {
+            throw new Error(resultPostContents.errorMessage);
+        }
 
         // 結果を検証する。
         expect(resultPostContents.length).toBe(0);

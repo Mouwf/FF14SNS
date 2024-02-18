@@ -17,10 +17,8 @@ export default class UserSettingAction {
     /**
      * ユーザー設定を更新する。
      * @param userSetting ユーザー設定。
-     * @returns 更新に成功したかどうか。
      */
-    public async editUserSetting(userSetting: UserSetting): Promise<boolean> {
-        const response = await this.userProfileManager.editUserSetting(userSetting);
-        return response;
+    public async editUserSetting(userSetting: UserSetting): Promise<void> {
+        await this.userProfileManager.editUserSetting(userSetting);
     }
 }

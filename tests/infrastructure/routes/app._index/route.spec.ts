@@ -93,6 +93,11 @@ describe("loader" , () => {
         // 検証に必要な情報を取得する。
         const posts = await response.json();
 
+        // 配列でない場合、エラーを投げる。
+        if (!Array.isArray(posts)) {
+            throw new Error(posts.errorMessage);
+        }
+
         // 結果を検証する。
         expect(posts.length).toBeGreaterThan(0);
         expect(posts[0].id).toBe(postId);
@@ -141,6 +146,11 @@ describe("loader" , () => {
 
         // 検証に必要な情報を取得する。
         const posts = await response.json();
+
+        // 配列でない場合、エラーを投げる。
+        if (!Array.isArray(posts)) {
+            throw new Error(posts.errorMessage);
+        }
 
         // 結果を検証する。
         expect(posts.length).toBeGreaterThan(0);

@@ -1,7 +1,10 @@
+import systemMessages from "../../messages/system-messages";
 import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@remix-run/node";
-import { Form } from "@remix-run/react";
+import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { commitSession, getSession } from "../../sessions";
 import { appLoadContext as context } from "../../dependency-injector/get-load-context";
+import { useContext, useEffect } from "react";
+import SystemMessageContext from "../../contexts/system-message/system-message-context";
 
 /**
  * ログインページのメタ情報を設定する。
@@ -23,17 +26,23 @@ export const meta: MetaFunction = () => {
 export const loader = async ({
     request,
 }: LoaderFunctionArgs) => {
-    // ログインしている場合、トップページにリダイレクトする。
-    const cookieHeader = request.headers.get("Cookie");
-    const session = await getSession(cookieHeader);
-    if (session.has("userId")) {
-        return redirect("/app", {
-            headers: {
-                "Set-Cookie": await commitSession(session),
-            },
-        });
+    try {
+        // ログインしている場合、トップページにリダイレクトする。
+        const cookieHeader = request.headers.get("Cookie");
+        const session = await getSession(cookieHeader);
+        if (session.has("userId")) {
+            return redirect("/app", {
+                headers: {
+                    "Set-Cookie": await commitSession(session),
+                },
+            });
+        }
+        return null;
+    } catch (error) {
+        console.error(error);
+        if (error instanceof TypeError || error instanceof Error) return json({ errorMessage: error.message });
+        return json({ errorMessage: systemMessages.error.unknownError });
     }
-    return null;
 }
 
 /**
@@ -88,7 +97,8 @@ export const action = async ({
         });
     } catch (error) {
         console.error(error);
-        return json({ error: "ログインに失敗しました。" });
+        if (error instanceof TypeError || error instanceof Error) return json({ errorMessage: error.message });
+        return json({ errorMessage: systemMessages.error.unknownError });
     }
 }
 
@@ -97,6 +107,21 @@ export const action = async ({
  * @returns ログインページ。
  */
 export default function Login() {
+    // システムメッセージを取得する。
+    const loaderData = useLoaderData<typeof loader>();
+    const loaderErrorMessage = loaderData && "errorMessage" in loaderData ? loaderData.errorMessage : "";
+    const actionData = useActionData<typeof action>();
+    const actionErrorMessage = actionData ? actionData.errorMessage : "";
+
+    // システムメッセージを表示する。
+    const { showSystemMessage } = useContext(SystemMessageContext);
+    useEffect(() => {
+        showSystemMessage("error", loaderErrorMessage);
+    }, [loaderData]);
+    useEffect(() => {
+        showSystemMessage("error", actionErrorMessage);
+    }, [actionData]);
+
     return (
         <Form method="post">
             <label>

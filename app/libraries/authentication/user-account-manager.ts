@@ -1,7 +1,8 @@
+import systemMessages from "../../messages/system-messages";
 import SignUpResponse from "../../models/authentication/signup-response";
 import IAuthenticationClient from "./i-authentication-client";
 import SignInWithEmailPasswordResponse from "../../models/authentication/signin-with-email-password-response";
-
+import SignUpValidator from "./sign-up-validator";
 
 /**
  * ユーザー管理を行うクラス。
@@ -20,21 +21,37 @@ export default class UserAccountManager {
      * ユーザーを登録する。
      * @param mailAddress メールアドレス。
      * @param password パスワード。
+     * @param confirmPassword 再確認パスワード。
      * @returns サインアップのレスポンス。
      */
-    public async register(mailAddress: string, password: string): Promise<SignUpResponse> {
-        const response = await this.authenticationClient.signUp(mailAddress, password);
-        return response;
+    public async register(mailAddress: string, password: string, confirmPassword: string): Promise<SignUpResponse> {
+        try {
+            // ユーザー登録のバリデーションを行う。
+            SignUpValidator.validate(password, confirmPassword);
+
+            // ユーザーを登録する。
+            const response = await this.authenticationClient.signUp(mailAddress, password);
+            return response;
+        } catch (error) {
+            console.error(error);
+            if (error instanceof TypeError) throw new Error(systemMessages.error.networkError);
+            throw new Error(systemMessages.error.signUpFailed);
+        }
     }
 
     /**
      * ユーザーを削除する。
      * @param token トークン。
-     * @returns 削除に成功したかどうか。
      */
-    public async delete(token: string): Promise<boolean> {
-        const response = await this.authenticationClient.deleteUser(token);
-        return response;
+    public async delete(token: string): Promise<void> {
+        try {
+            const response = await this.authenticationClient.deleteUser(token);
+            if (!response) throw new Error(systemMessages.error.authenticationUserDeletionFailed);
+        } catch (error) {
+            console.error(error);
+            if (error instanceof TypeError) throw new Error(systemMessages.error.networkError);
+            throw new Error(systemMessages.error.authenticationUserDeletionFailed);
+        }
     }
 
     /**
@@ -44,16 +61,26 @@ export default class UserAccountManager {
      * @returns メールアドレスとパスワードでサインインのレスポンス。
      */
     public async login(mailAddress: string, password: string): Promise<SignInWithEmailPasswordResponse> {
-        const response = await this.authenticationClient.signInWithEmailPassword(mailAddress, password);
-        return response;
+        try {
+            const response = await this.authenticationClient.signInWithEmailPassword(mailAddress, password);
+            return response;
+        } catch (error) {
+            console.error(error);
+            if (error instanceof TypeError) throw new Error(systemMessages.error.networkError);
+            throw new Error(systemMessages.error.invalidMailAddressOrPassword);
+        }
     }
 
     /**
      * ログアウトする。
      * @param token トークン。
-     * @returns ログアウトに成功したかどうか。
      */
-    public async logout(token: string): Promise<boolean> {
-        return true;
+    public async logout(token: string): Promise<void> {
+        try {
+        } catch (error) {
+            console.error(error);
+            if (error instanceof TypeError) throw new Error(systemMessages.error.networkError);
+            throw new Error(systemMessages.error.logoutFailed);
+        }
     }
 }
