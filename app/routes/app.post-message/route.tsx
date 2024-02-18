@@ -3,6 +3,7 @@ import { Form, useLoaderData } from "@remix-run/react";
 import { getSession } from "../../sessions";
 import { newlyPostedPostCookie } from "../../cookies.server";
 import { appLoadContext as context } from "../../dependency-injector/get-load-context";
+import styles from "./route.module.css";
 
 /**
  * メッセージ投稿ページのメタ情報を設定する。
@@ -93,16 +94,20 @@ export default function PostMessage() {
     }
 
     return (
-        <Form method="post">
-            <div>
-                {getReleaseVersionOptions()}
-            </div>
-            <div>
-                <textarea name="content" placeholder="メッセージを入力してください" />
-            </div>
-            <div>
-                <button type="submit">投稿</button>
-            </div>
-        </Form>
+        <div className={styles["post-message-area"]}>
+            <Form method="post">
+                <div className={styles["post-message"]}>
+                    <textarea name="content" placeholder="今日はどんな冒険をしましたか？" />
+                </div>
+                <div className={styles["post-message-container"]}>
+                    <div className={styles["post-release-version"]}>
+                        {getReleaseVersionOptions()}
+                    </div>
+                    <div>
+                        <button type="submit">投稿</button>
+                    </div>
+                </div>
+            </Form>
+        </div>
     );
 }
