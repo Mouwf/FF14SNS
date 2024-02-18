@@ -16,7 +16,7 @@ export default class SignUpValidator {
         if (password.length < 8 || !password.match(/^(?=.*?[a-z])(?=.*?\d)[a-z\d]{8,100}$/i)) throw new Error(systemMessages.error.invalidPasswordOnSetting);
 
         // パスワードと再確認パスワードが一致しない場合、エラーを返す。
-        if (password !== confirmPassword) throw new Error(systemMessages.error.passwordMismatc);
+        if (password !== confirmPassword) throw new Error(systemMessages.error.passwordMismatch);
         return true;
     }
 }

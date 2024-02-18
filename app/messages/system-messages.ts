@@ -17,7 +17,7 @@ const systemMessages: Messages = {
         databaseClientError: "データベースクライアントでエラーが発生しました。",
         invalidMailAddress: "メールアドレスが不正です。",
         invalidPasswordOnSetting: "パスワードは8文字以上の英数字で設定してください。",
-        passwordMismatc: "パスワードが一致していません。",
+        passwordMismatch: "パスワードが一致していません。",
         signUpFailed: "サインアップに失敗しました。",
         authenticationUserDeletionFailed: "認証ユーザーの削除に失敗しました。",
         invalidMailAddressOrPassword: "メールアドレスまたはパスワードが間違っています。",
