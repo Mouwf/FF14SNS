@@ -9,6 +9,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
+import SystemMessageProvider from "./contexts/system-message/system-message-provider";
 
 export const links: LinksFunction = () => [
   ...(cssBundleHref ? [
@@ -27,10 +28,12 @@ export default function App() {
         <Links />
       </head>
       <body>
-        <Outlet />
-        <ScrollRestoration />
-        <Scripts />
-        <LiveReload />
+        <SystemMessageProvider>
+          <Outlet />
+          <ScrollRestoration />
+          <Scripts />
+          <LiveReload />
+        </SystemMessageProvider>
       </body>
     </html>
   );

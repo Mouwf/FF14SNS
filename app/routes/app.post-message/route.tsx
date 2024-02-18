@@ -4,6 +4,8 @@ import { Form, useActionData, useLoaderData } from "@remix-run/react";
 import { getSession } from "../../sessions";
 import { newlyPostedPostCookie } from "../../cookies.server";
 import { appLoadContext as context } from "../../dependency-injector/get-load-context";
+import { useContext, useEffect } from "react";
+import SystemMessageContext from "../../contexts/system-message/system-message-context";
 
 /**
  * メッセージ投稿ページのメタ情報を設定する。
@@ -88,11 +90,20 @@ export const action = async ({
  * @returns メッセージ投稿ページ。
  */
 export default function PostMessage() {
-    // エラーメッセージを取得する。
+    // システムメッセージを取得する。
     const loaderData = useLoaderData<typeof loader>();
     const loaderErrorMessage = "errorMessage" in loaderData ? loaderData.errorMessage : "";
     const actionData = useActionData<typeof action>();
     const actionErrorMessage = actionData ? actionData.errorMessage : "";
+
+    // システムメッセージを表示する。
+    const { showSystemMessage } = useContext(SystemMessageContext);
+    useEffect(() => {
+        showSystemMessage("error", loaderErrorMessage);
+    }, [loaderData]);
+    useEffect(() => {
+        showSystemMessage("error", actionErrorMessage);
+    }, [actionData]);
 
     // リリース情報を取得する。
     const allReleaseInformation = "errorMessage" in loaderData ? [] : loaderData;

@@ -3,8 +3,9 @@ import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json } from "@rem
 import { getSession } from "../../sessions";
 import { appLoadContext as context } from "../../dependency-injector/get-load-context";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
 import ErrorDisplay from "../components/error-display";
+import SystemMessageContext from "../../contexts/system-message/system-message-context";
 
 /**
  * 設定ページのメタ情報を設定する。
@@ -90,12 +91,22 @@ export const action = async ({
  * 設定ページ。
  */
 export default function Setting() {
-    // エラーメッセージを取得する。
+    // システムメッセージを取得する。
     const loaderData = useLoaderData<typeof loader>();
     const loaderErrorMessage = "errorMessage" in loaderData ? loaderData.errorMessage : "";
     const actionData = useActionData<typeof action>();
     const actionSuccessMessage = actionData && "successMessage" in actionData ? actionData.successMessage : "";
     const actionErrorMessage = actionData && "errorMessage" in actionData ? actionData.errorMessage : "";
+
+    // システムメッセージを表示する。
+    const { showSystemMessage } = useContext(SystemMessageContext);
+    useEffect(() => {
+        showSystemMessage("error", loaderErrorMessage);
+    }, [loaderData]);
+    useEffect(() => {
+        showSystemMessage("success", actionSuccessMessage);
+        showSystemMessage("error", actionErrorMessage);
+    }, [actionData]);
 
     // ローダーでエラーが発生した場合、エラーメッセージを表示するコンポーネントを表示する。
     if ("errorMessage" in loaderData) {
@@ -105,7 +116,6 @@ export default function Setting() {
     }
 
     // ユーザー設定を取得する。
-    const settingLoaderData = "errorMessage" in loaderData ? { userSetting: {}, allReleaseInformation: [] } : loaderData;
     const userSetting = loaderData.userSetting;
 
     // リリース情報を全件表示する。

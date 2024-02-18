@@ -7,8 +7,9 @@ import { newlyPostedPostCookie } from "../../cookies.server";
 import { useFetcher, useLoaderData } from "@remix-run/react";
 import PostContent from "../../models/post/post-content";
 import InfiniteScroll from "../components/infinite-scroll";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { appLoadContext as context } from "../../dependency-injector/get-load-context";
+import SystemMessageContext from "../../contexts/system-message/system-message-context";
 import styles from "./route.module.css";
 
 /**
@@ -55,9 +56,15 @@ export const loader = async ({
  * @returns トップページのインデックス。
  */
 export default function TopIndex() {
-    // エラーメッセージを取得する。
+    // システムメッセージを取得する。
     const loaderData = useLoaderData<typeof loader>();
-    const errorMessage = "errorMessage" in loaderData ? loaderData.errorMessage : "";
+    const loaderErrorMessage = "errorMessage" in loaderData ? loaderData.errorMessage : "";
+
+    // システムメッセージを表示する。
+    const { showSystemMessage } = useContext(SystemMessageContext);
+    useEffect(() => {
+        showSystemMessage("error", loaderErrorMessage);
+    }, [loaderData]);
 
     // 最新の投稿を取得する。
     const fetcher = useFetcher<typeof loader>();
