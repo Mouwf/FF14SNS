@@ -6,6 +6,7 @@ import IPostContentRepository from "../../../app/repositories/post/i-post-conten
  */
 export default class MockPostContentRepository implements IPostContentRepository {
     public async create(posterId: number, releaseInformationId: number, content: string): Promise<number> {
+        if (content === "invalid_content") throw new Error("Invalid content.");
         return 1;
     }
 
@@ -18,6 +19,7 @@ export default class MockPostContentRepository implements IPostContentRepository
     }
 
     public async getLatestLimited(profileId: string, limit: number): Promise<PostContent[]> {
+        if (profileId === "invalid_profile_id") throw new Error("Invalid profile id.");
         if (profileId !== "username_world1") {
             const postContents: PostContent[] = Array(500).fill(null).map((_, index) => {
                 const incrementedId = index + 1;

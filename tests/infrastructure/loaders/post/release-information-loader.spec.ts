@@ -36,6 +36,7 @@ beforeEach(async () => {
     const releaseInformationGetter = new ReleaseInformationGetter(postgresReleaseInformationRepository);
     releaseInformationLoader = new ReleaseInformationLoader(releaseInformationGetter);
     postgresUserRepository = new PostgresUserRepository(postgresClientProvider);
+    await deleteRecordForTest();
 });
 
 afterEach(async () => {
@@ -43,12 +44,6 @@ afterEach(async () => {
 });
 
 describe("getReleaseInformation", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
-
     test("getReleaseInformation should return a release information.", async () => {
         // リリース情報を取得する。
         const releaseInformationId = 1;
@@ -62,12 +57,6 @@ describe("getReleaseInformation", () => {
 });
 
 describe("getAllReleaseInformation", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
-
     test("getAllReleaseInformation should return release informations.", async () => {
         // リリース情報を取得する。
         const response = await releaseInformationLoader.getAllReleaseInformation();

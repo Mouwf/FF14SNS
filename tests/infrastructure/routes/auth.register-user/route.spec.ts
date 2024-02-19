@@ -71,6 +71,11 @@ describe("loader", () => {
         // 検証に必要な情報を取得する。
         const responseAllReleaseInformation = await response.json();
 
+        // 配列でない場合、エラーを投げる。
+        if (!Array.isArray(responseAllReleaseInformation)) {
+            throw new Error(responseAllReleaseInformation.errorMessage);
+        }
+
         // 結果を検証する。
         expect(responseAllReleaseInformation.length).toBeGreaterThan(0);
     });

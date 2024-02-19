@@ -1,6 +1,7 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import MockAuthenticationClient from "./mock-authentication-client";
 import UserAccountManager from "../../../app/libraries/authentication/user-account-manager";
+import systemMessages from "../../../app/messages/system-messages";
 
 /**
  * ユーザー管理を行うクラス。
@@ -17,6 +18,11 @@ const mailAddress = "test@example.com";
  */
 const password = "testPassword123";
 
+/**
+ * 再確認パスワード。
+ */
+const confirmPassword = "testPassword123";
+
 beforeEach(() => {
     const mockAuthenticationClient = new MockAuthenticationClient();
     userAccountManager = new UserAccountManager(mockAuthenticationClient);
@@ -25,7 +31,7 @@ beforeEach(() => {
 describe("register", () => {
     test("register should register a user and return a SignUpResponse.", async () => {
         // ユーザーを登録する。
-        const response = await userAccountManager.register(mailAddress, password);
+        const response = await userAccountManager.register(mailAddress, password, confirmPassword);
 
         // 結果を検証する。
         const expectedResponse = {
@@ -43,7 +49,7 @@ describe("register", () => {
         try {
             // 無効なメールアドレスでユーザーを登録し、エラーを発生させる。
             const invalidMailAddress = "invalid-email";
-            await userAccountManager.register(invalidMailAddress, password);
+            await userAccountManager.register(invalidMailAddress, password, confirmPassword);
         } catch (error) {
             // エラーがErrorでない場合、エラーを投げる。
             if (!(error instanceof Error)) {
@@ -51,7 +57,7 @@ describe("register", () => {
             }
 
             // エラーを検証する。
-            expect(error.message).toBe("Invalid mail address.");
+            expect(error.message).toBe(systemMessages.error.signUpFailed);
         }
     });
 
@@ -60,7 +66,7 @@ describe("register", () => {
         try {
             // 無効なパスワードでユーザーを登録し、エラーを発生させる。
             const invalidPassword = "invalid-password";
-            await userAccountManager.register(mailAddress, invalidPassword);
+            await userAccountManager.register(mailAddress, invalidPassword, confirmPassword);
         } catch (error) {
             // エラーがErrorでない場合、エラーを投げる。
             if (!(error instanceof Error)) {
@@ -68,7 +74,49 @@ describe("register", () => {
             }
 
             // エラーを検証する。
-            expect(error.message).toBe("Invalid password.");
+            expect(error.message).toBe(systemMessages.error.signUpFailed);
+        }
+    });
+
+    test("register should throw an exception for invalid confirm password.", async () => {
+        expect.assertions(1);
+        try {
+            // 無効な再確認パスワードでユーザーを登録し、エラーを発生させる。
+            const invalidConfirmPassword = "invalid-confirm-password";
+            await userAccountManager.register(mailAddress, password, invalidConfirmPassword);
+        } catch (error) {
+            // エラーがErrorでない場合、エラーを投げる。
+            if (!(error instanceof Error)) {
+                throw error;
+            }
+
+            // エラーを検証する。
+            expect(error.message).toBe(systemMessages.error.signUpFailed);
+        }
+    });
+});
+
+describe("delete", () => {
+    test("delete should delete a user.", async () => {
+        // ユーザーを削除し、結果を検証する。
+        const token = "idToken";
+        await expect(userAccountManager.delete(token)).resolves.toBeUndefined();
+    });
+
+    test("delete should throw an exception for invalid token.", async () => {
+        expect.assertions(1);
+        try {
+            // 無効なトークンでユーザーを削除し、エラーを発生させる。
+            const token = "invalid-token";
+            await userAccountManager.delete(token);
+        } catch (error) {
+            // エラーがErrorでない場合、エラーを投げる。
+            if (!(error instanceof Error)) {
+                throw error;
+            }
+
+            // エラーを検証する。
+            expect(error.message).toBe(systemMessages.error.authenticationUserDeletionFailed);
         }
     });
 });
@@ -104,7 +152,7 @@ describe("login", () => {
             }
 
             // エラーを検証する。
-            expect(error.message).toBe("Invalid mail address.");
+            expect(error.message).toBe(systemMessages.error.invalidMailAddressOrPassword);
         }
     });
 
@@ -121,19 +169,16 @@ describe("login", () => {
             }
 
             // エラーを検証する。
-            expect(error.message).toBe("Invalid password.");
+            expect(error.message).toBe(systemMessages.error.invalidMailAddressOrPassword);
         }
     });
 });
 
 describe("logout", () => {
-    test("logout should logout and return true.", async () => {
-        // ログアウトする。
+    test("logout should logout.", async () => {
+        // ログアウトし、結果を検証する。
         const idToken = "idToken";
-        const response = await userAccountManager.logout(idToken);
-
-        // 結果を検証する。
-        expect(response).toBe(true);
+        await expect(userAccountManager.logout(idToken)).resolves.toBeUndefined();
     });
 
     // TODO: リフレッシュトークンを無効にしてログアウトする処理を追加した後にコメントアウトを外す。
@@ -153,32 +198,4 @@ describe("logout", () => {
     //         expect(error.message).toBe("Invalid token.");
     //     }
     // });
-});
-
-describe("delete", () => {
-    test("delete should delete a user and return true.", async () => {
-        // ユーザーを削除する。
-        const token = "idToken";
-        const response = await userAccountManager.delete(token);
-
-        // 結果を検証する。
-        expect(response).toBe(true);
-    });
-
-    test("delete should throw an exception for invalid token.", async () => {
-        expect.assertions(1);
-        try {
-            // 無効なトークンでユーザーを削除し、エラーを発生させる。
-            const token = "invalid-token";
-            await userAccountManager.delete(token);
-        } catch (error) {
-            // エラーがErrorでない場合、エラーを投げる。
-            if (!(error instanceof Error)) {
-                throw error;
-            }
-
-            // エラーを検証する。
-            expect(error.message).toBe("Invalid token.");
-        }
-    });
 });

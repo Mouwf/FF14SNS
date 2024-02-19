@@ -30,12 +30,6 @@ afterEach(async () => {
 });
 
 describe("action", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
-
     test("action should redirect register user page.", async () => {
         // アクションを実行し、結果を取得する。
         const requestWithMailAddressAndPassword = new Request("https://example.com", {

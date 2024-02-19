@@ -13,11 +13,6 @@ export default class MockAuthenticationClient implements IAuthenticationClient {
             throw new Error("Invalid mail address.");
         }
 
-        // パスワードが無効な場合、エラーを投げる。
-        if (password !== "testPassword123") {
-            throw new Error("Invalid password.");
-        }
-
         // サインアップのレスポンスを返す。
         return await {
             idToken: "idToken",

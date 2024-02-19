@@ -20,7 +20,7 @@ export default function InfiniteScroll<T extends Entity[]>({
     setContents,
 }: {
     children: ReactNode,
-    fetcher: FetcherWithComponents<SerializeFrom<T>>,
+    fetcher: FetcherWithComponents<SerializeFrom<T> | { errorMessage: string; }>,
     targetAddress: string,
     contents: T,
     setContents: Dispatch<SetStateAction<T>>,
@@ -68,7 +68,12 @@ export default function InfiniteScroll<T extends Entity[]>({
     useEffect(() => {
         // データがない場合、処理を終了する。
         if (!fetcher.data) return;
-        if (!Array.isArray(fetcher.data)) return;
+        if (!Array.isArray(fetcher.data)) {
+            if ("errorMessage" in fetcher.data) {
+                const errorMessage = fetcher.data.errorMessage;
+            }
+            return;
+        }
 
         // フェッチしたデータがない場合、無限スクロールを終了する。
         if (fetcher.data.length === 0) {

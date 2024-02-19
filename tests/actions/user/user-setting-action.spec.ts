@@ -15,16 +15,13 @@ beforeEach(() => {
 });
 
 describe("editUserSetting", () => {
-    test("editUserSetting should edit user setting and return true.", async () => {
-        // ユーザー設定を更新する。
+    test("editUserSetting should edit user setting.", async () => {
+        // ユーザー設定を更新し、結果を検証する。
         const userSetting = {
             userId: "username_world1",
             userName: "UserName@World1",
             currentReleaseInformationId: 1,
         };
-        const response = await userSettingAction.editUserSetting(userSetting);
-
-        // 結果を検証する。
-        expect(response).toBe(true);
+        await expect(userSettingAction.editUserSetting(userSetting)).resolves.toBeUndefined();
     });
 });

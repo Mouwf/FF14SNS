@@ -1,3 +1,5 @@
+import systemMessages from "../../messages/system-messages";
+
 /**
  * ユーザー登録のバリデーター。
  */
@@ -11,11 +13,11 @@ export default class UserRegistrationValidator {
      */
     public static validate(authenticationProviderId: string, userName: string): boolean {
         // 認証プロバイダIDが不正な場合、エラーを投げる。
-        if (!authenticationProviderId) throw new Error("認証プロバイダIDは必須です。");
+        if (!authenticationProviderId) throw new Error(systemMessages.error.authenticationFailed);
 
         // ユーザー名が不正な場合、エラーを投げる。
         const regex = /^[a-zA-Z0-9]*@{1}[a-zA-Z0-9]*$/;
-        if (!regex.test(userName)) throw new Error("ユーザー名は「username@world」で入力してください。");
+        if (!regex.test(userName)) throw new Error(systemMessages.error.invalidUserName);
 
         // バリデーションを通過した場合、trueを返す。
         return true;
