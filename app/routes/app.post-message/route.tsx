@@ -103,7 +103,7 @@ export default function PostMessage() {
                     <div className={styles["post-release-version"]}>
                         {getReleaseVersionOptions()}
                     </div>
-                    <div>
+                    <div className={styles["post-message-btn"]}>
                         <button type="submit">投稿</button>
                     </div>
                 </div>
