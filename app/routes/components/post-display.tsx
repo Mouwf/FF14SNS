@@ -52,7 +52,7 @@ export default function PostDisplay({
     return (
         <div className={styles["post"]}>
             <div className={styles["post-user-img-area"]}>
-                <img src="/images/dummy-profile.png" alt="プロフィール ダミー" />
+                <img src="/images/dummy-profile.png" width="57px" height="57px" alt="プロフィール ダミー" />
             </div>
             <div className={styles["post-contents-area"]}>
                 <div className={styles["post-information-container"]}>
