@@ -100,7 +100,7 @@ export default function Signup() {
     // システムメッセージを表示する。
     const { showSystemMessage } = useContext(SystemMessageContext);
     useEffect(() => {
-        showSystemMessage("error", actionErrorMessage);
+        showSystemMessage("error", loaderErrorMessage);
     }, [loaderData]);
     useEffect(() => {
         showSystemMessage("error", actionErrorMessage);
