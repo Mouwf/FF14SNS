@@ -1,3 +1,4 @@
+import systemMessages from "../../messages/system-messages";
 import PostgresClientProvider from "../common/postgres-client-provider";
 import ReleaseInformation from "../../models/post/release-information";
 import IReleaseInformationRepository from "./i-release-information-repository";
@@ -26,7 +27,7 @@ export default class PostgresReleaseInformationRepository implements IReleaseInf
             const result = await client.query(query, values);
 
             // リリース情報が存在しない場合、エラーを投げる。
-            if (result.rows.length === 0) throw new Error(`リリース情報が存在しません。releaseInformationId=${releaseInformationId}`);
+            if (result.rows.length === 0) throw new Error(`${systemMessages.error.releaseInformationRetrievalFailed}releaseInformationId=${releaseInformationId}`);
 
             // リリース情報を生成する。
             const releaseInformation = {
@@ -37,6 +38,7 @@ export default class PostgresReleaseInformationRepository implements IReleaseInf
             };
             return releaseInformation;
         } catch (error) {
+            console.error(error);
             throw error;
         } finally {
             client.release();
@@ -53,7 +55,7 @@ export default class PostgresReleaseInformationRepository implements IReleaseInf
             const result = await client.query(query);
 
             // リリース情報が存在しない場合、エラーを投げる。
-            if (result.rows.length === 0) throw new Error(`リリース情報が存在しません。`);
+            if (result.rows.length === 0) throw new Error(systemMessages.error.releaseInformationNotExists);
 
             // リリース情報を生成する。
             const allReleaseInformation = result.rows.map((releaseInformation) => {
@@ -66,6 +68,7 @@ export default class PostgresReleaseInformationRepository implements IReleaseInf
             });
             return allReleaseInformation;
         } catch (error) {
+            console.error(error);
             throw error;
         } finally {
             client.release();
@@ -115,6 +118,7 @@ export default class PostgresReleaseInformationRepository implements IReleaseInf
             }));
             return releaseInformationBelowUserSetting;
         } catch (error) {
+            console.error(error);
             throw error;
         } finally {
             client.release();

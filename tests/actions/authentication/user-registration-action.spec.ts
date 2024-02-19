@@ -18,6 +18,11 @@ const mailAddress = "test@example.com";
  */
 const password = "testPassword123";
 
+/**
+ * 再確認パスワード。
+ */
+const confirmPassword = "testPassword123";
+
 beforeEach(() => {
     const mockauthenticationClient = new MockAuthenticationClient();
     const userAccountManager: UserAccountManager = new UserAccountManager(mockauthenticationClient);
@@ -27,7 +32,7 @@ beforeEach(() => {
 describe("register", () => {
     test("register should register a user and return a SignUpResponse.", async () => {
         // ユーザーを登録する。
-        const response = await userRegistrationAction.register(mailAddress, password);
+        const response = await userRegistrationAction.register(mailAddress, password, confirmPassword);
 
         // 結果を検証する。
         const expectedResponse = {
@@ -42,12 +47,9 @@ describe("register", () => {
 });
 
 describe("delete", () => {
-    test("delete should delete a user and return true.", async () => {
-        // ユーザーを削除する。
+    test("delete should delete a user.", async () => {
+        // ユーザー削除し、結果を検証する。
         const token = "idToken";
-        const response = await userRegistrationAction.delete(token);
-
-        // 結果を検証する。
-        expect(response).toBe(true);
+        await expect(userRegistrationAction.delete(token)).resolves.toBeUndefined();
     });
 });

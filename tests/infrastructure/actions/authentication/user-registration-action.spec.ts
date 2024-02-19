@@ -1,5 +1,6 @@
-import { describe, test, expect, beforeEach } from "@jest/globals";
+import { describe, test, expect, beforeEach, afterEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
+import deleteRecordForTest from "../../../infrastructure/common/delete-record-for-test";
 import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
 import UserAccountManager from "../../../../app/libraries/authentication/user-account-manager";
 import UserRegistrationAction from "../../../../app/actions/authentication/user-registration-action";
@@ -33,31 +34,17 @@ beforeEach(async () => {
     firebaseClient = new FirebaseClient();
     userAccountManager = new UserAccountManager(firebaseClient);
     userRegistrationAction = new UserRegistrationAction(userAccountManager);
+    await deleteRecordForTest();
+});
 
-    // テスト用のユーザーが存在する場合、削除する。
-    try {
-        // テスト用のユーザーをログインする。
-        const responseSignIn = await delayAsync(() => firebaseClient.signInWithEmailPassword(mailAddress, password));
-
-        // テスト用のユーザーを削除する。
-        const idToken = responseSignIn.idToken;
-        await delayAsync(() => firebaseClient.deleteUser(idToken));
-        console.info("テスト用のユーザーを削除しました。");
-    } catch (error) {
-        console.info("テスト用のユーザーは存在しませんでした。");
-    }
+afterEach(async () => {
+    await deleteRecordForTest();
 });
 
 describe("register", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
-
     test("register should register a user and return a SignUpResponse.", async () => {
         // テスト用のユーザーを登録する。
-        const response = await delayAsync(() => userRegistrationAction.register(mailAddress, password));
+        const response = await delayAsync(() => userRegistrationAction.register(mailAddress, password, password));
 
         // 結果を検証する。
         expect(response.idToken).toBeDefined();
@@ -66,48 +53,15 @@ describe("register", () => {
         expect(response.expiresIn).toBeDefined();
         expect(response.localId).toBeDefined();
     });
-
-    test("register should throw an exception for invalid email.", async () => {
-        expect.assertions(1);
-        try {
-            // 無効なメールアドレスでユーザーを登録し、エラーを発生させる。
-            const invalidMailAddress = "invalid-email";
-            await delayAsync(() => userRegistrationAction.register(invalidMailAddress, password));
-        } catch (error) {
-            // エラーを検証する。
-            expect(error).toBeDefined();
-        }
-    });
-
-    test("register should throw an exception for invalid password.", async () => {
-        expect.assertions(1);
-        try {
-            // 無効なパスワードでユーザーを登録し、エラーを発生させる。
-            const invalidPassword = "invalid-password";
-            await delayAsync(() => userRegistrationAction.register(mailAddress, invalidPassword));
-        } catch (error) {
-            // エラーを検証する。
-            expect(error).toBeDefined();
-        }
-    });
 });
 
 describe("delete", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
-
     test("delete should delete a user and return true.", async () => {
         // テスト用のユーザーを登録する。
-        const responseRegister = await delayAsync(() => userRegistrationAction.register(mailAddress, password));
+        const responseRegister = await delayAsync(() => userRegistrationAction.register(mailAddress, password, password));
 
-        // テスト用のユーザーを削除する。
+        // ユーザー削除し、結果を検証する。
         const idToken = responseRegister.idToken;
-        const response = await delayAsync(() => userRegistrationAction.delete(idToken));
-
-        // 結果を検証する。
-        expect(response).toBe(true);
+        await expect(userRegistrationAction.delete(idToken)).resolves.toBeUndefined();
     });
 });

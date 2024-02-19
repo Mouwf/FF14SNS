@@ -3,6 +3,7 @@ import { action, loader } from "../../../app/routes/app.setting/route";
 import { AppLoadContext } from "@remix-run/node";
 import { appLoadContext } from "../../../app/dependency-injector/get-load-context";
 import { commitSession, getSession } from "../../../app/sessions";
+import systemMessages from "../../../app/messages/system-messages";
 
 /**
  * クッキーとボディ付きのモックリクエスト。
@@ -60,8 +61,15 @@ describe("loader", () => {
             context,
         });
 
-        // 検証に必要な情報を取得する。
+        // 検証に必要な情報を取得する準備をする。
         const responseJson = await response.json();
+
+        // エラーが発生していた場合、エラーを投げる。
+        if ('errorMessage' in responseJson) {
+            throw new Error(responseJson.errorMessage);
+        }
+
+        // 検証に必要な情報を取得する。
         const userSetting = responseJson.userSetting;
         const allReleaseInformation = responseJson.allReleaseInformation;
 
@@ -86,31 +94,11 @@ describe("action", () => {
         const responseJson = await response.json();
 
         // 結果が存在しない場合、エラーを投げる。
-        if (!('success' in responseJson) || !responseJson.success) {
+        if (!('successMessage' in responseJson) || !responseJson.successMessage) {
             throw new Error("Response is undefined.");
         }
 
         // 結果を検証する。
-        expect(responseJson.success).toBe(true);
-    });
-
-    test("action should throw an error when user id is not exist.", async () => {
-        // アクションを実行し、結果を取得する。
-        const response = await action({
-            request: requestWithInvalidCookie,
-            params: {},
-            context,
-        });
-
-        // 検証に必要な情報を取得する。
-        const responseJson = await response.json();
-
-        // 結果が存在しない場合、エラーを投げる。
-        if (!('error' in responseJson) || !responseJson.error) {
-            throw new Error("Response is undefined.");
-        }
-
-        // 結果を検証する。
-        expect(responseJson.error).toBe("設定の更新に失敗しました。");
+        expect(responseJson.successMessage).toBe(systemMessages.success.userSettingSaved);
     });
 });

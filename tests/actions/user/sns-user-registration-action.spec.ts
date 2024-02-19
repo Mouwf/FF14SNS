@@ -35,21 +35,15 @@ beforeEach(() => {
 });
 
 describe("register", () => {
-    test("register should register a user and return true.", async () => {
-        // ユーザーを登録する。
-        const response = await snsUserRegistrationAction.register(authenticationProviderId, userName, currentReleaseInformationId);
-
-        // 結果を検証する。
-        expect(response).toBe(true);
+    test("register should register a user.", async () => {
+        // ユーザーを登録し、結果を検証する。
+        await expect(snsUserRegistrationAction.register(authenticationProviderId, userName, currentReleaseInformationId)).resolves.toBeUndefined();
     });
 });
 
 describe("delete", () => {
-    test("delete should delete a user and return true.", async () => {
-        // ユーザーを削除する。
-        const response = await snsUserRegistrationAction.delete(id);
-
-        // 結果を検証する。
-        expect(response).toBe(true);
+    test("delete should delete a user.", async () => {
+        // ユーザーを削除し、結果を検証する。
+        await expect(snsUserRegistrationAction.delete(id)).resolves.toBeUndefined();
     });
 });

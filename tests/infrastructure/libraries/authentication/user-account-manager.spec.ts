@@ -1,9 +1,8 @@
 import { describe, test, expect, beforeEach, afterEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
 import deleteRecordForTest from "../../../infrastructure/common/delete-record-for-test";
-import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
 import UserAccountManager from "../../../../app/libraries/authentication/user-account-manager";
-import UserAuthenticationAction from "../../../../app/actions/authentication/user-authentication-action";
+import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
 
 /**
  * Firebaseのクライアント。
@@ -16,24 +15,18 @@ let firebaseClient: FirebaseClient;
 let userAccountManager: UserAccountManager;
 
 /**
- * ユーザー認証を行うアクション。
- */
-let userAuthenticationAction: UserAuthenticationAction;
-
-/**
- * メールアドレス。
+ * テスト用のメールアドレス。
  */
 const mailAddress = "test@example.com";
 
 /**
- * パスワード。
+ * テスト用のパスワード。
  */
 const password = "testPassword123";
 
 beforeEach(async () => {
     firebaseClient = new FirebaseClient();
     userAccountManager = new UserAccountManager(firebaseClient);
-    userAuthenticationAction = new UserAuthenticationAction(userAccountManager);
     await deleteRecordForTest();
 });
 
@@ -41,31 +34,47 @@ afterEach(async () => {
     await deleteRecordForTest();
 });
 
+describe("register", () => {
+    test("register should register a user.", async () => {
+        // テスト用のユーザーを登録する。
+        const response = await delayAsync(() => userAccountManager.register(mailAddress, password, password));
+
+        // 結果を検証する。
+        expect(response).toBeDefined();
+    });
+});
+
+describe("delete", () => {
+    test("delete should delete a user.", async () => {
+        // テスト用のユーザーを登録する。
+        const responseRegister = await delayAsync(() => userAccountManager.register(mailAddress, password, password));
+
+        // ユーザーを削除し、結果を検証する。
+        const idToken = responseRegister.idToken;
+        await expect(userAccountManager.delete(idToken)).resolves.toBeUndefined();
+    });
+});
+
 describe("login", () => {
-    test("login should login and return a SignInWithEmailPasswordResponse.", async () => {
+    test("login should login a user.", async () => {
         // テスト用のユーザーを登録する。
         await delayAsync(() => userAccountManager.register(mailAddress, password, password));
 
-        // テスト用のユーザーログインする。
-        const response = await delayAsync(() => userAuthenticationAction.login(mailAddress, password));
+        // テスト用のユーザーをログインする。
+        const response = await delayAsync(() => userAccountManager.login(mailAddress, password));
 
         // 結果を検証する。
-        expect(response.idToken).toBeDefined();
-        expect(response.email).toBe(mailAddress);
-        expect(response.refreshToken).toBeDefined();
-        expect(response.expiresIn).toBeDefined();
-        expect(response.localId).toBeDefined();
-        expect(response.registered).toBeDefined();
+        expect(response).toBeTruthy();
     });
 });
 
 describe("logout", () => {
-    test("logout should logout and return true.", async () => {
+    test("logout should logout a user.", async () => {
         // テスト用のユーザーを登録する。
         const responseRegister = await delayAsync(() => userAccountManager.register(mailAddress, password, password));
 
         // ログアウトし、結果を検証する。
         const idToken = responseRegister.idToken;
-        await expect(userAuthenticationAction.logout(idToken)).resolves.toBeUndefined();
+        await expect(userAccountManager.logout(idToken)).resolves.toBeUndefined();
     });
 });

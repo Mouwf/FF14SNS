@@ -18,20 +18,16 @@ export default class SnsUserRegistrationAction {
      * @param authenticationProviderId 認証プロバイダID。
      * @param userName ユーザー名。
      * @param currentReleaseInformationId 現在のリリース情報ID。
-     * @returns 登録に成功したかどうか。
      */
-    public async register(authenticationProviderId: string, userName: string, currentReleaseInformationId: number): Promise<boolean> {
-        const response = await this.userProfileManager.register(authenticationProviderId, userName, currentReleaseInformationId);
-        return response;
+    public async register(authenticationProviderId: string, userName: string, currentReleaseInformationId: number): Promise<void> {
+        await this.userProfileManager.register(authenticationProviderId, userName, currentReleaseInformationId);
     }
 
     /**
      * ユーザーを削除する。
      * @param id ユーザーID。
-     * @returns 削除に成功したかどうか。
      */
-    public async delete(id: number): Promise<boolean> {
-        const response = await this.userProfileManager.delete(id);
-        return response;
+    public async delete(id: number): Promise<void> {
+        await this.userProfileManager.delete(id);
     }
 }

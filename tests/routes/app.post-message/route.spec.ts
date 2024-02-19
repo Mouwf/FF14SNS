@@ -116,6 +116,11 @@ describe("loader", () => {
         // 検証に必要な情報を取得する。
         const resultAllReleaseInformation = await response.json();
 
+        // 配列でない場合、エラーを投げる。
+        if (!Array.isArray(resultAllReleaseInformation)) {
+            throw new Error(resultAllReleaseInformation.errorMessage);
+        }
+
         // 結果を検証する。
         expect(resultAllReleaseInformation.length).toBe(3);
         resultAllReleaseInformation.map((releaseInformation) => {
@@ -136,6 +141,11 @@ describe("loader", () => {
 
         // 検証に必要な情報を取得する。
         const resultAllReleaseInformation = await response.json();
+
+        // 配列でない場合、エラーを投げる。
+        if (!Array.isArray(resultAllReleaseInformation)) {
+            throw new Error(resultAllReleaseInformation.errorMessage);
+        }
 
         // 結果を検証する。
         expect(resultAllReleaseInformation.length).toBe(5);

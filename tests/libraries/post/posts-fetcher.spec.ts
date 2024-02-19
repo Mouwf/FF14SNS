@@ -1,6 +1,7 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import MockPostContentRepository from "../../repositories/post/mock-post-content-repository";
 import PostsFetcher from "../../../app/libraries/post/posts-fetcher";
+import systemMessages from "../../../app/messages/system-messages";
 
 /**
  * 投稿を取得するクラス。
@@ -57,5 +58,22 @@ describe("fetchLatestPosts", () => {
                 createdAt: expect.any(Date),
             });
         });
+    });
+
+    test("fetchLatestPosts should throw an exception invalid profile id.", async () => {
+        expect.assertions(1);
+        try {
+            // 無効なプロフィールIDで最新の投稿を取得し、エラーを発生させる。
+            const invalidProfileId = "invalid_profile_id";
+            await postsFetcher.fetchLatestPosts(invalidProfileId, 1000);
+        } catch (error) {
+            // エラーがErrorでない場合、エラーを投げる。
+            if (!(error instanceof Error)) {
+                throw error;
+            }
+
+            // エラーを検証する。
+            expect(error.message).toBe(systemMessages.error.postRetrievalFailed);
+        }
     });
 });

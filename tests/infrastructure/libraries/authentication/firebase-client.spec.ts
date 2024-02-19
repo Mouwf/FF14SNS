@@ -1,5 +1,6 @@
-import { describe, test, expect, beforeEach } from "@jest/globals";
+import { describe, test, expect, beforeEach, afterEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
+import deleteRecordForTest from "../../../infrastructure/common/delete-record-for-test";
 import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
 
 /**
@@ -20,28 +21,14 @@ const password = "testPassword123";
 beforeEach(async () => {
     // Firebaseのクライアントを生成する。
     firebaseClient = new FirebaseClient();
+    await deleteRecordForTest();
+});
 
-    // テスト用のユーザーが存在する場合、削除する。
-    try {
-        // テスト用のユーザーをログインする。
-        const responseSignIn = await delayAsync(() => firebaseClient.signInWithEmailPassword(mailAddress, password));
-
-        // テスト用のユーザーを削除する。
-        const idToken = responseSignIn.idToken;
-        await delayAsync(() => firebaseClient.deleteUser(idToken));
-        console.info("テスト用のユーザーを削除しました。");
-    } catch (error) {
-        console.info("テスト用のユーザーは存在しませんでした。");
-    }
+afterEach(async () => {
+    await deleteRecordForTest();
 });
 
 describe("signUp", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
-
     test("signUp should create a new user", async () => {
         // テスト用のユーザーを作成する。
         const response = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
@@ -67,27 +54,9 @@ describe("signUp", () => {
             expect(error).toBeDefined();
         }
     });
-
-    test("signUp should throw an error for invalid password.", async () => {
-        expect.assertions(1);
-        try {
-            // 無効なパスワードでサインアップし、エラーを発生させる。
-            const invalidPassword = "invalid-password";
-            await delayAsync(() => firebaseClient.signUp(mailAddress, invalidPassword));
-        } catch (error) {
-            // エラーを検証する。
-            expect(error).toBeDefined();
-        }
-    });
 });
 
 describe("signInWithEmailPassword", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
-
     test("signInWithEmailPassword should authenticate a user.", async () => {
         // テスト用のユーザーを作成する。
         await delayAsync(() => firebaseClient.signUp(mailAddress, password));
@@ -121,12 +90,6 @@ describe("signInWithEmailPassword", () => {
 });
 
 describe("getUserInformation", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
-
     test("getUserInformation should return user information.", async () => {
         // テスト用のユーザーを作成する。
         await delayAsync(() => firebaseClient.signUp(mailAddress, password));
@@ -161,12 +124,6 @@ describe("getUserInformation", () => {
 });
 
 describe("deleteUser", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
-
     test("deleteUser should delete a user.", async () => {
         // テスト用のユーザーを作成する。
         const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));

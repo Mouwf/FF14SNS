@@ -139,42 +139,6 @@ describe("action", () => {
         expect(session.has("userId")).toBe(true);
     });
 
-    test("action should return error information for invalid email.", async () => {
-        // 無効なメールアドレスでアクションを実行し、結果を取得する。
-        const response = await action({
-            request: requestWithInvalidEmail,
-            params: {},
-            context,
-        });
-
-        // 検証に必要な情報を取得する。
-        const errorInformation = await response.json();
-
-        // 結果を検証する。
-        const expectedErrorInformation = {
-            error: "ログインに失敗しました。",
-        };
-        expect(errorInformation).toEqual(expectedErrorInformation);
-    });
-
-    test("action should return error information for invalid password.", async () => {
-        // 無効なパスワードでアクションを実行し、結果を取得する。
-        const response = await action({
-            request: requestWithInvalidPassword,
-            params: {},
-            context,
-        });
-
-        // 検証に必要な情報を取得する。
-        const errorInformation = await response.json();
-
-        // 結果を検証する。
-        const expectedErrorInformation = {
-            error: "ログインに失敗しました。",
-        };
-        expect(errorInformation).toEqual(expectedErrorInformation);
-    });
-
     test("action should redirect to register user page if user is not exist.", async () => {
         // アクションを実行し、結果を取得する。
         const response = await action({

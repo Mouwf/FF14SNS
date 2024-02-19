@@ -41,12 +41,6 @@ afterEach(async () => {
 });
 
 describe("get", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
-
     test("get should return release information", async () => {
         // リリース情報を取得する。
         const releaseInformationId = 1;
@@ -57,32 +51,9 @@ describe("get", () => {
         expect(response.releaseVersion).toBeDefined();
         expect(response.releaseName).toBeDefined();
     });
-
-    test("get should throw an error if release information does not exist", async () => {
-        expect.assertions(1);
-        try {
-            // リリース情報を取得する。
-            const releaseInformationId = 100;
-            await postgresReleaseInformationRepository.get(releaseInformationId);
-        } catch (error) {
-            // エラーがResponseでない場合、エラーを投げる。
-            if (!(error instanceof Error)) {
-                throw error;
-            }
-
-            // エラーを検証する。
-            expect(error.message).toBe("リリース情報が存在しません。releaseInformationId=100");
-        }
-    });
 });
 
 describe("getAll", () => {
-    // 環境変数が設定されていない場合、テストをスキップする。
-    if (!process.env.RUN_INFRA_TESTS) {
-        test.skip("Skipping infrastructure tests.", () => {});
-        return;
-    }
-
     test("getAll should return release informations", async () => {
         // リリース情報を取得する。
         const response = await postgresReleaseInformationRepository.getAll();

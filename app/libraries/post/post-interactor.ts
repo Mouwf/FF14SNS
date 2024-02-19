@@ -1,3 +1,4 @@
+import systemMessages from "../../messages/system-messages";
 import IPostContentRepository from '../../repositories/post/i-post-content-repository';
 
 /**
@@ -21,7 +22,13 @@ export default class PostInteractor {
      * @returns 投稿ID。
      */
     public async post(posterId: number, releaseInformationId: number, content: string): Promise<number> {
-        const postId = await this.postContentRepository.create(posterId, releaseInformationId, content);
-        return postId;
+        try {
+            const postId = await this.postContentRepository.create(posterId, releaseInformationId, content);
+            return postId;
+        } catch (error) {
+            console.error(error);
+            if (error instanceof TypeError) throw new Error(systemMessages.error.networkError);
+            throw new Error(systemMessages.error.postFailed);
+        }
     }
 }

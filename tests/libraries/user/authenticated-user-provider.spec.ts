@@ -2,6 +2,7 @@ import { describe, test, expect, beforeEach } from "@jest/globals";
 import MockAuthenticationClient from "../../libraries/authentication/mock-authentication-client";
 import MockUserRepository from "../../repositories/user/mock-user-repository";
 import AuthenticatedUserProvider from "../../../app/libraries/user/authenticated-user-provider";
+import systemMessages from "../../../app/messages/system-messages";
 
 /**
  * 認証済みユーザーを提供するクラス。
@@ -55,6 +56,23 @@ describe("getUserByToken", () => {
         // 結果を検証する。
         expect(response).toBeNull();
     });
+
+    test("getUserByToken should throw an exception for invalid token.", async () => {
+        expect.assertions(1);
+        try {
+            // 無効なトークンでユーザーを取得し、エラーを発生させる。
+            const invalidToken = "invalidIdToken";
+            await authenticatedUserProvider.getUserByToken(invalidToken);
+        } catch (error) {
+            // エラーがErrorでない場合、エラーを投げる。
+            if (!(error instanceof Error)) {
+                throw error;
+            }
+
+            // エラーを検証する。
+            expect(error.message).toBe(systemMessages.error.userInformationRetrievalFailed);
+        }
+    });
 });
 
 describe("getUserByProfileId", () => {
@@ -80,13 +98,21 @@ describe("getUserByProfileId", () => {
         expect(response.createdAt).toBeInstanceOf(Date);
     });
 
-    test("getUserByProfileId should return null if the user does not exist.", async () => {
-        // テスト用のユーザーを登録する。
-        const invalidProfileId = "notExistProfileId";
-        const response = await authenticatedUserProvider.getUserByProfileId(invalidProfileId);
+    test("getUserByProfileId should throw an exception for not exist profile id.", async () => {
+        expect.assertions(1);
+        try {
+            // 無効なプロフィールIDでユーザーを取得し、エラーを発生させる。
+            const invalidProfileId = "notExistProfileId";
+            await authenticatedUserProvider.getUserByProfileId(invalidProfileId);
+        } catch (error) {
+            // エラーがErrorでない場合、エラーを投げる。
+            if (!(error instanceof Error)) {
+                throw error;
+            }
 
-        // 結果を検証する。
-        expect(response).toBeNull();
+            // エラーを検証する。
+            expect(error.message).toBe(systemMessages.error.userInformationRetrievalFailed);
+        }
     });
 });
 
@@ -97,5 +123,22 @@ describe("getAuthenticationProviderId", () => {
 
         // 結果を検証する。
         expect(authenticationProviderId).toBe("authenticationProviderId");
+    });
+
+    test("getAuthenticationProviderId should throw an exception for invalid token.", async () => {
+        expect.assertions(1);
+        try {
+            // 無効なトークンで認証プロバイダIDを取得し、エラーを発生させる。
+            const invalidToken = "invalidIdToken";
+            await authenticatedUserProvider.getAuthenticationProviderId(invalidToken);
+        } catch (error) {
+            // エラーがErrorでない場合、エラーを投げる。
+            if (!(error instanceof Error)) {
+                throw error;
+            }
+
+            // エラーを検証する。
+            expect(error.message).toBe(systemMessages.error.authenticationFailed);
+        }
     });
 });
