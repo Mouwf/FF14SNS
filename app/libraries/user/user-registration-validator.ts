@@ -17,7 +17,7 @@ export default class UserRegistrationValidator {
 
         // ユーザー名が不正な場合、エラーメッセージを保持する。
         const userNameErrors: string[] = [];
-        if (!userName.match(/^[a-zA-Z0-9]*@{1}[a-zA-Z0-9]*$/)) userNameErrors.push(systemMessages.error.invalidUserName);
+        if (!userName.match(/^[a-zA-Z0-9]+@{1}[a-zA-Z0-9]+$/)) userNameErrors.push(systemMessages.error.invalidUserName);
 
         // エラーがない場合、nullを返す。
         if (userNameErrors.length === 0) return null;
