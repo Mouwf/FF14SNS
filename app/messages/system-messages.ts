@@ -24,7 +24,7 @@ const systemMessages: Messages = {
         authenticationFailed: "認証に失敗しました。ログインし直してください。",
         authenticationProviderIdRetrievalFailed: "認証プロバイダIDの取得に失敗しました。",
         logoutFailed: "ログアウトに失敗しました。",
-        invalidUserName: "ユーザー名は「username@world」で入力してください。",
+        invalidUserName: "ユーザー名は「UserName@World」で入力してください。",
         userRegistrationFailed: "ユーザー登録に失敗しました。",
         userNotExists: "ユーザーが存在しません。",
         userDeletionFailed: "ユーザーの削除に失敗しました。",

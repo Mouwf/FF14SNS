@@ -34,6 +34,16 @@ beforeEach(() => {
     snsUserRegistrationAction = new SnsUserRegistrationAction(userProfileManager);
 });
 
+describe("validateRegistrationUser", () => {
+    test("validateRegistrationUser should validate registration user.", () => {
+        // ユーザー登録のバリデーションを行う。
+        const response = snsUserRegistrationAction.validateRegistrationUser(authenticationProviderId, userName);
+
+        // 結果を検証する。
+        expect(response).toBeNull();
+    });
+});
+
 describe("register", () => {
     test("register should register a user.", async () => {
         // ユーザーを登録し、結果を検証する。

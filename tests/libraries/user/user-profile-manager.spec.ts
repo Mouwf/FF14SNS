@@ -33,44 +33,51 @@ beforeEach(() => {
     userProfileManager = new UserProfileManager(mockUserRepository);
 });
 
+describe("validateRegistrationUser", () => {
+    test("validateRegistrationUser should validate registration user.", () => {
+        // ユーザー登録のバリデーションを行う。
+        const response = userProfileManager.validateRegistrationUser(authenticationProviderId, userName);
+
+        // 結果を検証する。
+        expect(response).toBeNull();
+    });
+
+    test("validateRegistrationUser should throw an error when authentication provider id is empty.", () => {
+        expect.assertions(1);
+        try {
+            // 無効な認証プロバイダIDでユーザー登録のバリデーションを行う。
+            const invalidAuthenticationProviderId = "";
+            userProfileManager.validateRegistrationUser(invalidAuthenticationProviderId, userName);
+        } catch (error) {
+            // エラーがErrorでない場合、エラーを投げる。
+            if (!(error instanceof Error)) {
+                throw error;
+            }
+
+            // エラーを検証する。
+            expect(error.message).toBe(systemMessages.error.userRegistrationFailed);
+        }
+    });
+
+    test("validateRegistrationUser should return error message for invalid user name.", () => {
+        // 無効なユーザー名でユーザー登録のバリデーションを行う。
+        const invalidUserName = "invalidUserName";
+        const response = userProfileManager.validateRegistrationUser(authenticationProviderId, invalidUserName);
+
+        // 結果を検証する。
+        const expectedResponse = {
+            userName: [
+                systemMessages.error.invalidUserName,
+            ],
+        };
+        expect(response).toEqual(expectedResponse);
+    });
+});
+
 describe("register", () => {
     test("register should register a user.", async () => {
         // ユーザーを登録し、結果を検証する。
         await expect(userProfileManager.register(authenticationProviderId, userName, currentReleaseInformationId)).resolves.toBeUndefined();
-    });
-
-    test("register should throw an error when authentication provider id is empty.", async () => {
-        expect.assertions(1);
-        try {
-            // ユーザーを登録する。
-            const invalidAuthenticationProviderId = "";
-            await userProfileManager.register(invalidAuthenticationProviderId, userName, currentReleaseInformationId);
-        } catch (error) {
-            // エラーがErrorでない場合、エラーを投げる。
-            if (!(error instanceof Error)) {
-                throw error;
-            }
-
-            // エラーを検証する。
-            expect(error.message).toBe(systemMessages.error.userRegistrationFailed);
-        }
-    });
-
-    test("register should throw an error when user name is correct format.", async () => {
-        expect.assertions(1);
-        try {
-            // ユーザーを登録する。
-            const invalidUserName = "invalidUserName";
-            await userProfileManager.register(authenticationProviderId, invalidUserName, currentReleaseInformationId);
-        } catch (error) {
-            // エラーがErrorでない場合、エラーを投げる。
-            if (!(error instanceof Error)) {
-                throw error;
-            }
-
-            // エラーを検証する。
-            expect(error.message).toBe(systemMessages.error.userRegistrationFailed);
-        }
     });
 });
 

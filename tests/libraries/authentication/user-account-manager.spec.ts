@@ -28,6 +28,61 @@ beforeEach(() => {
     userAccountManager = new UserAccountManager(mockAuthenticationClient);
 });
 
+describe("validateRegistrationUser", () => {
+    test("validateRegistrationUser should validate registration user.", () => {
+        // ユーザー登録のバリデーションを行う。
+        const response = userAccountManager.validateRegistrationUser(mailAddress, password, confirmPassword);
+
+        // 結果を検証する。
+        expect(response).toBeNull();
+    });
+
+    test("validateRegistrationUser should return error message for invalid email.", () => {
+        // 無効なメールアドレスでユーザー登録のバリデーションを行う。
+        const invalidMailAddress = "invalid-email";
+        const response = userAccountManager.validateRegistrationUser(invalidMailAddress, password, confirmPassword);
+
+        // 結果を検証する。
+        const expectedResponse = {
+            mailAddress: [
+                systemMessages.error.invalidMailAddress,
+            ],
+            password: [],
+        };
+        expect(response).toEqual(expectedResponse);
+    });
+
+    test("validateRegistrationUser should return error message for invalid password.", () => {
+        // 無効なパスワードでユーザー登録のバリデーションを行う。
+        const invalidPassword = "test";
+        const response = userAccountManager.validateRegistrationUser(mailAddress, invalidPassword, invalidPassword);
+
+        // 結果を検証する。
+        const expectedResponse = {
+            mailAddress: [],
+            password: [
+                systemMessages.error.invalidPasswordOnSetting,
+            ],
+        };
+        expect(response).toEqual(expectedResponse);
+    });
+
+    test("validateRegistrationUser should return error message for password mismatch.", () => {
+        // パスワードと再確認パスワードが一致しない場合、ユーザー登録のバリデーションを行う。
+        const invalidConfirmPassword = "invalid-confirm-password";
+        const response = userAccountManager.validateRegistrationUser(mailAddress, password, invalidConfirmPassword);
+
+        // 結果を検証する。
+        const expectedResponse = {
+            mailAddress: [],
+            password: [
+                systemMessages.error.passwordMismatch,
+            ],
+        };
+        expect(response).toEqual(expectedResponse);
+    });
+});
+
 describe("register", () => {
     test("register should register a user and return a SignUpResponse.", async () => {
         // ユーザーを登録する。
@@ -42,57 +97,6 @@ describe("register", () => {
             localId: "authenticationProviderId",
         };
         expect(response).toEqual(expectedResponse);
-    });
-
-    test("register should throw an exception for invalid email.", async () => {
-        expect.assertions(1);
-        try {
-            // 無効なメールアドレスでユーザーを登録し、エラーを発生させる。
-            const invalidMailAddress = "invalid-email";
-            await userAccountManager.register(invalidMailAddress, password, confirmPassword);
-        } catch (error) {
-            // エラーがErrorでない場合、エラーを投げる。
-            if (!(error instanceof Error)) {
-                throw error;
-            }
-
-            // エラーを検証する。
-            expect(error.message).toBe(systemMessages.error.signUpFailed);
-        }
-    });
-
-    test("register should throw an exception for invalid password.", async () => {
-        expect.assertions(1);
-        try {
-            // 無効なパスワードでユーザーを登録し、エラーを発生させる。
-            const invalidPassword = "invalid-password";
-            await userAccountManager.register(mailAddress, invalidPassword, confirmPassword);
-        } catch (error) {
-            // エラーがErrorでない場合、エラーを投げる。
-            if (!(error instanceof Error)) {
-                throw error;
-            }
-
-            // エラーを検証する。
-            expect(error.message).toBe(systemMessages.error.signUpFailed);
-        }
-    });
-
-    test("register should throw an exception for invalid confirm password.", async () => {
-        expect.assertions(1);
-        try {
-            // 無効な再確認パスワードでユーザーを登録し、エラーを発生させる。
-            const invalidConfirmPassword = "invalid-confirm-password";
-            await userAccountManager.register(mailAddress, password, invalidConfirmPassword);
-        } catch (error) {
-            // エラーがErrorでない場合、エラーを投げる。
-            if (!(error instanceof Error)) {
-                throw error;
-            }
-
-            // エラーを検証する。
-            expect(error.message).toBe(systemMessages.error.signUpFailed);
-        }
     });
 });
 
@@ -121,6 +125,46 @@ describe("delete", () => {
     });
 });
 
+describe("validateLogin", () => {
+    test("validateLogin should validate login.", () => {
+        // ログインのバリデーションを行う。
+        const response = userAccountManager.validateLogin(mailAddress, password);
+
+        // 結果を検証する。
+        expect(response).toBeNull();
+    });
+
+    test("validateLogin should return error message for invalid email.", () => {
+        // 無効なメールアドレスでログインのバリデーションを行う。
+        const invalidMailAddress = "invalid-email";
+        const response = userAccountManager.validateLogin(invalidMailAddress, password);
+
+        // 結果を検証する。
+        const expectedResponse = {
+            mailAddress: [
+                systemMessages.error.invalidMailAddress,
+            ],
+            password: [],
+        };
+        expect(response).toEqual(expectedResponse);
+    });
+
+    test("validateLogin should return error message for invalid password.", () => {
+        // 無効なパスワードでログインのバリデーションを行う。
+        const invalidPassword = "invalid-password";
+        const response = userAccountManager.validateLogin(mailAddress, invalidPassword);
+
+        // 結果を検証する。
+        const expectedResponse = {
+            mailAddress: [],
+            password: [
+                systemMessages.error.invalidPasswordOnSetting,
+            ],
+        };
+        expect(response).toEqual(expectedResponse);
+    });
+});
+
 describe("login", () => {
     test("login should login and return a SignInWithEmailPasswordResponse.", async () => {
         // ログインする。
@@ -137,40 +181,6 @@ describe("login", () => {
             registered: true,
         }
         expect(response).toEqual(expectedResponse);
-    });
-
-    test("login should throw an exception for invalid email.", async () => {
-        expect.assertions(1);
-        try {
-            // 無効なメールアドレスでログインし、エラーを発生させる。
-            const invalidMailAddress = "invalid-email";
-            await userAccountManager.login(invalidMailAddress, password);
-        } catch (error) {
-            // エラーがErrorでない場合、エラーを投げる。
-            if (!(error instanceof Error)) {
-                throw error;
-            }
-
-            // エラーを検証する。
-            expect(error.message).toBe(systemMessages.error.invalidMailAddressOrPassword);
-        }
-    });
-
-    test("login should throw an exception for invalid password.", async () => {
-        expect.assertions(1);
-        try {
-            // 無効なパスワードでログインし、エラーを発生させる。
-            const invalidPassword = "invalid-password";
-            await userAccountManager.login(mailAddress, invalidPassword);
-        } catch (error) {
-            // エラーがErrorでない場合、エラーを投げる。
-            if (!(error instanceof Error)) {
-                throw error;
-            }
-
-            // エラーを検証する。
-            expect(error.message).toBe(systemMessages.error.invalidMailAddressOrPassword);
-        }
     });
 });
 
