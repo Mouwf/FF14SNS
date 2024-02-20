@@ -26,8 +26,14 @@ export default class UserProfileManager {
      * @returns バリデーション結果。
      */
     public validateRegistrationUser(authenticationProviderId: string, userName: string): ClientUserRegistrationInputErrors | null {
-        const result = UserRegistrationValidator.validate(authenticationProviderId, userName);
-        return result;
+        try {
+            const result = UserRegistrationValidator.validate(authenticationProviderId, userName);
+            return result;
+        } catch (error) {
+            console.error(error);
+            if (error instanceof TypeError) throw new Error(systemMessages.error.networkError);
+            throw new Error(systemMessages.error.userRegistrationFailed);
+        }
     }
 
     /**

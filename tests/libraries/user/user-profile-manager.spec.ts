@@ -55,7 +55,7 @@ describe("validateRegistrationUser", () => {
             }
 
             // エラーを検証する。
-            expect(error.message).toBe(systemMessages.error.authenticationFailed);
+            expect(error.message).toBe(systemMessages.error.userRegistrationFailed);
         }
     });
 

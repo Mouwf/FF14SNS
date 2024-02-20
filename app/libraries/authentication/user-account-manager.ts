@@ -28,8 +28,14 @@ export default class UserAccountManager {
      * @returns バリデーション結果。
      */
     public validateRegistrationUser(mailAddress: string, password: string, confirmPassword: string): AuthenticationUserRegistrationInputErrors | null {
-        const result = SignUpValidator.validate(mailAddress, password, confirmPassword);
-        return result;
+        try {
+            const result = SignUpValidator.validate(mailAddress, password, confirmPassword);
+            return result;
+        } catch (error) {
+            console.error(error);
+            if (error instanceof TypeError) throw new Error(systemMessages.error.networkError);
+            throw new Error(systemMessages.error.signUpFailed);
+        }
     }
 
     /**
