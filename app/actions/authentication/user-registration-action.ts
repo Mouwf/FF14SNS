@@ -1,5 +1,6 @@
 import UserAccountManager from "../../libraries/authentication/user-account-manager";
 import SignUpResponse from "../../models/authentication/signup-response";
+import AuthenticationUserRegistrationInputErrors from "../../messages/authentication/authentication-user-registration-input-errors";
 
 /**
  * 認証するユーザーの登録をを行うアクション。
@@ -12,6 +13,18 @@ export default class UserRegistrationAction {
     constructor(
         private readonly userAccountManager: UserAccountManager,
     ) {
+    }
+
+    /**
+     * ユーザー登録のバリデーションを行う。
+     * @param mailAddress メールアドレス。
+     * @param password パスワード。
+     * @param confirmPassword 再確認パスワード。
+     * @returns バリデーション結果。
+     */
+    public validateRegistrationUser(mailAddress: string, password: string, confirmPassword: string): AuthenticationUserRegistrationInputErrors | null {
+        const result = this.userAccountManager.validateRegistrationUser(mailAddress, password, confirmPassword);
+        return result;
     }
 
     /**

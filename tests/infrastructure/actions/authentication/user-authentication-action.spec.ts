@@ -41,6 +41,16 @@ afterEach(async () => {
     await deleteRecordForTest();
 });
 
+describe("validateLogin", () => {
+    test("validateLogin should validate login.", () => {
+        // ログインのバリデーションを行う。
+        const response = userAuthenticationAction.validateLogin(mailAddress, password);
+
+        // 結果を検証する。
+        expect(response).toBeNull();
+    });
+});
+
 describe("login", () => {
     test("login should login and return a SignInWithEmailPasswordResponse.", async () => {
         // テスト用のユーザーを登録する。

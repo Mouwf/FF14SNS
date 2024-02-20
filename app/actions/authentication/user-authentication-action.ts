@@ -1,5 +1,6 @@
 import UserAccountManager from "../../libraries/authentication/user-account-manager";
 import SignInWithEmailPasswordResponse from "../../models/authentication/signin-with-email-password-response";
+import LoginInputErrors from "../../messages/authentication/login-input-errors";
 
 /**
  * ユーザー認証を行うアクション。
@@ -12,6 +13,17 @@ export default class UserAuthenticationAction {
     constructor(
         private readonly userAccountManager: UserAccountManager
     ) {
+    }
+
+    /**
+     * ログインのバリデーションを行う。
+     * @param mailAddress メールアドレス。
+     * @param password パスワード。
+     * @returns バリデーション結果。
+     */
+    public validateLogin(mailAddress: string, password: string): LoginInputErrors | null {
+        const result = this.userAccountManager.validateLogin(mailAddress, password);
+        return result;
     }
 
     /**

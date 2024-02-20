@@ -29,6 +29,16 @@ beforeEach(() => {
     userRegistrationAction = new UserRegistrationAction(userAccountManager);
 });
 
+describe("validateRegistrationUser", () => {
+    test("validateRegistrationUser should validate registration user.", () => {
+        // ユーザー登録のバリデーションを行う。
+        const response = userRegistrationAction.validateRegistrationUser(mailAddress, password, confirmPassword);
+
+        // 結果を検証する。
+        expect(response).toBeNull();
+    });
+});
+
 describe("register", () => {
     test("register should register a user and return a SignUpResponse.", async () => {
         // ユーザーを登録する。
