@@ -34,6 +34,7 @@ export default class UserAccountManager {
         } catch (error) {
             console.error(error);
             if (error instanceof TypeError) throw new Error(systemMessages.error.networkError);
+            if (error instanceof Error) throw new Error(error.message);
             throw new Error(systemMessages.error.signUpFailed);
         }
     }
@@ -79,8 +80,15 @@ export default class UserAccountManager {
      * @returns バリデーション結果。
      */
     public validateLogin(mailAddress: string, password: string): LoginInputErrors | null {
-        const result = LoginValidator.validate(mailAddress, password);
-        return result;
+        try {
+            const result = LoginValidator.validate(mailAddress, password);
+            return result;
+        } catch (error) {
+            console.error(error);
+            if (error instanceof TypeError) throw new Error(systemMessages.error.networkError);
+            if (error instanceof Error) throw new Error(error.message);
+            throw new Error(systemMessages.error.invalidMailAddressOrPassword);
+        }
     }
 
     /**
