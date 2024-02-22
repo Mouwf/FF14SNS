@@ -20,8 +20,8 @@ export default class SnsUserRegistrationAction {
      * @param userName ユーザー名。
      * @returns バリデーション結果。
      */
-    public validateRegistrationUser(authenticationProviderId: string, userName: string): ClientUserRegistrationInputErrors | null {
-        const result = this.userProfileManager.validateRegistrationUser(authenticationProviderId, userName);
+    public async validateRegistrationUser(authenticationProviderId: string, userName: string): Promise<ClientUserRegistrationInputErrors | null> {
+        const result = await this.userProfileManager.validateRegistrationUser(authenticationProviderId, userName);
         return result;
     }
 

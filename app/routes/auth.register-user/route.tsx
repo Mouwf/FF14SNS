@@ -76,7 +76,7 @@ export const action = async ({
 
         // バリデーションを行う。
         const snsUserRegistrationAction = context.snsUserRegistrationAction;
-        const inputErrors = snsUserRegistrationAction.validateRegistrationUser(authenticationProviderId, userName);
+        const inputErrors = await snsUserRegistrationAction.validateRegistrationUser(authenticationProviderId, userName);
         if (inputErrors) return json(inputErrors);
 
         // ユーザーを登録する。

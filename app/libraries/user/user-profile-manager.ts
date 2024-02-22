@@ -25,13 +25,14 @@ export default class UserProfileManager {
      * @param currentReleaseInformationId 現在のリリース情報ID。
      * @returns バリデーション結果。
      */
-    public validateRegistrationUser(authenticationProviderId: string, userName: string): ClientUserRegistrationInputErrors | null {
+    public async validateRegistrationUser(authenticationProviderId: string, userName: string): Promise<ClientUserRegistrationInputErrors | null> {
         try {
-            const result = UserRegistrationValidator.validate(authenticationProviderId, userName);
+            const result = await UserRegistrationValidator.validate(this.userRepository, authenticationProviderId, userName);
             return result;
         } catch (error) {
             console.error(error);
             if (error instanceof TypeError) throw new Error(systemMessages.error.networkError);
+            if (error instanceof Error) throw new Error(error.message);
             throw new Error(systemMessages.error.userRegistrationFailed);
         }
     }

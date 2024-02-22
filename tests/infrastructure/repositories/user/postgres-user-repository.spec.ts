@@ -115,6 +115,27 @@ describe("delete", () => {
     });
 });
 
+describe("existsByProfileId", () => {
+    test("existsByProfileId should return true for a user that exists", async () => {
+        // テスト用のユーザー情報を作成する。
+        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId));
+
+        // テスト用のユーザー情報が存在するかどうかを取得する。
+        const response = await delayAsync(() => postgresUserRepository.existsByProfileId(profileId));
+
+        // 結果を検証する。
+        expect(response).toBe(true);
+    });
+
+    test("existsByProfileId should return false for a user that does not exist", async () => {
+        // テスト用のユーザー情報が存在するかどうかを取得する。
+        const response = await delayAsync(() => postgresUserRepository.existsByProfileId(profileId));
+
+        // 結果を検証する。
+        expect(response).toBe(false);
+    });
+});
+
 describe("findByProfileId", () => {
     test("findByProfileId should return a user", async () => {
         // テスト用のユーザー情報を作成する。

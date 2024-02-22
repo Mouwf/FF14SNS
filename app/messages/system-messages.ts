@@ -27,6 +27,7 @@ const systemMessages: Messages = {
         invalidUserName: "ユーザー名は「UserName@World」で入力してください。",
         userRegistrationFailed: "ユーザー登録に失敗しました。",
         userNotExists: "ユーザーが存在しません。",
+        userAlreadyExists: "ユーザーが既に存在します。",
         userDeletionFailed: "ユーザーの削除に失敗しました。",
         userInformationRetrievalFailed: "ユーザー情報の取得に失敗しました。",
         userSettingRegistrationFailed: "ユーザー設定の登録に失敗しました。",
