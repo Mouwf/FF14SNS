@@ -46,9 +46,9 @@ afterEach(async () => {
 });
 
 describe("validateRegistrationUser", () => {
-    test("validateRegistrationUser should validate registration user.", () => {
+    test("validateRegistrationUser should validate registration user.", async () => {
         // ユーザー登録のバリデーションを行う。
-        const response = userProfileManager.validateRegistrationUser(authenticationProviderId, userName);
+        const response = await userProfileManager.validateRegistrationUser(authenticationProviderId, userName);
 
         // 結果を検証する。
         expect(response).toBeNull();

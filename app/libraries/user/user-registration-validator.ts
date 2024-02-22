@@ -1,5 +1,7 @@
 import systemMessages from "../../messages/system-messages";
+import IUserRepository from "../../repositories/user/i-user-repository";
 import ClientUserRegistrationInputErrors from "../../messages/user/client-user-registration-input-errors";
+import ProfileIdCreator from "./profile-id-creator";
 
 /**
  * ユーザー登録のバリデーター。
@@ -11,7 +13,12 @@ export default class UserRegistrationValidator {
      * @param userName ユーザー名。
      * @returns バリデーション結果。
      */
-    public static validate(authenticationProviderId: string, userName: string): ClientUserRegistrationInputErrors | null {
+    public static async validate(userRepository: IUserRepository, authenticationProviderId: string, userName: string): Promise<ClientUserRegistrationInputErrors | null> {
+        // ユーザー名が既に存在する場合、エラーを投げる。
+        const profileId = ProfileIdCreator.create(userName);
+        const doesUserExist = await userRepository.existsByProfileId(profileId);
+        if (doesUserExist) throw new Error(systemMessages.error.userAlreadyExists);
+
         // 認証プロバイダIDが不正な場合、エラーを投げる。
         if (!authenticationProviderId) throw new Error(systemMessages.error.authenticationFailed);
 
