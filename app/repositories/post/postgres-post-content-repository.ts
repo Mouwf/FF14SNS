@@ -185,11 +185,11 @@ export default class PostgresPostContentRepository implements IPostContentReposi
         }
     }
 
-    public async getLimitedByPosterId(posterId: number, limit: number): Promise<PostContent[]> {
+    public async getLimitedAfterId(profileId: string, postId: number, limit: number): Promise<PostContent[]> {
         throw new Error("Method not implemented.");
     }
 
-    public async getLimitedAfterId(profileId: string, postId: number, limit: number): Promise<PostContent[]> {
+    public async getLimitedByPosterId(posterId: number, limit: number): Promise<PostContent[]> {
         throw new Error("Method not implemented.");
     }
 }
