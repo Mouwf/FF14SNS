@@ -1,5 +1,8 @@
 import ReplyContent from "../../models/post/reply-content";
 
+/**
+ * リプライ内容リポジトリ。
+ */
 export default interface IReplyContentRepository {
     /**
      * リプライを作成する。
