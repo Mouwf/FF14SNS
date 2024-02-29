@@ -40,6 +40,10 @@ const systemMessages: Messages = {
         postDeletionFailed: "投稿の削除に失敗しました。",
         releaseInformationRetrievalFailed: "リリース情報の取得に失敗しました。",
         releaseInformationNotExists: "リリース情報が存在しません。",
+        replyContentNotInputted: "リプライ内容が入力されていません。",
+        replyFailed: "リプライに失敗しました。",
+        replyRetrievalFailed: "リプライの取得に失敗しました。",
+        replyDeletionFailed: "リプライの削除に失敗しました。",
     },
     success: {
         userSettingSaved: "ユーザー設定を保存しました。",

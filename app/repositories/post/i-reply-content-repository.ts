@@ -6,12 +6,12 @@ import ReplyContent from "../../models/post/reply-content";
 export default interface IReplyContentRepository {
     /**
      * リプライを作成する。
-     * @param posterId 投稿者ID。
+     * @param replierId リプライ者ID。
      * @param originalPostId リプライ先投稿ID。
      * @param originalReplyId リプライ先リプライID。
      * @param content リプライ内容。
      */
-    create(posterId: number, originalPostId: number, originalReplyId: number | null, content: string): Promise<void>;
+    create(replierId: number, originalPostId: number, originalReplyId: number | null, content: string): Promise<void>;
 
     /**
      * リプライを削除する。
