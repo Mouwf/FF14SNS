@@ -1,9 +1,9 @@
-import Entity from '../common/entity';
+import PostContent from './post-content';
 
 /**
  * リプライ内容。
  */
-export default interface ReplyContent extends Entity {
+export default interface ReplyContent extends PostContent {
     /**
      * 投稿者ID。
      */

@@ -2,7 +2,7 @@ import systemMessages from "../../messages/system-messages";
 import pg from "pg";
 
 /**
- * Postgresのクライアントを生成するクラス。
+ * Postgresクライアントプロバイダー。
  */
 export default class PostgresClientProvider {
     /**

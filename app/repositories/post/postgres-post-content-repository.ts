@@ -119,7 +119,17 @@ export default class PostgresPostContentRepository implements IPostContentReposi
     }
 
     public async getById(postId: number): Promise<PostContent> {
-        throw new Error("Method not implemented.");
+        const postContent = {
+            id: postId,
+            posterId: 1,
+            posterName: "UserName@World",
+            releaseInformationId: 1,
+            releaseVersion: "5.5",
+            releaseName: "ReleaseName",
+            content: "Mock content",
+            createdAt: new Date(),
+        };
+        return postContent;
     }
 
     public async getLatestLimited(profileId: string, limit: number): Promise<PostContent[]> {
