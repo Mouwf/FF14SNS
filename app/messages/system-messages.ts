@@ -47,6 +47,7 @@ const systemMessages: Messages = {
     },
     success: {
         userSettingSaved: "ユーザー設定を保存しました。",
+        replyMessagePosted: "返信しました。",
     },
 }
 export default systemMessages;

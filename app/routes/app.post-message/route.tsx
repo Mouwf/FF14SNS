@@ -22,6 +22,7 @@ export const meta: MetaFunction = () => {
  * リリース情報を取得するローダー。
  * @param request リクエスト。
  * @param context コンテキスト。
+ * @returns リリース情報。
  */
 export const loader = async ({
     request,
@@ -44,7 +45,7 @@ export const loader = async ({
  * メッセージを投稿するアクション。
  * @param request リクエスト。
  * @param context コンテキスト。
- * @returns メッセージを投稿するアクション。
+ * @returns 成功メッセージ。
  */
 export const action = async ({
     request,

@@ -1,4 +1,4 @@
-import PostDisplay from "../../components/post-display";
+import PostDisplay from "../../components/post-display/post-display";
 import PostContent from "../../../models/post/post-content";
 import styles from "./latest-post-time-line.module.css";
 
@@ -16,7 +16,7 @@ export default function LatestPostTimeLine({
         <div className={styles["post-time-line"]}>
             {postContents.map((postContent) => {
                 return (
-                    <PostDisplay key={postContent.id} postContent={postContent} />
+                    <PostDisplay key={postContent.id} postContent={postContent} isDirectNavigation={true} hasDetailAddress={true} hasInteraction={true} />
                 );
             })}
         </div>
