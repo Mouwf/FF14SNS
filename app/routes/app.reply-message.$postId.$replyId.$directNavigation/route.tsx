@@ -10,9 +10,9 @@ import ErrorDisplay from "../components/error-display";
 import { getSession } from "../../sessions";
 
 /**
- * 投稿を取得するローダー。
+ * リプライを取得するローダー。
  * @param params パラメータ。
- * @returns 投稿。
+ * @returns リプライ。
  */
 export const loader = async ({
     params,
@@ -71,8 +71,8 @@ export const action = async ({
 }
 
 /**
- * 投稿にリプライページ。
- * @returns 投稿にリプライページ。
+ * リプライにリプライページ。
+ * @returns リプライにリプライページ。
  */
 export default function ReplyMessage() {
     // システムメッセージを取得する。
