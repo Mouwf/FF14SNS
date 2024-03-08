@@ -1,11 +1,12 @@
 import systemMessages from "../../messages/system-messages";
 import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@remix-run/node";
-import { Form, useActionData, useLoaderData } from "@remix-run/react";
+import { useActionData, useLoaderData } from "@remix-run/react";
 import { getSession } from "../../sessions";
 import { newlyPostedPostCookie } from "../../cookies.server";
 import { appLoadContext as context } from "../../dependency-injector/get-load-context";
 import { useContext, useEffect } from "react";
 import SystemMessageContext from "../../contexts/system-message/system-message-context";
+import PostForm from "../components/post-form/post-form";
 
 /**
  * メッセージ投稿ページのメタ情報を設定する。
@@ -117,16 +118,8 @@ export default function PostMessage() {
     }
 
     return (
-        <Form method="post">
-            <div>
-                {getReleaseVersionOptions()}
-            </div>
-            <div>
-                <textarea name="content" placeholder="メッセージを入力してください" />
-            </div>
-            <div>
-                <button type="submit">投稿</button>
-            </div>
-        </Form>
+        <PostForm submitMessage="投稿">
+            {getReleaseVersionOptions()}
+        </PostForm>
     );
 }

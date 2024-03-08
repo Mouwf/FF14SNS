@@ -18,10 +18,10 @@ export const loader = async ({
     params,
 }: LoaderFunctionArgs) => {
     try {
-        const postId = Number(params.postId);
-        const postLoader = context.postLoader;
-        const post = await postLoader.getPostById(postId);
-        return json(post);
+        const replyId = Number(params.replyId);
+        const replyLoader = context.replyLoader;
+        const reply = await replyLoader.getReplyById(replyId);
+        return json(reply);
     }  catch (error) {
         console.error(error);
         if (error instanceof TypeError || error instanceof Error) return json({ errorMessage: error.message });
@@ -51,6 +51,7 @@ export const action = async ({
 
         // 投稿IDを取得する。
         const postId = Number(params.postId);
+        const replyId = Number(params.replyId);
 
         // フォームデータを取得する。
         const formData = await request.formData();
@@ -58,7 +59,7 @@ export const action = async ({
 
         // メッセージを投稿する。
         const replyMessageAction = context.replyMessageAction;
-        await replyMessageAction.reply(userId, postId, null, content);
+        await replyMessageAction.reply(userId, postId, replyId, content);
 
         // 成功メッセージを返す。
         return json({ successMessage: systemMessages.success.replyMessagePosted });
@@ -106,14 +107,14 @@ export default function ReplyMessage() {
         }
     }, [actionData]);
 
-    // 投稿を取得する。
-    const post = "errorMessage" in loaderData ? null : {
+    // リプライを取得する。
+    const reply = "errorMessage" in loaderData ? null : {
         ...loaderData,
         createdAt: new Date(loaderData.createdAt)
     };
 
     // ローダーでエラーが発生した場合、エラーメッセージを表示するコンポーネントを表示する。
-    if (!post) {
+    if (!reply) {
         return (
             <ErrorDisplay errorMessage={loaderErrorMessage} />
         );
@@ -121,7 +122,7 @@ export default function ReplyMessage() {
 
     return (
         <div>
-            <PostDisplay postContent={post} isDirectNavigation={false} hasDetailAddress={false} hasInteraction={false} />
+            <PostDisplay postContent={reply} isDirectNavigation={false} hasDetailAddress={false} hasInteraction={false} />
             <PostForm submitMessage="返信" />
         </div>
     );
