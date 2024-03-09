@@ -92,7 +92,7 @@ export default class PostgresPostContentRepository implements IPostContentReposi
                 return false;
             }
 
-            // 投稿テーブルからレコードを削除する。
+            // 指定された投稿を削除する。
             query = `
                 DELETE FROM posts WHERE id = $1;
             `;
@@ -119,17 +119,52 @@ export default class PostgresPostContentRepository implements IPostContentReposi
     }
 
     public async getById(postId: number): Promise<PostContent> {
-        const postContent = {
-            id: postId,
-            posterId: 1,
-            posterName: "UserName@World",
-            releaseInformationId: 1,
-            releaseVersion: "5.5",
-            releaseName: "ReleaseName",
-            content: "Mock content",
-            createdAt: new Date(),
-        };
-        return postContent;
+        const client = await this.postgresClientProvider.get();
+        try {
+            // 指定された投稿を取得する。
+            const query = `
+                SELECT
+                    posts.id,
+                    users.id AS user_id,
+                    users.user_name AS user_name,
+                    posts.content,
+                    posts.created_at AS created_at,
+                    post_release_information_association.release_information_id,
+                    release_information.release_version,
+                    release_information.release_name
+                FROM posts
+                JOIN users ON posts.user_id = users.id
+                LEFT JOIN post_release_information_association ON posts.id = post_release_information_association.post_id
+                LEFT JOIN release_information ON post_release_information_association.release_information_id = release_information.id
+                WHERE posts.id = $1;
+            `;
+            const values = [postId];
+            const result = await client.query(query, values);
+
+            // 結果がない場合、エラーを投げる。
+            if (result.rows.length === 0) {
+                throw new Error(`${systemMessages.error.postNotExists} 投稿ID: ${postId}`);
+            }
+
+            // 投稿を生成する。
+            const row = result.rows[0];
+            const postContent: PostContent = {
+                id: row.id,
+                posterId: row.user_id,
+                posterName: row.user_name,
+                content: row.content,
+                createdAt: row.created_at,
+                releaseInformationId: row.release_information_id,
+                releaseVersion: row.release_version,
+                releaseName: row.release_name
+            };
+            return postContent;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        } finally {
+            client.release();
+        }
     }
 
     public async getLatestLimited(profileId: string, limit: number): Promise<PostContent[]> {
