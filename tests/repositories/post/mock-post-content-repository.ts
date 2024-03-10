@@ -15,7 +15,17 @@ export default class MockPostContentRepository implements IPostContentRepository
     }
 
     public async getById(postId: number): Promise<PostContent> {
-        throw new Error("Method not implemented.");
+        return {
+            id: 1,
+            posterId: 1,
+            posterName: "UserName@World",
+            releaseInformationId: 1,
+            releaseVersion: "5.5",
+            releaseName: "ReleaseName",
+            replyCount: 4,
+            content: `Content 1`,
+            createdAt: new Date(),
+        };
     }
 
     public async getLatestLimited(profileId: string, limit: number): Promise<PostContent[]> {
@@ -30,6 +40,7 @@ export default class MockPostContentRepository implements IPostContentRepository
                     releaseInformationId: 1,
                     releaseVersion: "5.5",
                     releaseName: "ReleaseName",
+                    replyCount: 2,
                     content: `Content ${incrementedId}`,
                     createdAt: new Date(),
                 };
@@ -45,6 +56,7 @@ export default class MockPostContentRepository implements IPostContentRepository
                 releaseInformationId: 1,
                 releaseVersion: "5.5",
                 releaseName: "ReleaseName",
+                replyCount: 4,
                 content: `Content ${incrementedId}`,
                 createdAt: new Date(),
             };

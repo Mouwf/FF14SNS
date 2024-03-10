@@ -1,5 +1,6 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import MockPostContentRepository from "../../repositories/post/mock-post-content-repository";
+import MockReplyContentRepository from "../../repositories/post/mock-reply-content-repository";
 import PostInteractor from "../../../app/libraries/post/post-interactor";
 import systemMessages from "../../../app/messages/system-messages";
 
@@ -25,7 +26,8 @@ const content = "Content";
 
 beforeEach(() => {
     const mockPostContentRepository = new MockPostContentRepository();
-    postInteractor = new PostInteractor(mockPostContentRepository);
+    const mockReplyContentRepository = new MockReplyContentRepository();
+    postInteractor = new PostInteractor(mockPostContentRepository, mockReplyContentRepository);
 });
 
 describe("post", () => {
