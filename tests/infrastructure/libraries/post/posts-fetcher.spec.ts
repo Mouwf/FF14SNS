@@ -4,6 +4,7 @@ import deleteRecordForTest from "../../../infrastructure/common/delete-record-fo
 import { postgresClientProvider } from "../../../../app/dependency-injector/get-load-context";
 import PostgresUserRepository from "../../../../app/repositories/user/postgres-user-repository";
 import PostgresPostContentRepository from "../../../../app/repositories/post/postgres-post-content-repository";
+import PostgresReplyContentRepository from "../../../../app/repositories/post/postgres-reply-content-repository";
 import PostInteractor from "../../../../app/libraries/post/post-interactor";
 import PostsFetcher from "../../../../app/libraries/post/posts-fetcher";
 
@@ -16,6 +17,11 @@ let postgresUserRepository: PostgresUserRepository;
  * Postgresの投稿内容リポジトリ。
  */
 let postgresPostContentRepository: PostgresPostContentRepository;
+
+/**
+ * Postgresのリプライ内容リポジトリ。
+ */
+let postgresReplyContentRepository: PostgresReplyContentRepository;
 
 /**
  * 投稿に関する処理を行うクラス。
@@ -45,7 +51,8 @@ const currentReleaseInformationId = 1;
 beforeEach(async () => {
     postgresUserRepository = new PostgresUserRepository(postgresClientProvider);
     postgresPostContentRepository = new PostgresPostContentRepository(postgresClientProvider);
-    postInteractor = new PostInteractor(postgresPostContentRepository);
+    postgresReplyContentRepository = new PostgresReplyContentRepository(postgresClientProvider);
+    postInteractor = new PostInteractor(postgresPostContentRepository, postgresReplyContentRepository);
     postsFetcher = new PostsFetcher(postgresPostContentRepository);
     await deleteRecordForTest();
 });
@@ -79,6 +86,9 @@ describe("fetchLatestPosts" , () => {
         expect(posts[0].id).toBe(postId);
         expect(posts[0].posterId).toBe(profileId);
         expect(posts[0].releaseInformationId).toBe(1);
+        expect(posts[0].releaseVersion).toBeDefined();
+        expect(posts[0].releaseName).toBeDefined();
+        expect(posts[0].replyCount).toBeGreaterThanOrEqual(0);
         expect(posts[0].content).toBe(postContent);
         expect(posts[0].createdAt).toBeInstanceOf(Date);
     });

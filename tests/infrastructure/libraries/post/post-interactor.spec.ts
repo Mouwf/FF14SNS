@@ -5,6 +5,7 @@ import FirebaseClient from "../../../../app/libraries/authentication/firebase-cl
 import { postgresClientProvider } from "../../../../app/dependency-injector/get-load-context";
 import PostgresUserRepository from "../../../../app/repositories/user/postgres-user-repository";
 import PostgresPostContentRepository from "../../../../app/repositories/post/postgres-post-content-repository";
+import PostgresReplyContentRepository from "../../../../app/repositories/post/postgres-reply-content-repository";
 import PostInteractor from "../../../../app/libraries/post/post-interactor";
 
 /**
@@ -21,6 +22,11 @@ let postgresUserRepository: PostgresUserRepository;
  * Postgresの投稿内容リポジトリ。
  */
 let postgresPostContentRepository: PostgresPostContentRepository;
+
+/**
+ * Postgresのリプライ内容リポジトリ。
+ */
+let postgresReplyContentRepository: PostgresReplyContentRepository;
 
 /**
  * 投稿に関する処理を行うクラス。
@@ -51,7 +57,8 @@ beforeEach(async () => {
     firebaseClient = new FirebaseClient();
     postgresUserRepository = new PostgresUserRepository(postgresClientProvider);
     postgresPostContentRepository = new PostgresPostContentRepository(postgresClientProvider);
-    postInteractor = new PostInteractor(postgresPostContentRepository);
+    postgresReplyContentRepository = new PostgresReplyContentRepository(postgresClientProvider);
+    postInteractor = new PostInteractor(postgresPostContentRepository, postgresReplyContentRepository);
     await deleteRecordForTest();
 });
 
