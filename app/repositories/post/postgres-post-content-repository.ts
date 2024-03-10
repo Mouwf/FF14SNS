@@ -125,13 +125,21 @@ export default class PostgresPostContentRepository implements IPostContentReposi
             const query = `
                 SELECT
                     posts.id,
-                    users.id AS user_id,
+                    users.profile_id,
                     users.user_name AS user_name,
-                    posts.content,
-                    posts.created_at AS created_at,
                     post_release_information_association.release_information_id,
                     release_information.release_version,
-                    release_information.release_name
+                    release_information.release_name,
+                    (
+                        SELECT COUNT(*)
+                        FROM
+                            replies
+                        WHERE
+                            replies.original_post_id = posts.id
+                            AND replies.original_reply_id IS NULL
+                    ) AS reply_count,
+                    posts.content,
+                    posts.created_at AS created_at
                 FROM posts
                 JOIN users ON posts.user_id = users.id
                 LEFT JOIN post_release_information_association ON posts.id = post_release_information_association.post_id
@@ -150,13 +158,14 @@ export default class PostgresPostContentRepository implements IPostContentReposi
             const row = result.rows[0];
             const postContent: PostContent = {
                 id: row.id,
-                posterId: row.user_id,
+                posterId: row.profile_id,
                 posterName: row.user_name,
-                content: row.content,
-                createdAt: row.created_at,
                 releaseInformationId: row.release_information_id,
                 releaseVersion: row.release_version,
-                releaseName: row.release_name
+                releaseName: row.release_name,
+                replyCount: parseInt(row.reply_count),
+                content: row.content,
+                createdAt: row.created_at,
             };
             return postContent;
         } catch (error) {
@@ -191,9 +200,17 @@ export default class PostgresPostContentRepository implements IPostContentReposi
                     posts.id,
                     users.profile_id,
                     users.user_name,
-                    release_information.id AS release_information_id,
+                    post_release_information_association.release_information_id,
                     release_information.release_version,
                     release_information.release_name,
+                    (
+                        SELECT COUNT(*)
+                        FROM
+                            replies
+                        WHERE
+                            replies.original_post_id = posts.id
+                            AND replies.original_reply_id IS NULL
+                    ) AS reply_count,
                     posts.content,
                     posts.created_at
                 FROM
@@ -218,6 +235,7 @@ export default class PostgresPostContentRepository implements IPostContentReposi
                 releaseInformationId: post.release_information_id,
                 releaseVersion: post.release_version,
                 releaseName: post.release_name,
+                replyCount: parseInt(post.reply_count),
                 content: post.content,
                 createdAt: post.created_at,
             }));
