@@ -1,23 +1,23 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
-import MockPostContentRepository from "../../repositories/post/mock-post-content-repository";
-import PostsFetcher from "../../../app/libraries/post/posts-fetcher";
+import MockReplyContentRepository from "../../repositories/post/mock-reply-content-repository";
+import RepliesFetcher from "../../../app/libraries/post/replies-fetcher";
 import systemMessages from "../../../app/messages/system-messages";
 
 /**
- * 複数の投稿を取得するクラス。
+ * 複数のリプライを取得するクラス。
  */
-let postsFetcher: PostsFetcher;
+let repliesFetcher: RepliesFetcher;
 
 beforeEach(() => {
-    const postContentRepository = new MockPostContentRepository();
-    postsFetcher = new PostsFetcher(postContentRepository);
+    const replyContentRepository = new MockReplyContentRepository();
+    repliesFetcher = new RepliesFetcher(replyContentRepository);
 });
 
-describe("fetchLatestPosts", () => {
-    test("fetchLatestPosts should return 1000 posts.", async () => {
-        // 最新の投稿を取得する。
-        const profileId = "username_world1";
-        const response = await postsFetcher.fetchLatestPosts(profileId, 1000);
+describe("fetchAllByPostId", () => {
+    test("fetchAllByPostId should return replies.", async () => {
+        // リプライを取得する。
+        const postId = 1;
+        const response = await repliesFetcher.fetchAllByPostId(postId);
 
         // 結果を検証する。
         expect(response.length).toBe(1000);
@@ -28,6 +28,9 @@ describe("fetchLatestPosts", () => {
                 id: incrementedId,
                 posterId: 1,
                 posterName: "UserName@World",
+                originalPostId: 1,
+                originalReplyId: incrementedId,
+                replyNestingLevel: incrementedId,
                 releaseInformationId: 1,
                 releaseVersion: "5.5",
                 releaseName: "ReleaseName",
@@ -38,10 +41,10 @@ describe("fetchLatestPosts", () => {
         });
     });
 
-    test("fetchLatestPosts should return 500 posts.", async () => {
-        // 最新の投稿を取得する。
-        const profileId = "username_world2";
-        const response = await postsFetcher.fetchLatestPosts(profileId, 500);
+    test("fetchAllByPostId should return 500 replies.", async () => {
+        // リプライを取得する。
+        const postId = 2;
+        const response = await repliesFetcher.fetchAllByPostId(postId);
 
         // 結果を検証する。
         expect(response.length).toBe(500);
@@ -52,6 +55,9 @@ describe("fetchLatestPosts", () => {
                 id: incrementedId,
                 posterId: 1,
                 posterName: "UserName@World",
+                originalPostId: 1,
+                originalReplyId: incrementedId,
+                replyNestingLevel: incrementedId,
                 releaseInformationId: 1,
                 releaseVersion: "5.5",
                 releaseName: "ReleaseName",
@@ -62,12 +68,13 @@ describe("fetchLatestPosts", () => {
         });
     });
 
-    test("fetchLatestPosts should throw an exception invalid profile id.", async () => {
+    test("fetchAllByPostId should throw an error.", async () => {
+        // リプライを取得する。
         expect.assertions(1);
         try {
-            // 無効なプロフィールIDで最新の投稿を取得し、エラーを発生させる。
-            const invalidProfileId = "invalid_profile_id";
-            await postsFetcher.fetchLatestPosts(invalidProfileId, 1000);
+            // 無効な投稿IDでリプライを取得し、エラーを発生させる。
+            const postId = 3;
+            await repliesFetcher.fetchAllByPostId(postId);
         } catch (error) {
             // エラーがErrorでない場合、エラーを投げる。
             if (!(error instanceof Error)) {
@@ -75,7 +82,7 @@ describe("fetchLatestPosts", () => {
             }
 
             // エラーを検証する。
-            expect(error.message).toBe(systemMessages.error.postRetrievalFailed);
+            expect(error.message).toBe(systemMessages.error.replyRetrievalFailed);
         }
     });
 });

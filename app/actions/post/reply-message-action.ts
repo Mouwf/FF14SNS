@@ -20,7 +20,8 @@ export default class ReplyMessageAction {
      * @param originalReplyId リプライ先リプライID。
      * @param content リプライ内容。
      */
-    public async reply(replierId: number, origianlPostId: number, originalReplyId: number | null, content: string): Promise<void> {
-        await this.postInteractor.reply(replierId, origianlPostId, originalReplyId, content);
+    public async reply(replierId: number, origianlPostId: number, originalReplyId: number | null, content: string): Promise<number> {
+        const replyId = await this.postInteractor.reply(replierId, origianlPostId, originalReplyId, content);
+        return replyId;
     }
 }

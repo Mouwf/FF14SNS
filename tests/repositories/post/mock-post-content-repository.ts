@@ -23,7 +23,7 @@ export default class MockPostContentRepository implements IPostContentRepository
             releaseVersion: "5.5",
             releaseName: "ReleaseName",
             replyCount: 4,
-            content: `Content 1`,
+            content: "Content 1",
             createdAt: new Date(),
         };
     }

@@ -42,9 +42,10 @@ export default class PostInteractor {
      * @param originalReplyId リプライ先リプライID。
      * @param content リプライ内容。
      */
-    public async reply(replierId: number, origianlPostId: number, originalReplyId: number | null, content: string): Promise<void> {
+    public async reply(replierId: number, origianlPostId: number, originalReplyId: number | null, content: string): Promise<number> {
         try {
-            await this.replyContentRepository.create(replierId, origianlPostId, originalReplyId, content);
+            const replyId = await this.replyContentRepository.create(replierId, origianlPostId, originalReplyId, content);
+            return replyId;
         } catch (error) {
             console.error(error);
             if (error instanceof TypeError) throw new Error(systemMessages.error.networkError);

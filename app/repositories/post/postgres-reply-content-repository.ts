@@ -16,7 +16,7 @@ export default class PostgresReplyContentRepository implements IReplyContentRepo
     ) {
     }
 
-    public async create(replierId: number, originalPostId: number, originalReplyId: number | null, content: string): Promise<void> {
+    public async create(replierId: number, originalPostId: number, originalReplyId: number | null, content: string): Promise<number> {
         const client = await this.postgresClientProvider.get();
         try {
             await client.query("BEGIN");
@@ -34,7 +34,8 @@ export default class PostgresReplyContentRepository implements IReplyContentRepo
                     $2,
                     $3,
                     $4
-                );
+                )
+                RETURNING id;
             `;
             const replyInsertValues = [replierId, originalPostId, originalReplyId, content];
             const replyInsertResult = await client.query(replyInsertQuery, replyInsertValues);
@@ -42,8 +43,14 @@ export default class PostgresReplyContentRepository implements IReplyContentRepo
             // 結果がない場合、エラーを投げる。
             if (replyInsertResult.rowCount === 0) throw new Error(systemMessages.error.replyFailed);
 
+            // リプライIDを取得する。
+            const replyId = replyInsertResult.rows[0].id;
+
             // コミットする。
             await client.query("COMMIT");
+
+            // リプライIDを返す。
+            return replyId;
         } catch (error) {
             console.error(error);
             await client.query("ROLLBACK");

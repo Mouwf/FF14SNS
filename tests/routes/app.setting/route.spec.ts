@@ -65,7 +65,7 @@ describe("loader", () => {
         const responseJson = await response.json();
 
         // エラーが発生していた場合、エラーを投げる。
-        if ('errorMessage' in responseJson) {
+        if ("errorMessage" in responseJson) {
             throw new Error(responseJson.errorMessage);
         }
 
@@ -94,7 +94,7 @@ describe("action", () => {
         const responseJson = await response.json();
 
         // 結果が存在しない場合、エラーを投げる。
-        if (!('successMessage' in responseJson) || !responseJson.successMessage) {
+        if (!("successMessage" in responseJson) || !responseJson.successMessage) {
             throw new Error("Response is undefined.");
         }
 

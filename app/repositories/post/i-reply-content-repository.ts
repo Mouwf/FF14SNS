@@ -10,8 +10,9 @@ export default interface IReplyContentRepository {
      * @param originalPostId リプライ先投稿ID。
      * @param originalReplyId リプライ先リプライID。
      * @param content リプライ内容。
+     * @returns リプライID。
      */
-    create(replierId: number, originalPostId: number, originalReplyId: number | null, content: string): Promise<void>;
+    create(replierId: number, originalPostId: number, originalReplyId: number | null, content: string): Promise<number>;
 
     /**
      * リプライを削除する。
