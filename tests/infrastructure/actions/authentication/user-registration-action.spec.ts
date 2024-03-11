@@ -41,6 +41,16 @@ afterEach(async () => {
     await deleteRecordForTest();
 });
 
+describe("validateRegistrationUser", () => {
+    test("validateRegistrationUser should validate registration user.", () => {
+        // ユーザー登録のバリデーションを行う。
+        const response = userRegistrationAction.validateRegistrationUser(mailAddress, password, password);
+
+        // 結果を検証する。
+        expect(response).toBeNull();
+    });
+});
+
 describe("register", () => {
     test("register should register a user and return a SignUpResponse.", async () => {
         // テスト用のユーザーを登録する。

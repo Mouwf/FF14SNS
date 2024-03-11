@@ -22,6 +22,11 @@ export default class MockUserRepository implements IUserRepository {
         return true;
     }
 
+    public async existsByProfileId(profileId: string): Promise<boolean> {
+        if (profileId === "username_world2") return true;
+        return false;
+    }
+
     public async findById(id: string): Promise<User | null> {
         throw new Error("Method not implemented.");
     }

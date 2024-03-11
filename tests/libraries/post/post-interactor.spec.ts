@@ -1,5 +1,6 @@
 import { describe, test, expect, beforeEach } from "@jest/globals";
 import MockPostContentRepository from "../../repositories/post/mock-post-content-repository";
+import MockReplyContentRepository from "../../repositories/post/mock-reply-content-repository";
 import PostInteractor from "../../../app/libraries/post/post-interactor";
 import systemMessages from "../../../app/messages/system-messages";
 
@@ -23,9 +24,20 @@ const releaseInformationId = 1;
  */
 const content = "Content";
 
+/**
+ * リプライ先投稿ID。
+ */
+const originalPostId = 1;
+
+/**
+ * リプライ先リプライID。
+ */
+const originalReplyId = 1;
+
 beforeEach(() => {
     const mockPostContentRepository = new MockPostContentRepository();
-    postInteractor = new PostInteractor(mockPostContentRepository);
+    const mockReplyContentRepository = new MockReplyContentRepository();
+    postInteractor = new PostInteractor(mockPostContentRepository, mockReplyContentRepository);
 });
 
 describe("post", () => {
@@ -51,6 +63,41 @@ describe("post", () => {
 
             // エラーを検証する。
             expect(error.message).toBe(systemMessages.error.postFailed);
+        }
+    });
+});
+
+describe("reply", () => {
+    test("reply should reply a message and return a reply id.", async () => {
+        // リプライを行う。
+        const replyId = await postInteractor.reply(posterId, originalPostId, null, content);
+
+        // 結果を検証する。
+        expect(replyId).toBe(1);
+    });
+
+    test("reply should reply a message and return a reply id whhen original reply id is specified.", async () => {
+        // リプライを行う。
+        const replyId = await postInteractor.reply(posterId, originalPostId, originalReplyId, content);
+
+        // 結果を検証する。
+        expect(replyId).toBe(2);
+    });
+
+    test("reply should throw an exception invalid content.", async () => {
+        expect.assertions(1);
+        try {
+            // 無効な内容でリプライを行い、エラーを発生させる。
+            const invalidContent = "invalid_content";
+            await postInteractor.reply(posterId, originalPostId, null, invalidContent);
+        } catch (error) {
+            // エラーがErrorでない場合、エラーを投げる。
+            if (!(error instanceof Error)) {
+                throw error;
+            }
+
+            // エラーを検証する。
+            expect(error.message).toBe(systemMessages.error.replyFailed);
         }
     });
 });

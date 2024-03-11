@@ -3,6 +3,7 @@ import IUserRepository from "../../repositories/user/i-user-repository";
 import UserRegistrationValidator from "./user-registration-validator";
 import ProfileIdCreator from "./profile-id-creator";
 import UserSetting from "../../models/user/user-setting";
+import ClientUserRegistrationInputErrors from "../../messages/user/client-user-registration-input-errors";
 
 /**
  * ユーザー情報の管理を行うクラス。
@@ -18,6 +19,25 @@ export default class UserProfileManager {
     }
 
     /**
+     * ユーザー登録のバリデーションを行う。
+     * @param authenticationProviderId 認証プロバイダID。
+     * @param userName ユーザー名。
+     * @param currentReleaseInformationId 現在のリリース情報ID。
+     * @returns バリデーション結果。
+     */
+    public async validateRegistrationUser(authenticationProviderId: string, userName: string): Promise<ClientUserRegistrationInputErrors | null> {
+        try {
+            const result = await UserRegistrationValidator.validate(this.userRepository, authenticationProviderId, userName);
+            return result;
+        } catch (error) {
+            console.error(error);
+            if (error instanceof TypeError) throw new Error(systemMessages.error.networkError);
+            if (error instanceof Error) throw new Error(error.message);
+            throw new Error(systemMessages.error.userRegistrationFailed);
+        }
+    }
+
+    /**
      * ユーザーを登録する。
      * @param authenticationProviderId 認証プロバイダID。
      * @param userName ユーザー名。
@@ -25,9 +45,6 @@ export default class UserProfileManager {
      */
     public async register(authenticationProviderId: string, userName: string, currentReleaseInformationId: number): Promise<void> {
         try {
-            // ユーザー登録のバリデーションを行う。
-            UserRegistrationValidator.validate(authenticationProviderId, userName);
-
             // ユーザーを登録する。
             const profileId = ProfileIdCreator.create(userName);
             const response = await this.userRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId);

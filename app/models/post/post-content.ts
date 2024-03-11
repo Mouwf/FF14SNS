@@ -30,6 +30,11 @@ export default interface PostContent extends Entity {
     readonly releaseName: string;
 
     /**
+     * リプライ数。
+     */
+    readonly replyCount: number;
+
+    /**
      * 投稿内容。
      */
     readonly content: string;

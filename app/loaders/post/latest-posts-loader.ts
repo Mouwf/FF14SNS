@@ -8,7 +8,7 @@ import PostContent from "../../models/post/post-content";
 export default class LatestPostsLoader extends PostFetchLimit {
     /**
      * 最新の投稿を取得するローダーを生成する。
-     * @param postsFetcher 投稿を取得するクラス。
+     * @param postsFetcher 複数の投稿を取得するクラス。
      */
     constructor(
         private readonly postsFetcher: PostsFetcher,

@@ -1,4 +1,5 @@
 import UserProfileManager from "../../libraries/user/user-profile-manager";
+import ClientUserRegistrationInputErrors from "../../messages/user/client-user-registration-input-errors";
 
 /**
  * SNSのユーザー登録を行うアクション。
@@ -11,6 +12,17 @@ export default class SnsUserRegistrationAction {
     constructor(
         private readonly userProfileManager: UserProfileManager,
     ) {
+    }
+
+    /**
+     * ユーザー登録のバリデーションを行う。
+     * @param authenticationProviderId 認証プロバイダID。
+     * @param userName ユーザー名。
+     * @returns バリデーション結果。
+     */
+    public async validateRegistrationUser(authenticationProviderId: string, userName: string): Promise<ClientUserRegistrationInputErrors | null> {
+        const result = await this.userProfileManager.validateRegistrationUser(authenticationProviderId, userName);
+        return result;
     }
 
     /**

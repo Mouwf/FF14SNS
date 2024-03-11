@@ -74,8 +74,13 @@ export const action = async ({
         const authenticatedUserLoader = context.authenticatedUserLoader;
         const authenticationProviderId = await authenticatedUserLoader.getAuthenticationProviderId(idToken);
 
+        // バリデーションを行う。
+        const snsUserRegistrationAction = context.snsUserRegistrationAction;
+        const inputErrors = await snsUserRegistrationAction.validateRegistrationUser(authenticationProviderId, userName);
+        if (inputErrors) return json(inputErrors);
+
         // ユーザーを登録する。
-        await context.snsUserRegistrationAction.register(authenticationProviderId, userName, currentReleaseInformationId);
+        await snsUserRegistrationAction.register(authenticationProviderId, userName, currentReleaseInformationId);
 
         // 認証済みユーザーを取得する。
         const authenticatedUser = await authenticatedUserLoader.getUserByToken(idToken);
@@ -113,7 +118,7 @@ export default function RegisterUser() {
     const loaderData = useLoaderData<typeof loader>();
     const loaderErrorMessage = "errorMessage" in loaderData ? loaderData.errorMessage : "";
     const actionData = useActionData<typeof action>();
-    const actionErrorMessage = actionData ? actionData.errorMessage : "";
+    const actionErrorMessage = actionData && "errorMessage" in actionData ? actionData.errorMessage : "";
 
     // システムメッセージを表示する。
     const { showSystemMessage } = useContext(SystemMessageContext);
@@ -123,6 +128,9 @@ export default function RegisterUser() {
     useEffect(() => {
         showSystemMessage("error", actionErrorMessage);
     }, [actionData]);
+
+    // バリデーションエラーを取得する。
+    const inputErrors = actionData && "userName" in actionData ? actionData : null;
 
     // リリース情報を全件表示する。
     const allReleaseInformation = "errorMessage" in loaderData ? [] : loaderData;
@@ -138,10 +146,21 @@ export default function RegisterUser() {
         <Form method="post">
             { /** userNameにメールアドレスが入らないようにしている。 */ }
             <input type="text" style={{ display: "none" }} />
-            <label htmlFor="userName">FF14のユーザー名(UserName@world)</label>
-            <input type="text" name="userName" autoComplete="off" />
-            <label htmlFor="currentReleaseInformationId">現在のパッチ</label>
-            {getReleaseVersionOptions()}
+            {inputErrors && inputErrors.userName.length > 0 && 
+                <ul>
+                    {inputErrors.userName.map((errorMessage, index) => (
+                        <li key={index}>{errorMessage}</li>
+                    ))}
+                </ul>
+            }
+            <label>
+                <span>FF14のユーザー名(UserName@World)</span>
+                <input type="text" name="userName" autoComplete="off" />
+            </label>
+            <label>
+                <span>現在のパッチ</span>
+                {getReleaseVersionOptions()}
+            </label>
             <button type="submit">登録</button>
         </Form>
     );

@@ -1,12 +1,13 @@
 import systemMessages from "../../messages/system-messages";
 import { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction, json, redirect } from "@remix-run/node";
-import { Form, useActionData, useLoaderData } from "@remix-run/react";
+import { useActionData, useLoaderData } from "@remix-run/react";
 import { getSession } from "../../sessions";
 import { newlyPostedPostCookie } from "../../cookies.server";
 import { appLoadContext as context } from "../../dependency-injector/get-load-context";
 import styles from "./route.module.css";
 import { useContext, useEffect } from "react";
 import SystemMessageContext from "../../contexts/system-message/system-message-context";
+import PostForm from "../components/post-form/post-form";
 
 /**
  * メッセージ投稿ページのメタ情報を設定する。
@@ -23,6 +24,7 @@ export const meta: MetaFunction = () => {
  * リリース情報を取得するローダー。
  * @param request リクエスト。
  * @param context コンテキスト。
+ * @returns リリース情報。
  */
 export const loader = async ({
     request,
@@ -45,7 +47,7 @@ export const loader = async ({
  * メッセージを投稿するアクション。
  * @param request リクエスト。
  * @param context コンテキスト。
- * @returns メッセージを投稿するアクション。
+ * @returns 成功メッセージ。
  */
 export const action = async ({
     request,
@@ -117,20 +119,10 @@ export default function PostMessage() {
     }
 
     return (
-        <div className={styles["post-message-area"]}>
-            <Form method="post">
-                <div className={styles["post-message"]}>
-                    <textarea name="content" placeholder="今日はどんな冒険をしましたか？" />
-                </div>
-                <div className={styles["post-message-container"]}>
-                    <div className={styles["post-release-version"]}>
-                        {getReleaseVersionOptions()}
-                    </div>
-                    <div className={styles["post-message-btn"]}>
-                        <button type="submit">投稿</button>
-                    </div>
-                </div>
-            </Form>
-        </div>
+        <PostForm submitMessage="投稿">
+            <div className={styles["post-release-version"]}>
+                {getReleaseVersionOptions()}
+            </div>
+        </PostForm>
     );
 }

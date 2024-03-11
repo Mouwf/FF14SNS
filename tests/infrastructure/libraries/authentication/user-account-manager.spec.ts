@@ -34,6 +34,16 @@ afterEach(async () => {
     await deleteRecordForTest();
 });
 
+describe("validateRegistrationUser", () => {
+    test("validateRegistrationUser should validate registration user.", async () => {
+        // ユーザー登録のバリデーションを行う。
+        const response = await userAccountManager.validateRegistrationUser(mailAddress, password, password);
+
+        // 結果を検証する。
+        expect(response).toBeNull();
+    });
+});
+
 describe("register", () => {
     test("register should register a user.", async () => {
         // テスト用のユーザーを登録する。
@@ -52,6 +62,16 @@ describe("delete", () => {
         // ユーザーを削除し、結果を検証する。
         const idToken = responseRegister.idToken;
         await expect(userAccountManager.delete(idToken)).resolves.toBeUndefined();
+    });
+});
+
+describe("validateLogin", () => {
+    test("validateLogin should validate login.", () => {
+        // ログインのバリデーションを行う。
+        const response = userAccountManager.validateLogin(mailAddress, password);
+
+        // 結果を検証する。
+        expect(response).toBeNull();
     });
 });
 

@@ -61,8 +61,12 @@ export const action = async ({
         const password = formData.get("password") as string;
         const confirmPassword = formData.get("confirmPassword") as string;
 
-        // ユーザーを登録する。
+        // バリデーションを行う。
         const userRegistrationAction = context.userRegistrationAction;
+        const inputErrors = userRegistrationAction.validateRegistrationUser(mailAddress, password, confirmPassword);
+        if (inputErrors) return json(inputErrors);
+
+        // ユーザーを登録する。
         const response = await userRegistrationAction.register(mailAddress, password, confirmPassword);
 
         // IDトークンとリフレッシュトークンをセッションに保存する。
@@ -95,23 +99,40 @@ export default function Signup() {
     const loaderData = useLoaderData<typeof loader>();
     const loaderErrorMessage = loaderData && "errorMessage" in loaderData ? loaderData.errorMessage : "";
     const actionData = useActionData<typeof action>();
-    const actionErrorMessage = actionData ? actionData.errorMessage : "";
+    const actionErrorMessage = actionData && "errorMessage" in actionData ? actionData.errorMessage : "";
 
     // システムメッセージを表示する。
     const { showSystemMessage } = useContext(SystemMessageContext);
     useEffect(() => {
-        showSystemMessage("error", actionErrorMessage);
+        showSystemMessage("error", loaderErrorMessage);
     }, [loaderData]);
     useEffect(() => {
         showSystemMessage("error", actionErrorMessage);
     }, [actionData]);
 
+    // バリデーションエラーを取得する。
+    const inputErrors = actionData && "mailAddress" in actionData ? actionData : null;
+
     return (
         <Form method="post">
+            {inputErrors && inputErrors.mailAddress.length > 0 && 
+                <ul>
+                    {inputErrors.mailAddress.map((errorMessage, index) => (
+                        <li key={index}>{errorMessage}</li>
+                    ))}
+                </ul>
+            }
             <label>
                 <span>メールアドレス</span>
                 <input type="email" name="mailAddress" />
             </label>
+            {inputErrors && inputErrors.password.length > 0 && 
+                <ul>
+                    {inputErrors.password.map((errorMessage, index) => (
+                        <li key={index}>{errorMessage}</li>
+                    ))}
+                </ul>
+            }
             <label>
                 <span>パスワード</span>
                 <input type="password" name="password" />

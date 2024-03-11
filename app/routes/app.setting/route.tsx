@@ -139,8 +139,10 @@ export default function Setting() {
             <Form method="post">
                 <input type="hidden" name="userName" value={userSetting.userName} />
                 <div>
-                    <label htmlFor="currentReleaseInformationId">現在のパッチ</label>
-                    {getReleaseVersionOptions()}
+                    <label>
+                        <span>現在のパッチ</span>
+                        {getReleaseVersionOptions()}
+                    </label>
                 </div>
                 <button type="submit">設定</button>
             </Form>

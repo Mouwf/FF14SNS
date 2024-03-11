@@ -192,6 +192,26 @@ export default class PostgresUserRepository implements IUserRepository {
         }
     }
 
+    public async existsByProfileId(profileId: string): Promise<boolean> {
+        const client = await this.postgresClientProvider.get();
+        try {
+            // ユーザーが存在するかを取得する。
+            const query = `
+                SELECT 1 FROM users WHERE profile_id = $1 LIMIT 1;
+            `;
+            const values = [profileId];
+            const result = await client.query(query, values);
+
+            // ユーザーが存在するかどうかを返す。
+            return result.rows.length > 0;
+        } catch (error) {
+            console.error(error);
+            throw error;
+        } finally {
+            client.release();
+        }
+    }
+
     public async findById(id: string): Promise<User | null> {
         throw new Error('Method not implemented.');
     }

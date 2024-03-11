@@ -32,6 +32,7 @@ describe("getLatestPosts", () => {
                 releaseInformationId: 1,
                 releaseVersion: "5.5",
                 releaseName: "ReleaseName",
+                replyCount: 4,
                 content: content,
                 createdAt: expect.any(Date),
             });

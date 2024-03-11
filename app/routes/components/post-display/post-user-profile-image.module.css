@@ -1,0 +1,9 @@
+.post-user-img-area {
+    min-width: 57px;
+}
+
+@media (max-width: 599px) {
+    .post-user-img-area {
+        min-width: 32px;
+    }
+}

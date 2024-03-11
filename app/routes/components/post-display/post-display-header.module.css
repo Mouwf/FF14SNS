@@ -1,0 +1,31 @@
+.post-information-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.post-information {
+    display: flex;
+}
+
+.post-user-name {
+    width: fit-content;
+    min-width: 0px;
+    white-space: inherit;
+    overflow: hidden;
+    text-overflow: unset;
+    font-weight: 700;
+}
+
+.post-release-version {
+    margin-left: 16px;
+}
+
+.post-date {
+    color: #737373;
+}
+
+@media (max-width: 599px) {
+    .post-information-container {
+        display: block;
+    }
+}

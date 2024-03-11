@@ -4,6 +4,7 @@ import deleteRecordForTest from "../../../infrastructure/common/delete-record-fo
 import { postgresClientProvider } from "../../../../app/dependency-injector/get-load-context";
 import PostgresUserRepository from "../../../../app/repositories/user/postgres-user-repository";
 import PostgresPostContentRepository from "../../../../app/repositories/post/postgres-post-content-repository";
+import PostgresReplyContentRepository from "../../../../app/repositories/post/postgres-reply-content-repository";
 
 /**
  * Postgresのユーザーリポジトリ。
@@ -14,6 +15,11 @@ let postgresUserRepository: PostgresUserRepository;
  * Postgresの投稿内容リポジトリ。
  */
 let postgresPostContentRepository: PostgresPostContentRepository;
+
+/**
+ * Postgresのリプライ内容リポジトリ。
+ */
+let postgresReplyContentRepository: PostgresReplyContentRepository;
 
 /**
  * プロフィールID。
@@ -38,6 +44,7 @@ const currentReleaseInformationId = 1;
 beforeEach(async () => {
     postgresUserRepository = new PostgresUserRepository(postgresClientProvider);
     postgresPostContentRepository = new PostgresPostContentRepository(postgresClientProvider);
+    postgresReplyContentRepository = new PostgresReplyContentRepository(postgresClientProvider);
     await deleteRecordForTest();
 });
 
@@ -61,7 +68,7 @@ describe("create", () => {
         const postId = await postgresPostContentRepository.create(posterId, 1, "Content");
 
         // 結果を検証する。
-        expect(postId).toBeDefined();
+        expect(Number(postId)).toBeGreaterThan(0);
     });
 
     test("create should throw an error when the user does not exist.", async () => {
@@ -110,6 +117,38 @@ describe("delete", () => {
     });
 });
 
+describe("getById", () => {
+    test("getById should return a post.", async () => {
+        // テスト用のユーザー情報を登録する。
+        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId));
+
+        // 認証済みユーザーを取得する。
+        const responseAuthenticatedUser = await delayAsync(() => postgresUserRepository.findByAuthenticationProviderId(authenticationProviderId));
+
+        // ユーザーが存在しない場合、エラーを投げる。
+        if (responseAuthenticatedUser === null) throw new Error("The user does not exist.");
+
+        // メッセージを投稿する。
+        const posterId = responseAuthenticatedUser.id;
+        const postId = await postgresPostContentRepository.create(posterId, 1, "Content");
+
+        // 投稿を取得する。
+        const responseGetById = await delayAsync(() => postgresPostContentRepository.getById(postId));
+
+        // 結果を検証する。
+        expect(responseGetById).toBeDefined();
+        expect(responseGetById.id).toBe(postId);
+        expect(responseGetById.posterId).toBe(profileId);
+        expect(responseGetById.posterName).toBe(userName);
+        expect(responseGetById.releaseInformationId).toBe(1);
+        expect(responseGetById.releaseVersion).toBeDefined();
+        expect(responseGetById.releaseName).toBeDefined();
+        expect(responseGetById.replyCount).toBe(0);
+        expect(responseGetById.content).toBe("Content");
+        expect(responseGetById.createdAt).toBeInstanceOf(Date);
+    });
+});
+
 describe("getLatestLimited", () => {
     test("getLatestLimited should return a post.", async () => {
         // テスト用のユーザー情報を登録する。
@@ -131,6 +170,40 @@ describe("getLatestLimited", () => {
         // 結果を検証する。
         expect(responseGetLatestLimited.length).toBeGreaterThan(0);
         expect(responseGetLatestLimited).toBeDefined();
+    });
+
+    test("getLatestLimited should return a post when having a reply.", async () => {
+        // テスト用のユーザー情報を登録する。
+        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId));
+
+        // 認証済みユーザーを取得する。
+        const responseAuthenticatedUser = await delayAsync(() => postgresUserRepository.findByAuthenticationProviderId(authenticationProviderId));
+
+        // ユーザーが存在しない場合、エラーを投げる。
+        if (responseAuthenticatedUser === null) throw new Error("The user does not exist.");
+
+        // メッセージを投稿する。
+        const posterId = responseAuthenticatedUser.id;
+        const postId = await postgresPostContentRepository.create(posterId, 1, "Content");
+
+        // リプライを行う。
+        await postgresReplyContentRepository.create(posterId, postId, null, "Content");
+
+        // 投稿を取得する。
+        const responseGetLatestLimited = await delayAsync(() => postgresPostContentRepository.getLatestLimited(profileId, 100));
+
+        // 結果を検証する。
+        expect(responseGetLatestLimited).toBeDefined();
+        expect(responseGetLatestLimited.length).toBeGreaterThan(0);
+        expect(responseGetLatestLimited[0].id).toBe(postId);
+        expect(responseGetLatestLimited[0].posterId).toBe(profileId);
+        expect(responseGetLatestLimited[0].posterName).toBe(userName);
+        expect(responseGetLatestLimited[0].releaseInformationId).toBe(1);
+        expect(responseGetLatestLimited[0].releaseVersion).toBeDefined();
+        expect(responseGetLatestLimited[0].releaseName).toBeDefined();
+        expect(responseGetLatestLimited[0].replyCount).toBe(1);
+        expect(responseGetLatestLimited[0].content).toBe("Content");
+        expect(responseGetLatestLimited[0].createdAt).toBeInstanceOf(Date);
     });
 
     test("getLatestLimited should return an empty array when the post does not exist.", async () => {

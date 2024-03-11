@@ -1,0 +1,11 @@
+.post {
+    display: flex;
+    padding: 12px;
+    border: 1px solid #4B4B4B;
+    background: #1e1e1e;
+}
+
+.post-contents-area {
+    width: 100%;
+    margin-left: 10px;
+}
