@@ -36,13 +36,20 @@ const systemMessages: Messages = {
         userSettingRetrievalFailed: "ユーザー設定の取得に失敗しました。",
         postContentNotInputted: "投稿内容が入力されていません。",
         postFailed: "投稿に失敗しました。",
+        postNotExists: "投稿が存在しません。",
         postRetrievalFailed: "投稿の取得に失敗しました。",
         postDeletionFailed: "投稿の削除に失敗しました。",
         releaseInformationRetrievalFailed: "リリース情報の取得に失敗しました。",
         releaseInformationNotExists: "リリース情報が存在しません。",
+        replyContentNotInputted: "リプライ内容が入力されていません。",
+        replyFailed: "リプライに失敗しました。",
+        replyNotExists: "リプライが存在しません。",
+        replyRetrievalFailed: "リプライの取得に失敗しました。",
+        replyDeletionFailed: "リプライの削除に失敗しました。",
     },
     success: {
         userSettingSaved: "ユーザー設定を保存しました。",
+        replyMessagePosted: "返信しました。",
     },
 }
 export default systemMessages;

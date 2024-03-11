@@ -6,6 +6,9 @@ import MockAuthenticationClient from "../libraries/authentication/mock-authentic
 import UserAccountManager from "../../app/libraries/authentication/user-account-manager";
 import AuthenticatedUserProvider from "../../app/libraries/user/authenticated-user-provider";
 import LatestPostsLoader from "../../app/loaders/post/latest-posts-loader";
+import PostLoader from "../../app/loaders/post/post-loader";
+import RepliesLoader from "../../app/loaders/post/replies-loader";
+import ReplyLoader from "../../app/loaders/post/reply-loader";
 import SnsUserRegistrationAction from "../../app/actions/user/sns-user-registration-action";
 import UserProfileManager from "../../app/libraries/user/user-profile-manager";
 import MockUserRepository from "../repositories/user/mock-user-repository";
@@ -13,9 +16,14 @@ import MockReleaseInformationRepository from "../repositories/post/mock-release-
 import ReleaseInformationGetter from "../../app/libraries/post/release-information-getter";
 import ReleaseInformationLoader from "../../app/loaders/post/release-information-loader";
 import MockPostContentRepository from "../repositories/post/mock-post-content-repository";
+import MockReplyContentRepository from "../repositories/post/mock-reply-content-repository";
 import PostInteractor from "../../app/libraries/post/post-interactor";
 import PostMessageAction from "../../app/actions/post/post-message-action";
+import ReplyMessageAction from "../../app/actions/post/reply-message-action";
 import PostsFetcher from "../../app/libraries/post/posts-fetcher";
+import PostFetcher from "../../app/libraries/post/post-fetcher";
+import RepliesFetcher from "../../app/libraries/post/replies-fetcher";
+import ReplyFetcher from "../../app/libraries/post/reply-fetcher";
 import UserSettingAction from "../../app/actions/user/user-setting-action";
 import UserSettingLoader from "../../app/loaders/user/user-setting-loader";
 
@@ -42,12 +50,20 @@ const userSettingLoader = new UserSettingLoader(userProfileManager);
 
 // メッセージを投稿するためのクラスを生成する。
 const postContentRepository = new MockPostContentRepository();
-const postInteractor = new PostInteractor(postContentRepository);
+const replyContentRepository = new MockReplyContentRepository();
+const postInteractor = new PostInteractor(postContentRepository, replyContentRepository);
 const postMessageAction = new PostMessageAction(postInteractor);
+const replyMessageAction = new ReplyMessageAction(postInteractor);
 
 // 最新の投稿を取得するためのクラスを生成する。
 const postsFetcher = new PostsFetcher(postContentRepository);
 const latestPostsLoader = new LatestPostsLoader(postsFetcher);
+const postFetcher = new PostFetcher(postContentRepository);
+const postLoader = new PostLoader(postFetcher);
+const repliesFetcher = new RepliesFetcher(replyContentRepository);
+const repliesLoader = new RepliesLoader(repliesFetcher);
+const replyFetcher = new ReplyFetcher(replyContentRepository);
+const replyLoader = new ReplyLoader(replyFetcher);
 
 // リリース情報を取得するためのクラスを生成する。
 const releaseInformationRepository = new MockReleaseInformationRepository();
@@ -62,6 +78,10 @@ export const unitTestAppLoadContext: AppLoadContext = {
     authenticatedUserLoader,
     userSettingLoader,
     latestPostsLoader,
+    postLoader,
+    repliesLoader,
+    replyLoader,
     releaseInformationLoader,
     postMessageAction,
+    replyMessageAction,
 };

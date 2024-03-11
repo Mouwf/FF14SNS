@@ -115,24 +115,24 @@ export default function Signup() {
 
     return (
         <Form method="post">
-            {inputErrors && inputErrors.mailAddress.length > 0 && (
+            {inputErrors && inputErrors.mailAddress.length > 0 && 
                 <ul>
                     {inputErrors.mailAddress.map((errorMessage, index) => (
                         <li key={index}>{errorMessage}</li>
                     ))}
                 </ul>
-            )}
+            }
             <label>
                 <span>メールアドレス</span>
                 <input type="email" name="mailAddress" />
             </label>
-            {inputErrors && inputErrors.password.length > 0 && (
+            {inputErrors && inputErrors.password.length > 0 && 
                 <ul>
                     {inputErrors.password.map((errorMessage, index) => (
                         <li key={index}>{errorMessage}</li>
                     ))}
                 </ul>
-            )}
+            }
             <label>
                 <span>パスワード</span>
                 <input type="password" name="password" />

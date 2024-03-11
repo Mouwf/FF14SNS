@@ -1,17 +1,12 @@
 import { describe, test, expect, beforeEach, afterEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
 import deleteRecordForTest from "../../../infrastructure/common/delete-record-for-test";
-import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
 import { postgresClientProvider } from "../../../../app/dependency-injector/get-load-context";
 import PostgresUserRepository from "../../../../app/repositories/user/postgres-user-repository";
 import PostgresPostContentRepository from "../../../../app/repositories/post/postgres-post-content-repository";
+import PostgresReplyContentRepository from "../../../../app/repositories/post/postgres-reply-content-repository";
 import PostInteractor from "../../../../app/libraries/post/post-interactor";
 import PostMessageAction from "../../../../app/actions/post/post-message-action";
-
-/**
- * Firebaseのクライアント。
- */
-let firebaseClient: FirebaseClient;
 
 /**
  * Postgresのユーザーリポジトリ。
@@ -22,6 +17,11 @@ let postgresUserRepository: PostgresUserRepository;
  * Postgresの投稿内容リポジトリ。
  */
 let postgresPostContentRepository: PostgresPostContentRepository;
+
+/**
+ * Postgresのリプライ内容リポジトリ。
+ */
+let postgresReplyContentRepository: PostgresReplyContentRepository;
 
 /**
  * 投稿に関する処理を行うクラス。
@@ -54,10 +54,10 @@ const userName = "UserName@World";
 const currentReleaseInformationId = 1;
 
 beforeEach(async () => {
-    firebaseClient = new FirebaseClient();
     postgresUserRepository = new PostgresUserRepository(postgresClientProvider);
     postgresPostContentRepository = new PostgresPostContentRepository(postgresClientProvider);
-    postInteractor = new PostInteractor(postgresPostContentRepository);
+    postgresReplyContentRepository = new PostgresReplyContentRepository(postgresClientProvider);
+    postInteractor = new PostInteractor(postgresPostContentRepository, postgresReplyContentRepository);
     postMessageAction = new PostMessageAction(postInteractor);
     await deleteRecordForTest();
 });
@@ -68,6 +68,7 @@ afterEach(async () => {
 
 describe("post", () => {
     test("post should post a message and return a post id.", async () => {
+        // テスト用のユーザー情報を登録する。
         await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId));
 
         // 認証済みユーザーを取得する。
@@ -81,6 +82,6 @@ describe("post", () => {
         const postId = await postMessageAction.post(posterId, currentReleaseInformationId, "Content");
 
         // 結果を検証する。
-        expect(postId).toBeDefined();
+        expect(Number(postId)).toBeGreaterThan(0);
     });
 });

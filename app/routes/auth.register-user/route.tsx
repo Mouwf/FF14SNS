@@ -146,13 +146,13 @@ export default function RegisterUser() {
         <Form method="post">
             { /** userNameにメールアドレスが入らないようにしている。 */ }
             <input type="text" style={{ display: "none" }} />
-            {inputErrors && inputErrors.userName.length > 0 && (
+            {inputErrors && inputErrors.userName.length > 0 && 
                 <ul>
                     {inputErrors.userName.map((errorMessage, index) => (
                         <li key={index}>{errorMessage}</li>
                     ))}
                 </ul>
-            )}
+            }
             <label>
                 <span>FF14のユーザー名(UserName@World)</span>
                 <input type="text" name="userName" autoComplete="off" />

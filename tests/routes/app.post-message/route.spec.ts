@@ -54,16 +54,6 @@ beforeEach(async () => {
             Cookie: await commitSession(getReleaseInformationSession2),
         },
     });
-    requestWithCookieAndBody = new Request("https://example.com", {
-        headers: {
-            Cookie: await commitSession(getReleaseInformationSession1),
-        },
-        method: "POST",
-        body: new URLSearchParams({
-            releaseInformationId: "5",
-            content: "アクション経由の投稿テスト！",
-        }),
-    });
     const validSession = await getSession();
     validSession.set("idToken", "idToken");
     validSession.set("refreshToken", "refreshToken");

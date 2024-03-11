@@ -3,11 +3,11 @@ import PostContent from '../../models/post/post-content';
 import IPostContentRepository from '../../repositories/post/i-post-content-repository';
 
 /**
- * 投稿を取得するクラス。
+ * 複数の投稿を取得するクラス。
  */
 export default class PostsFetcher {
     /**
-     * 投稿を取得するクラスを生成する。
+     * 複数の投稿を取得するクラスを生成する。
      * @param postContentRepository 投稿を取得するリポジトリ。
      */
     constructor(
