@@ -35,14 +35,14 @@ export default async function deleteRecordForTest() {
         if (responseGetLatestLimited.length === 0) throw new Error("The post does not exist.");
 
         // テスト用の投稿を削除する。
-        responseGetLatestLimited.map(async (postContent) => {
+        await Promise.all(responseGetLatestLimited.map(async (postContent) => {
             const postId = postContent.id;
             const responseGetAllByPostId = await delayAsync(() => postgresReplyContentRepository.getAllByPostId(postId));
-            responseGetAllByPostId.map(async (replyContent) => {
+            await Promise.all(responseGetAllByPostId.map(async (replyContent) => {
                 await delayAsync(() => postgresReplyContentRepository.delete(replyContent.id));
-            });
+            }));
             await delayAsync(() => postgresPostContentRepository.delete(postId));
-        });
+        }));
 
         console.info("テスト用の投稿を削除しました。");
     } catch (error) {

@@ -85,3 +85,27 @@ describe("post", () => {
         expect(postId).toBeDefined();
     });
 });
+
+describe("reply", () => {
+    test("reply should reply message and return a reply id.", async () => {
+        // テスト用のユーザー情報を登録する。
+        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId));
+
+        // 認証済みユーザーを取得する。
+        const responseAuthenticatedUser = await delayAsync(() => postgresUserRepository.findByAuthenticationProviderId(authenticationProviderId));
+
+        // ユーザーが存在しない場合、エラーを投げる。
+        if (responseAuthenticatedUser === null) throw new Error("The user does not exist.");
+
+        // メッセージを投稿する。
+        const posterId = responseAuthenticatedUser.id;
+        const postId = await postgresPostContentRepository.create(posterId, currentReleaseInformationId, "Content");
+
+        // リプライを行う。
+        const replyContent = "ReplyContent";
+        const replyId = await postInteractor.reply(posterId, postId, null, replyContent);
+
+        // 結果を検証する。
+        expect(replyId).toBeDefined();
+    });
+});

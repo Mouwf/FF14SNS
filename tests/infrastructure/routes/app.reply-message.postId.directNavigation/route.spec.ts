@@ -1,15 +1,21 @@
 import { describe, test, expect, beforeEach, afterEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
-import deleteRecordForTest from "../../../infrastructure/common/delete-record-for-test";
+import deleteRecordForTest from "../../common/delete-record-for-test";
 import { AppLoadContext } from "@remix-run/node";
 import { appLoadContext, postgresClientProvider } from "../../../../app/dependency-injector/get-load-context";
+import FirebaseClient from "../../../../app/libraries/authentication/firebase-client";
 import PostgresUserRepository from "../../../../app/repositories/user/postgres-user-repository";
 import PostgresPostContentRepository from "../../../../app/repositories/post/postgres-post-content-repository";
 import PostgresReplyContentRepository from "../../../../app/repositories/post/postgres-reply-content-repository";
 import PostInteractor from "../../../../app/libraries/post/post-interactor";
+import { loader, action } from "../../../../app/routes/app.reply-message.$postId.$directNavigation/route";
 import { commitSession, getSession } from "../../../../app/sessions";
-import { newlyPostedPostCookie } from "../../../../app/cookies.server";
-import { loader } from "../../../../app/routes/app._index/route";
+import systemMessages from "../../../../app/messages/system-messages";
+
+/**
+ * Firebaseのクライアント。
+ */
+let firebaseClient: FirebaseClient;
 
 /**
  * Postgresのユーザーリポジトリ。
@@ -32,6 +38,16 @@ let postgresReplyContentRepository: PostgresReplyContentRepository;
 let postInteractor: PostInteractor;
 
 /**
+ * テスト用のメールアドレス。
+ */
+const mailAddress = "test@example.com";
+
+/**
+ * テスト用のパスワード。
+ */
+const password = "testPassword123";
+
+/**
  * プロフィールID。
  */
 const profileId = "username_world";
@@ -52,6 +68,7 @@ const currentReleaseInformationId = 1;
 let context: AppLoadContext;
 
 beforeEach(async () => {
+    firebaseClient = new FirebaseClient();
     postgresUserRepository = new PostgresUserRepository(postgresClientProvider);
     postgresPostContentRepository = new PostgresPostContentRepository(postgresClientProvider);
     postgresReplyContentRepository = new PostgresReplyContentRepository(postgresClientProvider);
@@ -64,8 +81,8 @@ afterEach(async () => {
     await deleteRecordForTest();
 });
 
-describe("loader" , () => {
-    test("loader should return latest posts.", async () => {
+describe("loader", () => {
+    test("loader should return a post.", async () => {
         // テスト用のユーザー情報を登録する。
         const authenticationProviderId = "authenticationProviderId";
         await postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId);
@@ -82,45 +99,45 @@ describe("loader" , () => {
         const postId = await postInteractor.post(posterId, currentReleaseInformationId, postContent);
 
         // ローダーを実行し、結果を取得する。
-        const session = await getSession();
-        session.set("idToken", "idToken");
-        session.set("refreshToken", "refreshToken");
-        session.set("userId", profileId);
-        const requestWithCookie = new Request("https://example.com", {
-            headers: {
-                Cookie: await commitSession(session),
-            },
-        });
+        const request = new Request("https://example.com");
         const response = await loader({
-            request: requestWithCookie,
-            params: {},
+            request: request,
+            params: {
+                postId: postId.toString(),
+                directNavigation: "direct",
+            },
             context,
         });
 
         // 検証に必要な情報を取得する。
-        const posts = await response.json();
+        const result = await response.json();
 
-        // 配列でない場合、エラーを投げる。
-        if (!Array.isArray(posts)) {
-            throw new Error(posts.errorMessage);
+        // エラーが発生していた場合、エラーを投げる。
+        if ("errorMessage" in result) {
+            throw new Error(result.errorMessage);
         }
 
         // 結果を検証する。
-        expect(posts.length).toBeGreaterThan(0);
-        expect(posts[0].id).toBe(postId);
-        expect(posts[0].posterId).toBe(profileId);
-        expect(posts[0].releaseInformationId).toBe(currentReleaseInformationId);
-        expect(posts[0].releaseVersion).toBeDefined();
-        expect(posts[0].releaseName).toBeDefined();
-        expect(posts[0].replyCount).toBeGreaterThanOrEqual(0);
-        expect(posts[0].content).toBe(postContent);
-        expect(new Date(posts[0].createdAt)).toBeInstanceOf(Date);
+        expect(result.id).toBe(postId);
+        expect(result.posterId).toBe(profileId);
+        expect(result.posterName).toBe(userName);
+        expect(result.releaseInformationId).toBe(currentReleaseInformationId);
+        expect(result.releaseVersion).toBeDefined();
+        expect(result.releaseName).toBeDefined();
+        expect(result.replyCount).toBe(0);
+        expect(result.content).toBe(postContent);
+        expect(new Date(result.createdAt)).toBeInstanceOf(Date);
     });
+});
 
-    test("loader should return before posts if user has cookie.", async () => {
+describe("action", () => {
+    test("action should return a success message.", async () => {
+        // テスト用のユーザーを作成する。
+        const responseSignUp = await delayAsync(() => firebaseClient.signUp(mailAddress, password));
+
         // テスト用のユーザー情報を登録する。
-        const authenticationProviderId = "authenticationProviderId";
-        await postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId);
+        const authenticationProviderId = responseSignUp.localId;
+        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId));
 
         // 認証済みユーザーを取得する。
         const responseAuthenticatedUser = await delayAsync(() => postgresUserRepository.findByAuthenticationProviderId(authenticationProviderId));
@@ -128,49 +145,43 @@ describe("loader" , () => {
         // ユーザーが存在しない場合、エラーを投げる。
         if (responseAuthenticatedUser === null) throw new Error("The user does not exist.");
 
-        // 認証済みユーザーの投稿を登録する。
+        // メッセージを投稿する。
         const posterId = responseAuthenticatedUser.id;
         const postContent = "postContent";
-        const postId = await postInteractor.post(posterId, 1, postContent);
+        const postId = await postInteractor.post(posterId, currentReleaseInformationId, postContent);
 
-        // ローダーを実行し、結果を取得する。
+        // アクションを実行し、結果を取得する。
         const session = await getSession();
-        session.set("idToken", "idToken");
-        session.set("refreshToken", "refreshToken");
+        session.set("idToken", responseSignUp.idToken);
+        session.set("refreshToken", responseSignUp.refreshToken);
         session.set("userId", profileId);
-        const cookieSession = await commitSession(session);
-        const cookie = {
-            postId: postId,
-        };
-        const cookieNewlyPostedPost = await newlyPostedPostCookie.serialize(cookie);
-        const requestWithCookie = new Request("https://example.com", {
+        const requestWithCookieAndBody = new Request("https://example.com", {
             headers: {
-                Cookie: `${cookieSession}; ${cookieNewlyPostedPost}`,
+                Cookie: await commitSession(session),
             },
+            method: "POST",
+            body: new URLSearchParams({
+                content: "アクション経由の投稿テスト！",
+            }),
         });
-        const response = await loader({
-            request: requestWithCookie,
-            params: {},
+        const response = await action({
+            request: requestWithCookieAndBody,
+            params: {
+                postId: postId.toString(),
+                directNavigation: "direct",
+            },
             context,
         });
 
         // 検証に必要な情報を取得する。
-        const posts = await response.json();
+        const result = await response.json();
 
-        // 配列でない場合、エラーを投げる。
-        if (!Array.isArray(posts)) {
-            throw new Error(posts.errorMessage);
+        // 結果が存在しない場合、エラーを投げる。
+        if (!("successMessage" in result) || !result.successMessage) {
+            throw new Error("Response is undefined.");
         }
 
         // 結果を検証する。
-        expect(posts.length).toBeGreaterThan(0);
-        expect(posts[0].id).toBe(postId);
-        expect(posts[0].posterId).toBe(profileId);
-        expect(posts[0].releaseInformationId).toBe(currentReleaseInformationId);
-        expect(posts[0].releaseVersion).toBeDefined();
-        expect(posts[0].releaseName).toBeDefined();
-        expect(posts[0].replyCount).toBeGreaterThanOrEqual(0);
-        expect(posts[0].content).toBe(postContent);
-        expect(new Date(posts[0].createdAt)).toBeInstanceOf(Date);
+        expect(result.successMessage).toBe(systemMessages.success.replyMessagePosted);
     });
 });

@@ -1,12 +1,13 @@
 import { describe, test, expect, beforeEach, afterEach } from "@jest/globals";
 import delayAsync from "../../../test-utilityies/delay-async";
-import deleteRecordForTest from "../../../infrastructure/common/delete-record-for-test";
-import { postgresClientProvider } from "../../../../app/dependency-injector/get-load-context";
+import deleteRecordForTest from "../../common/delete-record-for-test";
+import { AppLoadContext } from "@remix-run/node";
+import { appLoadContext, postgresClientProvider } from "../../../../app/dependency-injector/get-load-context";
 import PostgresUserRepository from "../../../../app/repositories/user/postgres-user-repository";
 import PostgresPostContentRepository from "../../../../app/repositories/post/postgres-post-content-repository";
 import PostgresReplyContentRepository from "../../../../app/repositories/post/postgres-reply-content-repository";
 import PostInteractor from "../../../../app/libraries/post/post-interactor";
-import PostsFetcher from "../../../../app/libraries/post/posts-fetcher";
+import { loader } from "../../../../app/routes/app.post-detail.$postId/route";
 
 /**
  * Postgresのユーザーリポジトリ。
@@ -29,11 +30,6 @@ let postgresReplyContentRepository: PostgresReplyContentRepository;
 let postInteractor: PostInteractor;
 
 /**
- * 複数の投稿を取得するクラス。
- */
-let postsFetcher: PostsFetcher;
-
-/**
  * プロフィールID。
  */
 const profileId = "username_world";
@@ -48,12 +44,17 @@ const userName = "UserName@World";
  */
 const currentReleaseInformationId = 1;
 
+/**
+ * コンテキスト。
+ */
+let context: AppLoadContext;
+
 beforeEach(async () => {
     postgresUserRepository = new PostgresUserRepository(postgresClientProvider);
     postgresPostContentRepository = new PostgresPostContentRepository(postgresClientProvider);
     postgresReplyContentRepository = new PostgresReplyContentRepository(postgresClientProvider);
     postInteractor = new PostInteractor(postgresPostContentRepository, postgresReplyContentRepository);
-    postsFetcher = new PostsFetcher(postgresPostContentRepository);
+    context = appLoadContext;
     await deleteRecordForTest();
 });
 
@@ -61,8 +62,8 @@ afterEach(async () => {
     await deleteRecordForTest();
 });
 
-describe("fetchLatestPosts" , () => {
-    test("fetchLatestPosts should return latest posts.", async () => {
+describe("loader", () => {
+    test("loader should return a post and its replies.", async () => {
         // テスト用のユーザー情報を登録する。
         const authenticationProviderId = "authenticationProviderId";
         await postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId);
@@ -78,18 +79,50 @@ describe("fetchLatestPosts" , () => {
         const postContent = "postContent";
         const postId = await postInteractor.post(posterId, currentReleaseInformationId, postContent);
 
-        // 投稿を取得する。
-        const posts = await postsFetcher.fetchLatestPosts(profileId, currentReleaseInformationId);
+        // リプライを行う。
+        const replyContent = "replyContent";
+        const replyId = await postInteractor.reply(posterId, postId, null, replyContent);
+
+        // ローダーを実行し、結果を取得する。
+        const request = new Request("https://example.com");
+        const response = await loader({
+            request: request,
+            params: {
+                postId: postId.toString(),
+            },
+            context,
+        });
+
+        // 検証に必要な情報を取得する。
+        const result = await response.json();
+
+        // エラーが発生していた場合、エラーを投げる。
+        if ("errorMessage" in result) {
+            throw new Error(result.errorMessage);
+        }
 
         // 結果を検証する。
-        expect(posts.length).toBeGreaterThanOrEqual(1);
-        expect(posts[0].id).toBe(postId);
-        expect(posts[0].posterId).toBe(profileId);
-        expect(posts[0].releaseInformationId).toBe(1);
-        expect(posts[0].releaseVersion).toBeDefined();
-        expect(posts[0].releaseName).toBeDefined();
-        expect(posts[0].replyCount).toBeGreaterThanOrEqual(0);
-        expect(posts[0].content).toBe(postContent);
-        expect(posts[0].createdAt).toBeInstanceOf(Date);
+        expect(result.post.id).toBe(postId);
+        expect(result.post.posterId).toBe(profileId);
+        expect(result.post.posterName).toBe(userName);
+        expect(result.post.releaseInformationId).toBe(currentReleaseInformationId);
+        expect(result.post.releaseVersion).toBeDefined();
+        expect(result.post.releaseName).toBeDefined();
+        expect(result.post.replyCount).toBe(1);
+        expect(result.post.content).toBe(postContent);
+        expect(new Date(result.post.createdAt)).toBeInstanceOf(Date);
+        expect(result.replies.length).toBe(1);
+        expect(result.replies[0].id).toBe(replyId);
+        expect(result.replies[0].posterId).toBe(profileId);
+        expect(result.replies[0].posterName).toBe(userName);
+        expect(result.replies[0].originalPostId).toBe(postId);
+        expect(result.replies[0].originalReplyId).toBeNull();
+        expect(result.replies[0].replyNestingLevel).toBe(0);
+        expect(result.replies[0].releaseInformationId).toBe(currentReleaseInformationId);
+        expect(result.replies[0].releaseVersion).toBeDefined();
+        expect(result.replies[0].releaseName).toBeDefined();
+        expect(result.replies[0].replyCount).toBe(0);
+        expect(result.replies[0].content).toBe(replyContent);
+        expect(new Date(result.replies[0].createdAt)).toBeInstanceOf(Date);
     });
 });

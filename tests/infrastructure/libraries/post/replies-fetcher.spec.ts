@@ -6,7 +6,7 @@ import PostgresUserRepository from "../../../../app/repositories/user/postgres-u
 import PostgresPostContentRepository from "../../../../app/repositories/post/postgres-post-content-repository";
 import PostgresReplyContentRepository from "../../../../app/repositories/post/postgres-reply-content-repository";
 import PostInteractor from "../../../../app/libraries/post/post-interactor";
-import PostMessageAction from "../../../../app/actions/post/post-message-action";
+import RepliesFetcher from "../../../../app/libraries/post/replies-fetcher";
 
 /**
  * Postgresのユーザーリポジトリ。
@@ -29,14 +29,9 @@ let postgresReplyContentRepository: PostgresReplyContentRepository;
 let postInteractor: PostInteractor;
 
 /**
- * メッセージを投稿するアクション。
+ * 複数のリプライを取得するクラス。
  */
-let postMessageAction: PostMessageAction;
-
-/**
- * 認証プロバイダID。
- */
-const authenticationProviderId = "authenticationProviderId";
+let repliesFetcher: RepliesFetcher;
 
 /**
  * プロフィールID。
@@ -58,7 +53,7 @@ beforeEach(async () => {
     postgresPostContentRepository = new PostgresPostContentRepository(postgresClientProvider);
     postgresReplyContentRepository = new PostgresReplyContentRepository(postgresClientProvider);
     postInteractor = new PostInteractor(postgresPostContentRepository, postgresReplyContentRepository);
-    postMessageAction = new PostMessageAction(postInteractor);
+    repliesFetcher = new RepliesFetcher(postgresReplyContentRepository);
     await deleteRecordForTest();
 });
 
@@ -66,10 +61,11 @@ afterEach(async () => {
     await deleteRecordForTest();
 });
 
-describe("post", () => {
-    test("post should post a message and return a post id.", async () => {
+describe("fetchAllByPostId" , () => {
+    test("fetchAllByPostId should return all replies by post id.", async () => {
         // テスト用のユーザー情報を登録する。
-        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId));
+        const authenticationProviderId = "authenticationProviderId";
+        await postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId);
 
         // 認証済みユーザーを取得する。
         const responseAuthenticatedUser = await delayAsync(() => postgresUserRepository.findByAuthenticationProviderId(authenticationProviderId));
@@ -79,9 +75,41 @@ describe("post", () => {
 
         // メッセージを投稿する。
         const posterId = responseAuthenticatedUser.id;
-        const postId = await postMessageAction.post(posterId, currentReleaseInformationId, "Content");
+        const postContent = "postContent";
+        const postId = await postInteractor.post(posterId, currentReleaseInformationId, postContent);
+
+        // リプライを行う。
+        const replyContent1 = "ReplyContent1";
+        const replyContent2 = "ReplyContent2";
+        const replyId1 = await postInteractor.reply(posterId, postId, null, replyContent1);
+        const replyId2 = await postInteractor.reply(posterId, postId, replyId1, replyContent2);
+
+        // リプライを取得する。
+        const replies = await repliesFetcher.fetchAllByPostId(postId);
 
         // 結果を検証する。
-        expect(Number(postId)).toBeGreaterThan(0);
+        expect(replies).toHaveLength(2);
+        expect(replies[0].id).toBe(replyId1);
+        expect(replies[0].posterId).toBe(profileId);
+        expect(replies[0].originalPostId).toBe(postId);
+        expect(replies[0].originalReplyId).toBeNull();
+        expect(replies[0].replyNestingLevel).toBe(0);
+        expect(replies[0].releaseInformationId).toBe(currentReleaseInformationId);
+        expect(replies[0].releaseVersion).toBeDefined();
+        expect(replies[0].releaseName).toBeDefined();
+        expect(replies[0].replyCount).toBe(1);
+        expect(replies[0].content).toBe(replyContent1);
+        expect(replies[0].createdAt).toBeInstanceOf(Date);
+        expect(replies[1].id).toBe(replyId2);
+        expect(replies[1].posterId).toBe(profileId);
+        expect(replies[1].originalPostId).toBe(postId);
+        expect(replies[1].originalReplyId).toBe(replyId1);
+        expect(replies[1].replyNestingLevel).toBe(1);
+        expect(replies[1].releaseInformationId).toBe(currentReleaseInformationId);
+        expect(replies[1].releaseVersion).toBeDefined();
+        expect(replies[1].releaseName).toBeDefined();
+        expect(replies[1].replyCount).toBeGreaterThanOrEqual(0);
+        expect(replies[1].content).toBe(replyContent2);
+        expect(replies[1].createdAt).toBeInstanceOf(Date);
     });
 });

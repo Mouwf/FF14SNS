@@ -6,7 +6,8 @@ import PostgresUserRepository from "../../../../app/repositories/user/postgres-u
 import PostgresPostContentRepository from "../../../../app/repositories/post/postgres-post-content-repository";
 import PostgresReplyContentRepository from "../../../../app/repositories/post/postgres-reply-content-repository";
 import PostInteractor from "../../../../app/libraries/post/post-interactor";
-import PostMessageAction from "../../../../app/actions/post/post-message-action";
+import PostFetcher from "../../../../app/libraries/post/post-fetcher";
+import PostLoader from "../../../../app/loaders/post/post-loader";
 
 /**
  * Postgresのユーザーリポジトリ。
@@ -29,14 +30,14 @@ let postgresReplyContentRepository: PostgresReplyContentRepository;
 let postInteractor: PostInteractor;
 
 /**
- * メッセージを投稿するアクション。
+ * 投稿を取得するクラス。
  */
-let postMessageAction: PostMessageAction;
+let postFetcher: PostFetcher;
 
 /**
- * 認証プロバイダID。
+ * 投稿を取得するローダー。
  */
-const authenticationProviderId = "authenticationProviderId";
+let postLoader: PostLoader;
 
 /**
  * プロフィールID。
@@ -58,7 +59,8 @@ beforeEach(async () => {
     postgresPostContentRepository = new PostgresPostContentRepository(postgresClientProvider);
     postgresReplyContentRepository = new PostgresReplyContentRepository(postgresClientProvider);
     postInteractor = new PostInteractor(postgresPostContentRepository, postgresReplyContentRepository);
-    postMessageAction = new PostMessageAction(postInteractor);
+    postFetcher = new PostFetcher(postgresPostContentRepository);
+    postLoader = new PostLoader(postFetcher);
     await deleteRecordForTest();
 });
 
@@ -66,10 +68,10 @@ afterEach(async () => {
     await deleteRecordForTest();
 });
 
-describe("post", () => {
-    test("post should post a message and return a post id.", async () => {
-        // テスト用のユーザー情報を登録する。
-        await delayAsync(() => postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId));
+describe("getPostById" , () => {
+    test("getPostById should return specified post.", async () => {
+        const authenticationProviderId = "authenticationProviderId";
+        await postgresUserRepository.create(profileId, authenticationProviderId, userName, currentReleaseInformationId);
 
         // 認証済みユーザーを取得する。
         const responseAuthenticatedUser = await delayAsync(() => postgresUserRepository.findByAuthenticationProviderId(authenticationProviderId));
@@ -79,9 +81,21 @@ describe("post", () => {
 
         // メッセージを投稿する。
         const posterId = responseAuthenticatedUser.id;
-        const postId = await postMessageAction.post(posterId, currentReleaseInformationId, "Content");
+        const postContent = "postContent";
+        const postId = await postInteractor.post(posterId, currentReleaseInformationId, postContent);
+
+        // 投稿を取得する。
+        const post = await postLoader.getPostById(postId);
 
         // 結果を検証する。
-        expect(Number(postId)).toBeGreaterThan(0);
+        expect(post.id).toBe(postId);
+        expect(post.posterId).toBe(profileId);
+        expect(post.posterName).toBe(userName);
+        expect(post.releaseInformationId).toBe(1);
+        expect(post.releaseVersion).toBeDefined();
+        expect(post.releaseName).toBeDefined();
+        expect(post.replyCount).toBeGreaterThanOrEqual(0);
+        expect(post.content).toBe(postContent);
+        expect(post.createdAt).toBeInstanceOf(Date);
     });
 });
