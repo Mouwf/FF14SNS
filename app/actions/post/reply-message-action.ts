@@ -16,12 +16,12 @@ export default class ReplyMessageAction {
     /**
      * リプライを行う。
      * @param replierId リプライ者ID。
-     * @param origianlPostId リプライ先投稿ID。
+     * @param originalPostId リプライ先投稿ID。
      * @param originalReplyId リプライ先リプライID。
      * @param content リプライ内容。
      */
-    public async reply(replierId: number, origianlPostId: number, originalReplyId: number | null, content: string): Promise<number> {
-        const replyId = await this.postInteractor.reply(replierId, origianlPostId, originalReplyId, content);
+    public async reply(replierId: number, originalPostId: number, originalReplyId: number | null, content: string): Promise<number> {
+        const replyId = await this.postInteractor.reply(replierId, originalPostId, originalReplyId, content);
         return replyId;
     }
 }
