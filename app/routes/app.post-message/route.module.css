@@ -1,18 +1,3 @@
-.post-message-area {
-    width: 600px;
-    min-width: 480px;
-    height: 100vh;
-    padding: 214px 40px 0;
-    border: 1px solid #4B4B4B;
-    background: #1e1e1e;
-}
-
-.post-message {
-    height: auto;
-    border-bottom: solid 1px white;
-    margin-bottom: 16px;
-}
-
 .post-message textarea {
     width: 100%;
     height: 100%;
@@ -24,10 +9,6 @@
     box-sizing: border-box;
 }
 
-.post-message-container {
-    display: flex;
-    justify-content: space-between;
-}
 
 .post-release-version select {
     background: none;
@@ -39,21 +20,4 @@
 .post-release-version select option {
     background: initial;
     color: initial;
-}
-
-.post-message-btn button {
-    font-size: 16px;
-    padding: 4px 16px;
-    background: #727935;
-    border: none;
-    color: white;
-}
-
-@media (max-width: 599px) {
-    .post-message-area {
-        width: 100%;
-        min-width: 0;
-        padding: 214px 8px 0;
-
-    }
 }
