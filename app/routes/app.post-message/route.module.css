@@ -3,6 +3,7 @@
     border: none;
     color: #a3e2ee;
     font-size: 16px;
+    outline: none;
 }
 
 .post-release-version select option {
