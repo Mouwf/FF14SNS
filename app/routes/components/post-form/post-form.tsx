@@ -19,13 +19,15 @@ export default function PostForm({
 
     return (
         <Form className={styles["post-message-area"]} method="post">
-            <PostUserProfileImage />
-            <p>{snsUser.userName}</p>
+            <div className={styles["post-message-user-information"]}>
+                <PostUserProfileImage />
+                <p>{snsUser.userName}</p>
+            </div>
+            <div className={styles["post-message"]}>
+                <textarea name="content" placeholder="今日はどんな冒険をしましたか？" />
+            </div>
             <div className={styles["post-message-container"]}>
                 {children}
-                <div className={styles["post-message"]}>
-                    <textarea name="content" placeholder="今日はどんな冒険をしましたか？" />
-                </div>
                 <div className={styles["post-message-btn"]}>
                     <button type="submit">{submitMessage}</button>
                 </div>
