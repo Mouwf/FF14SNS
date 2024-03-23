@@ -1,4 +1,4 @@
-import { Form } from "@remix-run/react";
+import { Form, Link } from "@remix-run/react";
 import useSnsUser from "../../../contexts/user/use-sns-user";
 import PostUserProfileImage from "../post-display/post-user-profile-image";
 import { ReactNode } from "react";
@@ -19,6 +19,7 @@ export default function PostForm({
 
     return (
         <Form className={styles["post-message-area"]} method="post">
+            <Link to="/app">キャンセル</Link>
             <div className={styles["post-message-user-information"]}>
                 <PostUserProfileImage />
                 <p>{snsUser.userName}</p>
