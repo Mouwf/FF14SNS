@@ -9,3 +9,9 @@
     background: #1e1e1e;
     color: #E3E3E3;
 }
+
+@media (max-width: 599px) {
+    .post-release-version select, .post-release-version select option {
+        font-size: 15px;
+    }
+}

@@ -29,6 +29,7 @@ footer {
 .post-message-container {
     display: flex;
     justify-content: space-between;
+    width: 100%;
 }
 
 .post-message {
@@ -59,7 +60,7 @@ footer {
 }
 
 @media (max-width: 599px) {
-    header:has(+ .post-message-area){
+    header:has(+ .post-message-area) {
         display: none;
     }
 
@@ -68,23 +69,27 @@ footer {
         padding: 12px 8px 0;
     }
 
-    .post-message textarea {
-        font-size: 15px;
+    .post-message {
+        border-bottom: none;
     }
 
-    /* テキストエリアをフォーカス時の拡大を解除 */
-    .post-message textarea:focus {
+    .post-message textarea {
+        height: calc(100vh - 214px);
+    }
+
+    .post-message textarea, .post-message-btn button {
         font-size: 15px;
-        transform: scale(1);
     }
 
     .post-message-container {
-        display: block;
+        position: fixed;
+        bottom: 4px;
+        left: 0;
+        padding: 8px;
+        font-size: 15px;
     }
 
     .post-message-btn button {
-        position: fixed;
-        bottom: 16px;
-        right: 8px;
+        padding: 10px 32px;
     }
 }
