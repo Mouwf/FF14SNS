@@ -92,4 +92,10 @@ footer {
     .post-message-btn button {
         padding: 10px 32px;
     }
+
+    /* テキストエリアをフォーカス時の拡大を解除 */
+    .post-message textarea:focus {
+        font-size: 15px;
+        transform: scale(1);
+    }
 }
