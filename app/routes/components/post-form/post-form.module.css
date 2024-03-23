@@ -53,10 +53,11 @@ footer {
 
 .post-message-btn button {
     font-size: 16px;
-    padding: 4px 16px;
+    padding: 10px 32px;
     background: none;
-    border: solid 1px #a3e2ee;
+    border: solid 1px #a3e2eea8;
     color: #a3e2ee;
+    box-sizing: border-box;
 }
 
 @media (max-width: 599px) {
@@ -87,10 +88,6 @@ footer {
         left: 0;
         padding: 8px;
         font-size: 15px;
-    }
-
-    .post-message-btn button {
-        padding: 10px 32px;
     }
 
     /* テキストエリアをフォーカス時の拡大を解除 */
