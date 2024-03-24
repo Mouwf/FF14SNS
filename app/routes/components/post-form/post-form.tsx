@@ -18,18 +18,18 @@ export default function PostForm({
     const snsUser = useSnsUser();
 
     return (
-        <Form className={styles["post-message-area"]} method="post">
+        <Form className={styles["post-form-area"]} method="post">
             <Link to="/app">キャンセル</Link>
-            <div className={styles["post-message-user-information"]}>
+            <div className={styles["post-form-user-information"]}>
                 <PostUserProfileImage />
                 <p>{snsUser.userName}</p>
             </div>
-            <div className={styles["post-message"]}>
+            <div className={styles["post-form-message"]}>
                 <textarea name="content" placeholder="今日はどんな冒険をしましたか？" />
             </div>
-            <div className={styles["post-message-container"]}>
+            <div className={styles["post-form-submission"]}>
                 {children}
-                <div className={styles["post-message-btn"]}>
+                <div className={styles["post-form-button"]}>
                     <button type="submit">{submitMessage}</button>
                 </div>
             </div>
