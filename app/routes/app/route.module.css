@@ -4,8 +4,7 @@
 
 @media (max-width: 599px) {
     .top-layout {
-        grid-template-columns: 1fr;
-        margin-top: 166px;
+        display: block;
     }
 }
 

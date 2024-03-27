@@ -4,6 +4,7 @@ import { useActionData, useLoaderData } from "@remix-run/react";
 import { getSession } from "../../sessions";
 import { newlyPostedPostCookie } from "../../cookies.server";
 import { appLoadContext as context } from "../../dependency-injector/get-load-context";
+import styles from "./route.module.css";
 import { useContext, useEffect } from "react";
 import SystemMessageContext from "../../contexts/system-message/system-message-context";
 import PostForm from "../components/post-form/post-form";
@@ -119,7 +120,9 @@ export default function PostMessage() {
 
     return (
         <PostForm submitMessage="投稿">
-            {getReleaseVersionOptions()}
+            <div className={styles["post-release-version"]}>
+                {getReleaseVersionOptions()}
+            </div>
         </PostForm>
     );
 }

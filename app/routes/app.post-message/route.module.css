@@ -1,0 +1,18 @@
+.post-release-version select {
+    background: none;
+    border: none;
+    color: #a3e2ee;
+    font-size: 16px;
+    outline: none;
+}
+
+.post-release-version select option {
+    background: #1e1e1e;
+    color: #E3E3E3;
+}
+
+@media (max-width: 599px) {
+    .post-release-version select, .post-release-version select option {
+        font-size: 15px;
+    }
+}
